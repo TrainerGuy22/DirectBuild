@@ -1,0 +1,4 @@
+= SimpleCI
+
+== Setup
+include::src/setup.adoc[]

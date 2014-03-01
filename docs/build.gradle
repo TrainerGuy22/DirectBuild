@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name 'Bintray Asciidoctor repo'
+            url 'http://dl.bintray.com/content/aalmiray/asciidoctor'
+        }
+    }
+
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+    }
+}
+
+apply plugin: 'asciidoctor'
+
+asciidoctor {
+    sourceDir = file("src")
+    outputDir = new File("$buildDir/docs")
+    options = [
+        eruby: 'erubis',
+        attributes: [
+            'source-highlighter': 'coderay',
+            toc: 'left',
+            idprefix: '',
+            idseparator: '-'
+        ]
+    ]
+}

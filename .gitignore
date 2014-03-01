@@ -5,7 +5,7 @@
 /out/
 /jar/
 /lib/
-/build
+build/
 /.gradle
 *.*~
 /classes/
