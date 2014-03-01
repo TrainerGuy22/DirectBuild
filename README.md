@@ -1,9 +1,8 @@
-[![Stories in Ready](https://badge.waffle.io/directmyfile/simpleci.png?label=ready&title=Ready)](https://waffle.io/directmyfile/simpleci)
 # SimpleCI
 
 SimpleCI is a Continuous Integration Server written in [Groovy](http://groovy.codehaus.org/)
 
-[![Build Status](https://travis-ci.org/DirectMyFile/SimpleCI.png?branch=master)](https://travis-ci.org/DirectMyFile/SimpleCI)
+[![Build Status](https://travis-ci.org/DirectMyFile/SimpleCI.png?branch=master)](https://travis-ci.org/DirectMyFile/SimpleCI)  [![Stories in Ready](https://badge.waffle.io/directmyfile/simpleci.png?label=ready&title=Ready)](https://waffle.io/directmyfile/simpleci)
 
 ## Links
 
