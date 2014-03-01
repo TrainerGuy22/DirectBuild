@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/directmyfile/simpleci.png?label=ready&title=Ready)](https://waffle.io/directmyfile/simpleci)
 # SimpleCI
 
 SimpleCI is a Continuous Integration Server written in [Groovy](http://groovy.codehaus.org/)
