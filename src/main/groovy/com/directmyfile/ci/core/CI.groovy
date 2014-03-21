@@ -279,14 +279,14 @@ class CI {
                     logger.info "Running Task ${id} of ${job.tasks.size()} for Job '${job.name}'"
 
                     try {
-                        def taskSuccess = taskConfig.task.execute(taskConfig.params)
+                        def taskSuccess = taskTypes[taskConfig.type].execute(taskConfig)
 
                         if (!taskSuccess) {
                             success = false
                             break
                         }
                     } catch (CIException e) {
-                        logger.info "Job '${job.name}' (Task #${tasks.indexOf(taskConfig) + 1}): ${e.message}"
+                        logger.info "Job '${job.name}' (Task #${id}): ${e.message}"
                     }
                 }
                 def artifacts = new File(artifactDir, "${job.name}/${number}")
