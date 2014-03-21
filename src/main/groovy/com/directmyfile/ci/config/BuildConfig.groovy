@@ -1,7 +1,6 @@
 package com.directmyfile.ci.config
 
 import com.directmyfile.ci.exception.JobConfigurationException
-import groovy.json.JsonSlurper
 import com.directmyfile.ci.jobs.JobScript
 import org.codehaus.groovy.control.CompilerConfiguration
 
