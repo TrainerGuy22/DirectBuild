@@ -166,7 +166,7 @@ class CI {
         }
 
         sql.dataSet("jobs").rows().each {
-            def jobCfg = new File(jobRoot, "${it['name']}.json")
+            def jobCfg = new File(jobRoot, "${it['name']}.groovy")
 
             if (!jobCfg.exists()) {
                 logger.warning "Job Configuration File '${jobCfg.name}' does not exist. Skipping."
@@ -179,7 +179,7 @@ class CI {
             job.forceStatus(JobStatus.parse(it['status'] as int))
         }
 
-        FileMatcher.create(jobRoot).withExtension("json") { File file ->
+        FileMatcher.create(jobRoot).withExtension("groovy") { File file ->
             def job = new Job(this, file)
 
             if (!jobs.containsKey(job.name)) { // This Job Config isn't in the Database yet.

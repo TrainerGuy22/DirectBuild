@@ -2,10 +2,18 @@ package com.directmyfile.ci.config
 
 import com.directmyfile.ci.exception.JobConfigurationException
 import groovy.json.JsonSlurper
+import com.directmyfile.ci.jobs.JobScript
+import org.codehaus.groovy.control.CompilerConfiguration
 
 class BuildConfig {
 
-    private final Object json
+    private static final CompilerConfiguration compilerConfig = {
+        def config = new CompilerConfiguration()
+        config.scriptBaseClass = JobScript.class.name
+        return config
+    }()
+
+    private final JobScript script
     File file
 
     BuildConfig(File file) {
@@ -16,30 +24,32 @@ class BuildConfig {
             throw new JobConfigurationException("No Such Job Configuration File: ${file.absolutePath}")
         }
 
-        this.json = new JsonSlurper().parse(file.newReader())
+        def shell = new GroovyShell(compilerConfig)
+        script = shell.parse(file)
+        script.run()
     }
 
     String getName() {
-        return json['name']
+        return script.name
     }
 
-    List<Object> getTasks() {
-        return json['tasks'] as List<Object>
+    List<Map<String, Object>> getTasks() {
+        return script.tasks as List<Object>
     }
 
     def getSCM() {
-        return json['scm'] as Map<String, Object>
+        return script.scm as Map<String, Object>
     }
 
     def getArtifacts() {
-        return json['artifacts'] as List<String>
+        return script.artifacts as List<String>
     }
 
     def getNotify() {
-        return json['notify'] ?: [:]
+        return script.notify
     }
 
     def getRequirements() {
-        return json['requirements'] ?: [:]
+        return script.requirements
     }
 }
