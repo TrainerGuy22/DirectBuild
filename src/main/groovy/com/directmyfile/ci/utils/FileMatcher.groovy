@@ -1,16 +1,13 @@
 package com.directmyfile.ci.utils
 
 import groovy.io.FileType
-import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.SimpleType
 
 import java.util.regex.Pattern
-
 /**
  * Find files in a directory.
  */
 class FileMatcher {
-    private final File parent
+    final File parent
 
     /**
      * Create a File Matcher looking in the specified parent directory.
@@ -48,8 +45,7 @@ class FileMatcher {
      * @param extension file extension
      * @param closure closure to call
      */
-    void withExtension(String extension,
-                       @ClosureParams(value = SimpleType, options = "java.util.File") Closure closure) {
+    void withExtension(String extension, Closure closure) {
         def allFiles = recursive(FileType.FILES)
         List<File> matched = []
         allFiles.findAll { File file ->
@@ -66,8 +62,7 @@ class FileMatcher {
      * @param extensions file extensions
      * @param closure closure to call
      */
-    void withExtensions(List<String> extensions,
-                        @ClosureParams(value = SimpleType, options = "java.util.File") Closure closure) {
+    void withExtensions(List<String> extensions, Closure closure) {
         extensions.each { String extension ->
             withExtension(extension, closure)
         }
@@ -81,7 +76,7 @@ class FileMatcher {
     List<File> extension(String extension) {
         def files = []
 
-        withExtension(extension) { file ->
+        withExtension(extension) { File file ->
             files.add(file)
         }
 
@@ -97,6 +92,14 @@ class FileMatcher {
         recursive(FileType.FILES).findAll { File file ->
             file.name.matches(pattern)
         }
+    }
+
+    List<File> directory(String name) {
+        def files = []
+        new File(parent, name).eachFileRecurse { file ->
+            files.add(file)
+        }
+        return files
     }
 
     static FileMatcher create(File parent) {

@@ -4,18 +4,18 @@ import com.directmyfile.ci.exception.JobConfigurationException
 import com.directmyfile.ci.jobs.JobScript
 import org.codehaus.groovy.control.CompilerConfiguration
 
-class BuildConfig {
+class BuildConfiguration {
 
     private static final CompilerConfiguration compilerConfig = {
         def config = new CompilerConfiguration()
         config.scriptBaseClass = JobScript.class.name
-        return config
+        config
     }()
 
-    private final JobScript script
+    private JobScript script
     File file
 
-    BuildConfig(File file) {
+    BuildConfiguration(File file) {
 
         this.file = file
 
@@ -24,7 +24,7 @@ class BuildConfig {
         }
 
         def shell = new GroovyShell(compilerConfig)
-        script = shell.parse(file)
+        script = shell.parse(file) as JobScript
         script.run()
     }
 
@@ -32,8 +32,8 @@ class BuildConfig {
         return script.name
     }
 
-    List<Map<String, Object>> getTasks() {
-        return script.tasks as List<Object>
+    List<TaskConfiguration> getTasks() {
+        return script.tasks
     }
 
     def getSCM() {
@@ -41,7 +41,7 @@ class BuildConfig {
     }
 
     def getArtifacts() {
-        return script.artifacts as List<String>
+        return script.artifacts
     }
 
     def getNotify() {

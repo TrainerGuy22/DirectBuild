@@ -1,27 +1,29 @@
 package com.directmyfile.ci.tasks
 
 import com.directmyfile.ci.api.Task
-import com.directmyfile.ci.jobs.Job
 import org.codehaus.groovy.control.CompilerConfiguration
 
 class GroovyScriptTask extends Task {
-    @Override
-    boolean execute(Object params) {
-        def job = params["job"] as Job
-        def scriptFile = file(job.buildDir, params["script"] as String)
+    String script
+
+    void execute() {
 
         def compiler = new CompilerConfiguration()
 
-        compiler.output = job.logFile.newPrintWriter()
+        compiler.output = log.out
 
-        def shell = new GroovyShell()
+        def shell = new GroovyShell(compiler)
+
         try {
-            def script = shell.parse(scriptFile)
-            script.run()
+            def theScript = shell.parse(script)
+            theScript.run()
         } catch (e) {
             e.printStackTrace(compiler.output)
-            return false
         }
-        return true
+    }
+
+    @Override
+    void configure(Closure closure) {
+        with(closure)
     }
 }

@@ -1,11 +1,12 @@
 package com.directmyfile.ci.jobs
 
-import com.directmyfile.ci.config.BuildConfig
+import com.directmyfile.ci.config.BuildConfiguration
+import com.directmyfile.ci.config.TaskConfiguration
 import com.directmyfile.ci.core.CI
 import com.directmyfile.ci.scm.Changelog
 
 class Job {
-    BuildConfig buildConfig
+    BuildConfiguration buildConfig
     CI ci
 
     private JobStatus status
@@ -14,7 +15,7 @@ class Job {
 
     Job(CI ci, File file) {
         this.ci = ci
-        this.buildConfig = new BuildConfig(file)
+        this.buildConfig = new BuildConfiguration(file)
         buildDir.mkdirs()
     }
 
@@ -22,24 +23,8 @@ class Job {
         return buildConfig.name
     }
 
-    def getTasks() {
-        def taskConfig = buildConfig.tasks
-
-        List<Map<String, Object>> tasks = []
-
-        taskConfig.each {
-            def type = it['type'] as String
-            if (!ci.taskTypes.containsKey(type)) {
-                throw new RuntimeException("Invalid Task Type: $type")
-            }
-
-            it['ci'] = ci
-            it['job'] = this
-
-            tasks.add(it as Map<String, Object>)
-        }
-
-        return tasks
+    List<TaskConfiguration> getTasks() {
+        return buildConfig.tasks
     }
 
     def getBuildDir() {
@@ -47,29 +32,15 @@ class Job {
     }
 
     def getSCM() {
-        return buildConfig.getSCM()
+        return buildConfig.SCM
     }
 
-    def getArtifactLocations() {
+    def getArtifacts() {
         return buildConfig.artifacts
     }
 
     def getLogFile() {
         return new File(ci.configRoot, "logs/${name}.log")
-    }
-
-    def generateArtifactList() {
-        def text = []
-        if (history.latestBuild == null) return "No builds yet."
-        def number = history.latestBuild.number
-        def artifactDir = new File(ci.artifactDir, "${name}/${number}")
-        if (!artifactDir.exists()) {
-            return ""
-        }
-        artifactDir.eachFile {
-            text.add("<tr><td><a href=\"/artifact/${this.name}/${number}/${it.name}\">${it.name}</a></tr></td>")
-        }
-        return text.join('\n')
     }
 
     void setStatus(JobStatus status) {
@@ -82,7 +53,7 @@ class Job {
     }
 
     void reload() {
-        this.buildConfig = new BuildConfig(buildConfig.file)
+        this.buildConfig = new BuildConfiguration(buildConfig.file)
 
         this.status = JobStatus.parse(ci.sql.firstRow("SELECT `status` FROM `jobs` WHERE `id` = ${id};").status as int)
     }
@@ -92,7 +63,7 @@ class Job {
     }
 
     Changelog getChangelog() {
-        return ci.scmTypes[SCM.type].changelog(this)
+        return ci.scmTypes[SCM.type as String].changelog(this)
     }
 
     def getHistory() {

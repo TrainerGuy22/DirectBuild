@@ -1,5 +1,4 @@
 package com.directmyfile.ci.core
-
 import com.directmyfile.ci.api.SCM
 import com.directmyfile.ci.api.Task
 import com.directmyfile.ci.api.ToolInstaller
@@ -7,6 +6,7 @@ import com.directmyfile.ci.config.CiConfig
 import com.directmyfile.ci.db.SqlHelper
 import com.directmyfile.ci.exception.CIException
 import com.directmyfile.ci.jobs.Job
+import com.directmyfile.ci.jobs.JobLog
 import com.directmyfile.ci.jobs.JobStatus
 import com.directmyfile.ci.logging.LogLevel
 import com.directmyfile.ci.logging.Logger
@@ -27,6 +27,8 @@ import java.util.logging.Level as JavaLogLevel
 import java.util.logging.Logger as JavaLogger
 
 class CI {
+
+    private static CI INSTANCE
 
     /**
      * Main CI Logger
@@ -76,12 +78,12 @@ class CI {
     /**
      * CI Task Types
      */
-    final Map<String, Task> taskTypes = [
-            command: new CommandTask(),
-            gradle : new GradleTask(),
-            make   : new MakeTask(),
-            git    : new GitTask(),
-            groovy : new GroovyScriptTask()
+    final Map<String, Class<? extends Task>> taskTypes = [
+            command: CommandTask,
+            gradle : GradleTask,
+            make   : MakeTask,
+            git    : GitTask,
+            groovy : GroovyScriptTask
     ]
 
     /**
@@ -271,6 +273,8 @@ class CI {
                 }
             }
 
+            def jobLog = new JobLog(job.logFile)
+
             if (tasksShouldRun) {
                 def tasks = job.tasks
 
@@ -279,26 +283,36 @@ class CI {
                     logger.info "Running Task ${id} of ${job.tasks.size()} for Job '${job.name}'"
 
                     try {
-                        def taskSuccess = taskTypes[taskConfig.type].execute(taskConfig)
+                        def taskType = taskTypes[taskConfig.taskType as String]
+                        def task = taskType.newInstance()
 
-                        if (!taskSuccess) {
+                        task.ci = this
+                        task.job = job
+                        task.log = jobLog
+
+                        task.configure(taskConfig.configClosure)
+
+                        try {
+                            task.execute()
+                        } catch (e) {
                             success = false
+                            job.logFile.append(e.class.simpleName + ": " + e.message)
                             break
                         }
                     } catch (CIException e) {
                         logger.info "Job '${job.name}' (Task #${id}): ${e.message}"
                     }
                 }
-                def artifacts = new File(artifactDir, "${job.name}/${number}")
-                artifacts.mkdirs()
-                job.artifactLocations.each {
-                    def file = new File(job.buildDir, it)
-                    if (!file.exists()) {
-                        job.logFile.append("\nArtifact File: ${file.canonicalPath} does not exist")
-                        logger.debug "Job '${job.name}' has non existent artifact: ${file.canonicalPath}"
-                        return
+
+                def artifactsDir = new File(artifactDir, "${job.name}/${number}")
+                artifactsDir.mkdirs()
+                job.artifacts.files.each { location ->
+                    def source = new File(job.buildDir, location)
+                    def target = new File(artifactsDir, source.name)
+                    if (!source.exists()) {
+                        jobLog.write("Artifact '${location}' does not exist. Skipping.")
                     }
-                    new File(artifacts, file.name).bytes = file.bytes
+                    target.bytes = source.bytes
                 }
             }
 
@@ -321,6 +335,8 @@ class CI {
                     timeString: timer.toString(),
                     number    : number
             ])
+
+            jobLog.complete()
 
             def log = job.logFile.text
 
@@ -347,5 +363,13 @@ class CI {
         def dir = new File(configRoot, "artifacts")
         dir.mkdir()
         return dir
+    }
+
+    static CI getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CI()
+        } else {
+            return INSTANCE
+        }
     }
 }

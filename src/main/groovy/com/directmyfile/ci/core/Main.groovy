@@ -35,7 +35,7 @@ class Main {
             logger.info "Shutdown sequence complete"
         }
 
-        def ci = new CI()
+        def ci = CI.instance
         ci.start()
 
         ConsoleHandler.loop { String command, List<String> args ->
