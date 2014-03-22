@@ -1,4 +1,5 @@
 package com.directmyfile.ci.core
+
 import com.directmyfile.ci.api.SCM
 import com.directmyfile.ci.api.Task
 import com.directmyfile.ci.api.ToolInstaller

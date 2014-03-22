@@ -6,12 +6,12 @@ import com.directmyfile.ci.core.CI
 import com.directmyfile.ci.exception.JobConfigurationException
 
 abstract class JobScript extends Script {
-	String name = this.class.simpleName
-	List<TaskConfiguration> tasks = []
-	ArtifactSpec artifacts = new ArtifactSpec()
-	Map<String, Object> notify = [:]
-	Map<String, Object> scm = [:]
-	List<String> requirements = []
+    String name = this.class.simpleName
+    List<TaskConfiguration> tasks = []
+    ArtifactSpec artifacts = new ArtifactSpec()
+    Map<String, Object> notify = [:]
+    Map<String, Object> scm = [:]
+    List<String> requirements = []
 
     void name(String name) {
         this.name = name

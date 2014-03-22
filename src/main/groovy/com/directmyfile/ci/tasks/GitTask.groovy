@@ -7,7 +7,7 @@ class GitTask extends Task {
 
     @Override
     void execute() {
-        
+
     }
 
     @Override

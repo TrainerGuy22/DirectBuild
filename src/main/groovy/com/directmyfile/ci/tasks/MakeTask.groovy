@@ -8,7 +8,7 @@ class MakeTask extends Task {
 
     @Override
     void execute() {
-        def command = [ "make" ]
+        def command = ["make"]
         command.addAll(targets)
         run(command)
     }

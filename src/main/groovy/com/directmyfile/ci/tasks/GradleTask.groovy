@@ -32,7 +32,7 @@ class GradleTask extends Task {
         command.addAll(opts)
         command.addAll(tasks)
 
-        def exitCode = run(command, job.buildDir, [ TERM: "dumb" ])
+        def exitCode = run(command, job.buildDir, [TERM: "dumb"])
 
         if (exitCode != 0) {
             throw new TaskFailedException("Gradle exited with a non-zero status!")

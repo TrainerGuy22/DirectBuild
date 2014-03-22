@@ -3,6 +3,7 @@ package com.directmyfile.ci.utils
 import groovy.io.FileType
 
 import java.util.regex.Pattern
+
 /**
  * Find files in a directory.
  */

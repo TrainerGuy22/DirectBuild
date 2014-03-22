@@ -1,5 +1,7 @@
 package com.directmyfile.ci.utils
 
+import java.util.regex.Pattern
+
 class FileSpec {
     private final FileMatcher matcher
 
@@ -15,5 +17,9 @@ class FileSpec {
 
     void include(File file) {
         files << file
+    }
+
+    void include(Pattern pattern) {
+        files.addAll(matcher.matching(pattern))
     }
 }
