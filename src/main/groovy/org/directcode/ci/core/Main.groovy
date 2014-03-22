@@ -36,6 +36,7 @@ class Main {
         }
 
         def ci = CI.instance
+
         ci.start()
 
         ConsoleHandler.loop { String command, List<String> args ->

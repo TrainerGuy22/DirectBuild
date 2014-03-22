@@ -1,11 +1,19 @@
 package org.directcode.ci.jobs
 
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.config.ArtifactSpec
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.exception.JobConfigurationException
 
 abstract class JobScript extends Script {
+
+    private static final CompilerConfiguration compilerConfig = {
+        def config = new CompilerConfiguration()
+        config.scriptBaseClass = JobScript.class.name
+        config
+    }()
+
     String name = this.class.simpleName
     List<TaskConfiguration> tasks = []
     ArtifactSpec artifacts = new ArtifactSpec()
@@ -48,6 +56,12 @@ abstract class JobScript extends Script {
         artifacts.with(closure)
     }
 
+    void notifier(String name, Closure closure) {
+        def opts = [:]
+        opts.with(closure)
+        notify[name] = opts
+    }
+
     class TaskContainer {
         @Override
         Object invokeMethod(String name, Object args) {
@@ -58,5 +72,17 @@ abstract class JobScript extends Script {
 
             return null
         }
+    }
+
+    static JobScript from(File file) {
+
+        if (!file.exists()) {
+            throw new JobConfigurationException("No Such Job Configuration File: ${file.absolutePath}")
+        }
+
+        def shell = new GroovyShell(compilerConfig)
+        def script = shell.parse(file) as JobScript
+        script.run()
+        return script
     }
 }

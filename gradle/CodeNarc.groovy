@@ -12,9 +12,7 @@ ruleset {
     /* Design Rules */
     ruleset("rulesets/design.xml") {
         exclude 'BuilderMethodWithSideEffects'
-        AbstractClassWithoutAbstractMethod {
-            doNotApplyToClassNames = 'com.directmyfile.ci.test.CITest'
-        }
+        exclude 'AbstractClassWithoutAbstractMethod'
     }
     /* DRY (Don't Repeat Yourself) Rules */
     ruleset("rulesets/dry.xml") {

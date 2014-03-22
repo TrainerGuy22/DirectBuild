@@ -2,7 +2,7 @@ package org.directcode.ci.core
 
 import org.directcode.ci.api.SCM
 import org.directcode.ci.api.Task
-import org.directcode.ci.api.ToolInstaller
+
 import org.directcode.ci.config.CiConfig
 import org.directcode.ci.db.SqlHelper
 import org.directcode.ci.exception.CIException
@@ -113,11 +113,6 @@ class CI {
     final EventBus eventBus = new EventBus()
 
     /**
-     * CI Tool Installers
-     */
-    final Map<String, ToolInstaller> tools = [:]
-
-    /**
      * Starts CI Server
      */
     void start() {
@@ -177,7 +172,7 @@ class CI {
             }
 
             def job = new Job(this, jobCfg)
-            jobs[job.name] = job
+            jobs[job.name as String] = job
             job.id = it['id'] as int
             job.forceStatus(JobStatus.parse(it['status'] as int))
         }
@@ -189,7 +184,7 @@ class CI {
                 def r = sql.insert("INSERT INTO `jobs` (`id`, `name`, `status`, `lastRevision`) VALUES (NULL, '${job.name}', '${JobStatus.NOT_STARTED.ordinal()}', '');")
                 job.status = JobStatus.NOT_STARTED
                 job.id = r[0][0] as int
-                jobs[job.name] = job
+                jobs[job.name as String] = job
             }
         }
 

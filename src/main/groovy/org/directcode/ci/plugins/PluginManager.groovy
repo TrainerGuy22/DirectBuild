@@ -13,6 +13,7 @@ class PluginManager {
     }
 
     void loadPlugins() {
+        new File("plugins").mkdirs()
         providers.each { provider ->
             provider.ci = ci
             provider.loadPlugins()

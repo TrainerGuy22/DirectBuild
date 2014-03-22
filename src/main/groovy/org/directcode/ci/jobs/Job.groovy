@@ -1,21 +1,24 @@
 package org.directcode.ci.jobs
 
-import org.directcode.ci.config.BuildConfiguration
+
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.scm.Changelog
 
 class Job {
-    BuildConfiguration buildConfig
+    private final File jobFile
     CI ci
 
     private JobStatus status
+
+    private JobScript buildConfig
 
     int id
 
     Job(CI ci, File file) {
         this.ci = ci
-        this.buildConfig = new BuildConfiguration(file)
+        this.jobFile = file
+        this.buildConfig = JobScript.from(file)
         buildDir.mkdirs()
     }
 
@@ -32,7 +35,7 @@ class Job {
     }
 
     def getSCM() {
-        return buildConfig.SCM
+        return buildConfig.scm
     }
 
     def getArtifacts() {
@@ -53,7 +56,7 @@ class Job {
     }
 
     void reload() {
-        this.buildConfig = new BuildConfiguration(buildConfig.file)
+        this.buildConfig = JobScript.from(jobFile)
 
         this.status = JobStatus.parse(ci.sql.firstRow("SELECT `status` FROM `jobs` WHERE `id` = ${id};").status as int)
     }
