@@ -32,9 +32,9 @@ update_modules() {
 
 exit_on_bad_status() {
     local status=$?
-    if [ $status -ne 0 ]; then
+    if [ ${status} -ne 0 ]; then
         clean
-        exit $status
+        exit ${status}
     fi
 }
 
@@ -42,7 +42,7 @@ exit_on_bad_status() {
 [ ! -d depends/drirc/ ] && update_modules
 
 # DMD build
-dmd -m"$build_type" -defaultlib=phobos2 -fPIC -lib $(find $D_SRC -type f -name '*.d') $(find 'depends/drirc/src' -type f -name '*.d') -of"$BUILD_DIR"/libbot.a
+dmd -m"$build_type" -defaultlib=phobos2 -fPIC -lib $(find ${D_SRC} -type f -name '*.d') $(find 'depends/drirc/src' -type f -name '*.d') -of"$BUILD_DIR"/libbot.a
 exit_on_bad_status
 
 # GCC build

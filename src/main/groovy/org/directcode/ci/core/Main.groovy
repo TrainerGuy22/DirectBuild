@@ -14,7 +14,7 @@ class Main {
     private static final logger = Logger.getLogger("Console")
 
     @SuppressWarnings("GroovyEmptyStatementBody")
-    static void main(String[] consoleArgs) throws Exception {
+    static void main(String[] consoleArgs) {
 
         /* Configure log4j to fix warnings */
         Log4j.rootLogger.level = Log4jLevel.OFF
@@ -25,7 +25,7 @@ class Main {
                 }
         ] as Thread.UncaughtExceptionHandler
 
-        System.addShutdownHook {
+        addShutdownHook { ->
             logger.info "Shutdown sequence initiated"
             ciRunning = false
 
