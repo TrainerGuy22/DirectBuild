@@ -1,10 +1,7 @@
 package org.directcode.ci.core
-
 import org.directcode.ci.api.SCM
 import org.directcode.ci.api.Task
-
 import org.directcode.ci.config.CiConfig
-import org.directcode.ci.db.SqlHelper
 import org.directcode.ci.exception.CIException
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobLog
@@ -15,7 +12,6 @@ import org.directcode.ci.notify.IRCBot
 import org.directcode.ci.plugins.PluginManager
 import org.directcode.ci.scm.GitSCM
 import org.directcode.ci.scm.NoneSCM
-import org.directcode.ci.security.CISecurity
 import org.directcode.ci.tasks.*
 import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
@@ -24,8 +20,6 @@ import org.directcode.ci.web.VertxManager
 
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.logging.Level as JavaLogLevel
-import java.util.logging.Logger as JavaLogger
 
 class CI {
 
@@ -62,19 +56,14 @@ class CI {
     final CiConfig config = new CiConfig(this)
 
     /**
-     * SQL Functionality Provider
+     * CI Storage System
      */
-    final SqlHelper sql = new SqlHelper(this)
+    final CIStorage storage = new CIStorage()
 
     /**
      * CI IRC Bot
      */
     final IRCBot ircBot = new IRCBot()
-
-    /**
-     * CI Security
-     */
-    final CISecurity security = new CISecurity(this)
 
     /**
      * CI Task Types
@@ -134,13 +123,13 @@ class CI {
      */
     private void init() {
         config.load()
-        JavaLogger.getLogger("groovy.sql.Sql").level = JavaLogLevel.OFF
 
         def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
         logger.currentLevel = logLevel
 
         jobQueue = new LinkedBlockingQueue<Job>(config.ciSection()['queueSize'] as int)
-        sql.init()
+        storage.storagePath = new File(configRoot, "storage").toPath()
+        storage.start()
         logger.info "Connected to Database"
         new File(configRoot, 'logs').mkdirs()
         pluginManager.loadPlugins()
@@ -163,29 +152,21 @@ class CI {
             jobRoot.mkdir()
         }
 
-        sql.dataSet("jobs").rows().each {
-            def jobCfg = new File(jobRoot, "${it['name']}.groovy")
-
-            if (!jobCfg.exists()) {
-                logger.warning "Job Configuration File '${jobCfg.name}' does not exist. Skipping."
-                return
-            }
-
-            def job = new Job(this, jobCfg)
-            jobs[job.name as String] = job
-            job.id = it['id'] as int
-            job.forceStatus(JobStatus.parse(it['status'] as int))
-        }
+        def jobStorage = storage.get("jobs")
 
         FileMatcher.create(jobRoot).withExtension("groovy") { File file ->
             def job = new Job(this, file)
 
-            if (!jobs.containsKey(job.name)) { // This Job Config isn't in the Database yet.
-                def r = sql.insert("INSERT INTO `jobs` (`id`, `name`, `status`, `lastRevision`) VALUES (NULL, '${job.name}', '${JobStatus.NOT_STARTED.ordinal()}', '');")
-                job.status = JobStatus.NOT_STARTED
-                job.id = r[0][0] as int
-                jobs[job.name as String] = job
+            if (jobStorage.containsKey(job.name)) {
+                def jobInfo = jobStorage[job.name] as Map<String, Object>
+                job.status = JobStatus.parse(jobInfo.status as int)
+            } else {
+                jobStorage[job.name] = [
+                    status: JobStatus.NOT_STARTED.ordinal()
+                ]
             }
+
+            jobs[job.name] = job
         }
 
         logger.info "Loaded ${jobs.size()} jobs."
@@ -338,7 +319,12 @@ class CI {
 
             def base64Log = Utils.encodeBase64(log)
 
-            sql.insert("INSERT INTO `job_history` (`id`, `job_id`, `status`, `log`, `logged`, `number`) VALUES (NULL, ${job.id}, ${job.status.ordinal()}, '${base64Log}', CURRENT_TIMESTAMP, ${number});")
+            def job_history = storage.get("job_history")
+
+            def history = ((List<Map<String, Object>>) job_history.get(job.name, []))
+
+            history.add(number: number, status: job.status.ordinal(), log: base64Log, buildTime: buildTime, timeStamp: new Date().toString())
+
             jobQueue.remove(job)
             logger.debug "Job '${job.name}' removed from queue"
         }

@@ -25,14 +25,6 @@ class CiConfig extends GConfig {
 
         ci.host = web['host'] as String
         ci.port = web['port'] as int
-
-        ci.sql.config = getProperty("sql", [
-                host    : "localhost",
-                port    : "3306",
-                username: "root",
-                password: "changeme",
-                database: "ci"
-        ]) as Map<String, Object>
     }
 
     Map<String, Object> ciSection() {

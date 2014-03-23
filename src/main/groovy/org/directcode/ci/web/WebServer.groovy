@@ -1,14 +1,11 @@
 package org.directcode.ci.web
-
+import groovy.json.JsonBuilder
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
-import groovy.json.JsonBuilder
 import org.vertx.groovy.core.buffer.Buffer
 import org.vertx.groovy.core.http.HttpServer
 import org.vertx.groovy.core.http.HttpServerRequest
 import org.vertx.groovy.core.http.RouteMatcher
-
-import java.sql.Timestamp
 
 class WebServer {
     HttpServer server
@@ -172,7 +169,7 @@ class WebServer {
                         number   : entry.number,
                         status   : entry.status,
                         log      : entry.log,
-                        timestamp: (entry.logTime as Timestamp)
+                        timestamp: entry.when as String
                 ])
             }
 

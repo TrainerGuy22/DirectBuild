@@ -41,6 +41,4 @@ Execute the following command:
 
 Edit the config.groovy file to match your configuration.
 
-SimpleCI requires a MySQL-like (Be it MariaDB or MySQL) server to store CI information.
-
-A blank database needs to be created, and SimpleCI will create all the tables necessary on first run.
+SimpleCI uses a custom storage system to storage Job History and Status information.

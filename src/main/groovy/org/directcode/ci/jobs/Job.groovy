@@ -13,8 +13,6 @@ class Job {
 
     private JobScript buildConfig
 
-    int id
-
     Job(CI ci, File file) {
         this.ci = ci
         this.jobFile = file
@@ -48,7 +46,8 @@ class Job {
 
     void setStatus(JobStatus status) {
         this.status = status
-        ci.sql.update("UPDATE `jobs` SET  `status` =  '${status.ordinal()}' WHERE  `jobs`.`id` = ${id};")
+        def jobInfo = ci.storage["jobs"][name] as Map<String, Object>
+        jobInfo.status = status.ordinal()
     }
 
     JobStatus getStatus() {
@@ -57,8 +56,6 @@ class Job {
 
     void reload() {
         this.buildConfig = JobScript.from(jobFile)
-
-        this.status = JobStatus.parse(ci.sql.firstRow("SELECT `status` FROM `jobs` WHERE `id` = ${id};").status as int)
     }
 
     void forceStatus(JobStatus status) {

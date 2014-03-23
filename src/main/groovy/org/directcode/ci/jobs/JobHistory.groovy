@@ -1,9 +1,7 @@
 package org.directcode.ci.jobs
 
-import groovy.sql.GroovyRowResult
 import groovy.transform.ToString
-
-import java.sql.Timestamp
+import org.directcode.ci.core.CI
 
 class JobHistory {
     private final List<Entry> entries = []
@@ -14,16 +12,14 @@ class JobHistory {
     }
 
     void load() {
-        job.ci.sql.eachRow("SELECT * FROM `job_history` WHERE `job_id` = ${job.id}") {
+        def history = ((List<Map<String, Object>>) CI.instance.storage.get("job_history").get(job.name, []))
+        for (result in history) {
             def entry = new Entry()
             entries.add(entry)
-            def result = it.toRowResult() as GroovyRowResult
-            entry.id = result['id'] as int
-            entry.jobID = result['job_id'] as int
-            entry.log = result['log'] as String
-            entry.logTime = result['logged'] as Timestamp
-            entry.status = result['status'] as int
-            entry.number = result['number'] as int
+            entry.number = result.number as int
+            entry.log = result.log as String
+            entry.when = result.timeStamp as String
+            entry.status = result.status as int
         }
     }
 
@@ -42,8 +38,8 @@ class JobHistory {
 
     @ToString
     static class Entry {
-        int id, jobID, status, number
+        int id, status, number
         String log
-        Timestamp logTime
+        String when
     }
 }
