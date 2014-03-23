@@ -99,7 +99,7 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "1.11"
+    gradleVersion = "2.0-20140322230012+0000"
 }
 
 apply from: 'gradle/pom.gradle'
