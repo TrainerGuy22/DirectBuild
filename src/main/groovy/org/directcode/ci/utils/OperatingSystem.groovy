@@ -1,10 +1,22 @@
 package org.directcode.ci.utils
 
 class OperatingSystem {
-    private final String name = System.getProperty("os.name").toLowerCase()
+    private final String name
+
+    OperatingSystem() {
+        this(System.getProperty("os.name"))
+    }
+
+    OperatingSystem(String name) {
+        this.name = name.toLowerCase()
+    }
 
     static OperatingSystem current() {
         return new OperatingSystem()
+    }
+
+    static OperatingSystem forName(String name) {
+        return new OperatingSystem(name)
     }
 
     boolean isWindows() {

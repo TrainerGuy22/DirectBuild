@@ -1,6 +1,7 @@
 package org.directcode.ci.utils
 
 import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
@@ -40,7 +41,6 @@ class Utils {
     @CompileStatic
     static Script parseConfig(File file) {
         def cc = new CompilerConfiguration()
-
         return new GroovyShell(cc).parse(file)
     }
 
@@ -70,7 +70,7 @@ class Utils {
     @CompileStatic
     static byte[] generateSalt(int size) {
         def random = new SecureRandom()
-        byte[] list = new byte[size]
+        def list = new byte[size]
         random.nextBytes(list)
         return list
     }
@@ -95,5 +95,10 @@ class Utils {
     @CompileStatic
     static def parseJSON(String text) {
         return jsonSlurper.parseText(text)
+    }
+
+    @CompileStatic
+    static def prettyJSON(String json) {
+        return JsonOutput.prettyPrint(json)
     }
 }

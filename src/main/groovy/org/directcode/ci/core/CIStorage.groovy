@@ -36,7 +36,7 @@ class CIStorage {
             save()
         }
 
-        def saveTask = new Task() {
+        worker.addTask(new Task() {
             @Override
             void execute() {
                 while (autoSave) {
@@ -44,8 +44,7 @@ class CIStorage {
                     sleep(4000)
                 }
             }
-        }
-        worker.addTask(saveTask)
+        })
     }
 
     void save() {

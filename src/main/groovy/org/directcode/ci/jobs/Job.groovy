@@ -63,7 +63,11 @@ class Job {
     }
 
     Changelog getChangelog() {
-        return ci.scmTypes[SCM.type as String].changelog(this)
+        def scm = ci.scmTypes[SCM.type as String].newInstance()
+        scm.ci = ci
+        scm.job = this
+        scm.log = new JobLog(File.createTempFile("ci", "changelog"))
+        return scm.changelog()
     }
 
     def getHistory() {

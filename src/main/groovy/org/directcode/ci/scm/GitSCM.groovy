@@ -86,8 +86,8 @@ class GitSCM extends SCM {
         return gitCommand
     }
 
-    boolean updateSubmodules() {
-        return run([findGit().absolutePath, "submodule", "update", "--init", "--recursive"]) == 0
+    void updateSubmodules() {
+        run([findGit().absolutePath, "submodule", "update", "--init", "--recursive"])
     }
 
     Process execute(List<String> command) {

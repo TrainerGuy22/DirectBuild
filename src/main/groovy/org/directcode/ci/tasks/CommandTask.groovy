@@ -20,7 +20,6 @@ class CommandTask extends Task {
 
     @Override
     void configure(Closure closure) {
-        closure.delegate = this
-        closure()
+        with(closure)
     }
 }
