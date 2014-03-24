@@ -20,9 +20,13 @@ class CIStorage {
             if (!file.name.endsWith(".json")) {
                 return
             }
-            def storageName = file.name[0..file.name.lastIndexOf('.') - 1]
-            storages[storageName] = Utils.parseJSON(path.text) as Map<String, Object>
+            load(file.name[0..file.name.lastIndexOf('.') - 1])
         }
+    }
+
+    void load(String storageName) {
+        def path = new File(storagePath.toFile(), "${storageName}.json").toPath()
+        storages[storageName] = Utils.parseJSON(path.text) as Map<String, Object>
     }
 
     protected void start() {
@@ -32,12 +36,6 @@ class CIStorage {
             save()
         }
 
-        def loadTask = new Task() {
-            @Override
-            void execute() {
-                load()
-            }
-        }
         def saveTask = new Task() {
             @Override
             void execute() {
@@ -47,16 +45,19 @@ class CIStorage {
                 }
             }
         }
-        worker.addTask(loadTask)
         worker.addTask(saveTask)
     }
 
     void save() {
-        storages.each { entry ->
-            def storageFile = new File(storagePath.toFile(), "${entry.key}.json").toPath()
-            def builder = new JsonBuilder(entry.value)
-            storageFile.write(builder.toPrettyString() + System.lineSeparator())
+        storages.keySet().each { storageName ->
+            save(storageName)
         }
+    }
+
+    void save(String storageName) {
+        def storageFile = new File(storagePath.toFile(), "${storageName}.json").toPath()
+        def builder = new JsonBuilder(storages[storageName])
+        storageFile.write(builder.toPrettyString() + System.lineSeparator())
     }
 
     void setStoragePath(Path path) {
@@ -70,7 +71,11 @@ class CIStorage {
 
     Map<String, Object> get(String storageName) {
         if (!(storageName in storages.keySet())) {
-            storages[storageName] = [:]
+            if (new File(storagePath.toFile(), "${storageName}.json").exists()) {
+                load(storageName)
+            } else {
+                storages[storageName] = [:]
+            }
         }
         return storages[storageName]
     }
