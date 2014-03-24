@@ -104,6 +104,9 @@ class CI {
     private void init() {
         def timer = new ExecutionTimer()
         timer.start()
+
+        debuggingSystem()
+
         config.load()
 
         def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
@@ -127,7 +130,7 @@ class CI {
         logger.info("Completed Initialization in ${timer.time} milliseconds")
     }
 
-    void loadBuiltins() {
+    private void loadBuiltins() {
         registerSCM("git", GitSCM)
         registerSCM("none", NoneSCM)
         registerTask("gradle", GradleTask)
@@ -136,6 +139,7 @@ class CI {
         registerTask("git", GitTask)
         registerTask("make", MakeTask)
         registerTask("ant", AntTask)
+        registerTask("maven", MavenTask)
     }
 
     /**
@@ -168,6 +172,15 @@ class CI {
         logger.info "Loaded ${jobs.size()} jobs."
 
         eventBus.dispatch("ci.jobs.loaded")
+    }
+
+    private void debuggingSystem() {
+        eventBus.on("ci.task.register") { event ->
+            logger.debug("Registered task '${event.name}' with type '${event.type.name}'")
+        }
+        eventBus.on("ci.scm.register") { event ->
+            logger.debug("Registered SCM '${event.name}' with type '${event.type.name}'")
+        }
     }
 
     /**
@@ -352,7 +365,7 @@ class CI {
 
     void registerSCM(String name, Class<? extends SCM> scmType, Closure callback = {}) {
         scmTypes[name] = scmType
-        eventBus.dispatch("ci.scm.register", [ name: name, type: scmType ])
+        eventBus.dispatch("ci.scm.register", [name: name, type: scmType])
         callback()
     }
 
