@@ -2,7 +2,8 @@
 
 SimpleCI is a Continuous Integration Server written in [Groovy](http://groovy.codehaus.org/)
 
-[![Build Status](https://travis-ci.org/DirectMyFile/SimpleCI.svg?branch=master)](https://travis-ci.org/DirectMyFile/SimpleCI)  [![Stories in Ready](https://badge.waffle.io/directmyfile/simpleci.png?label=ready&title=Ready)](https://waffle.io/directmyfile/simpleci)
+[![Build Status](https://travis-ci.org/DirectMyFile/SimpleCI.svg?branch=master)](https://travis-ci.org/DirectMyFile/SimpleCI)
+[![Version](http://img.shields.io/github/release/DirectMyFile/SimpleCI.svg)]
 
 ## Links
 
