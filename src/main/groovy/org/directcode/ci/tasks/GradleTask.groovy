@@ -4,6 +4,7 @@ import org.directcode.ci.api.Task
 import org.directcode.ci.exception.JobConfigurationException
 import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.exception.ToolException
+import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
 
 class GradleTask extends Task {
@@ -20,7 +21,11 @@ class GradleTask extends Task {
                 throw new JobConfigurationException("Gradle Wrapper not found in Job: ${job.name}")
             }
 
-            command.addAll("sh", "gradlew")
+            if (OperatingSystem.current().unix) {
+                command.add("sh")
+            }
+
+            command.add("gradlew")
         } else {
             def c = Utils.findCommandOnPath("gradle")
             if (c == null) {
