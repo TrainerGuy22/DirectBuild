@@ -13,7 +13,6 @@ group = "com.directmyfile"
 
 ext {
     groovyVersion = '2.3.0-SNAPSHOT:indy'
-    jdkHome = "${System.getProperty("java.home")}/../"
 }
 
 repositories {
