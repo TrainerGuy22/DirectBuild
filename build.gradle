@@ -65,8 +65,6 @@ sourceCompatibility = 8
 targetCompatibility = 8
 
 jar {
-    dependsOn 'makeDBot'
-
     manifest {
         attributes('Main-class': 'org.directcode.ci.core.Main')
     }
