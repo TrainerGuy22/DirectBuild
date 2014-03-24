@@ -1,8 +1,8 @@
 package org.directcode.ci.core
 
-import org.directcode.ci.utils.MultiMap
 import jpower.core.Task as PowerTask
 import jpower.core.WorkerPool
+import org.directcode.ci.utils.MultiMap
 
 /**
  * A Groovy Event Bus that uses JPower's Worker Pool

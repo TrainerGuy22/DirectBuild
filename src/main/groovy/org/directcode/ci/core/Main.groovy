@@ -1,9 +1,9 @@
 package org.directcode.ci.core
 
-import org.directcode.ci.logging.Logger
-import org.directcode.ci.utils.ConsoleHandler
 import org.apache.log4j.Level as Log4jLevel
 import org.apache.log4j.Logger as Log4j
+import org.directcode.ci.logging.Logger
+import org.directcode.ci.utils.ConsoleHandler
 
 class Main {
 

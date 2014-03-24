@@ -1,7 +1,7 @@
 package org.directcode.ci.config
 
-import org.directcode.ci.core.CI
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 
 @CompileStatic
 class CiConfig extends GConfig {

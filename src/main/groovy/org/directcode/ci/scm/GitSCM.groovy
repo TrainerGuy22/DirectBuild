@@ -2,28 +2,15 @@ package org.directcode.ci.scm
 
 import org.directcode.ci.api.SCM
 import org.directcode.ci.exception.ToolMissingException
-import org.directcode.ci.jobs.Job
 import org.directcode.ci.utils.Utils
 
 class GitSCM extends SCM {
 
-    void clone(Job job) {
+    void gitClone() {
         def cmd = [findGit().absolutePath, "clone", "--recursive", job.SCM.url as String, job.buildDir.absolutePath]
 
-        def proc = execute(cmd)
-        job.logFile.parentFile.mkdirs()
-        def log = job.logFile.newPrintWriter()
-        proc.inputStream.eachLine {
-            log.println(it)
-            log.flush()
-        }
-        log.println()
-        log.flush()
-        log.close()
-        def exitCode = proc.waitFor()
-        if (exitCode != 0) {
-            throw new ToolMissingException("Git failed to clone repository!")
-        }
+        run(cmd)
+
         updateSubmodules()
     }
 
@@ -32,20 +19,7 @@ class GitSCM extends SCM {
 
         updateSubmodules()
 
-        def proc = execute(cmd)
-
-        def log = job.logFile.newPrintWriter()
-        proc.inputStream.eachLine {
-            log.println(it)
-            log.flush()
-        }
-        def exitCode = proc.waitFor()
-        log.println()
-        log.flush()
-        log.close()
-        if (exitCode != 0) {
-            throw new ToolMissingException("Git failed to pull changes!")
-        }
+        run(cmd)
     }
 
     boolean exists() {
@@ -58,7 +32,7 @@ class GitSCM extends SCM {
         if (exists()) {
             update()
         } else {
-            clone()
+            gitClone()
         }
     }
 
@@ -67,7 +41,7 @@ class GitSCM extends SCM {
         def changelog = new Changelog()
 
         if (!exists()) {
-            clone(job)
+            gitClone()
         }
 
         def proc = execute([findGit().absolutePath, "log", "-4", "--pretty=%H%n%an%n%s"])

@@ -1,4 +1,5 @@
 package org.directcode.ci.core
+
 import org.directcode.ci.api.SCM
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
@@ -74,7 +75,7 @@ class CI {
      * Source Code Manager Types
      */
     final Map<String, Class<? extends SCM>> scmTypes = [
-            git: GitSCM,
+            git : GitSCM,
             none: NoneSCM
     ]
 
@@ -153,7 +154,7 @@ class CI {
                 job.status = JobStatus.parse(jobInfo.status as int)
             } else {
                 jobStorage[job.name] = [
-                    status: JobStatus.NOT_STARTED.ordinal()
+                        status: JobStatus.NOT_STARTED.ordinal()
                 ]
             }
 
@@ -279,6 +280,7 @@ class CI {
                     def target = new File(artifactsDir, source.name)
                     if (!source.exists()) {
                         jobLog.write("Artifact '${location}' does not exist. Skipping.")
+                        return
                     }
                     target.bytes = source.bytes
                 }

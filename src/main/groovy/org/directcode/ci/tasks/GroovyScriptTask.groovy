@@ -1,7 +1,7 @@
 package org.directcode.ci.tasks
 
-import org.directcode.ci.api.Task
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.directcode.ci.api.Task
 
 class GroovyScriptTask extends Task {
     String script

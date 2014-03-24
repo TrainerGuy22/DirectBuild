@@ -1,4 +1,5 @@
 package org.directcode.ci.web
+
 import groovy.json.JsonBuilder
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
