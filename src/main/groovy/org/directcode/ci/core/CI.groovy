@@ -1,5 +1,4 @@
 package org.directcode.ci.core
-
 import org.directcode.ci.api.SCM
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
@@ -63,21 +62,12 @@ class CI {
     /**
      * CI Task Types
      */
-    final Map<String, Class<? extends Task>> taskTypes = [
-            command: CommandTask,
-            gradle : GradleTask,
-            make   : MakeTask,
-            git    : GitTask,
-            groovy : GroovyScriptTask
-    ]
+    final Map<String, Class<? extends Task>> taskTypes = [:]
 
     /**
      * Source Code Manager Types
      */
-    final Map<String, Class<? extends SCM>> scmTypes = [
-            git : GitSCM,
-            none: NoneSCM
-    ]
+    final Map<String, Class<? extends SCM>> scmTypes = [:]
 
     /**
      * CI Jobs
@@ -123,6 +113,9 @@ class CI {
         storage.storagePath = new File(configRoot, "storage").toPath()
         storage.start()
         new File(configRoot, 'logs').mkdirs()
+
+        loadBuiltins()
+
         pluginManager.loadPlugins()
 
         eventBus.dispatch("ci.init", [
@@ -132,6 +125,16 @@ class CI {
         timer.stop()
 
         logger.info("Completed Initialization in ${timer.time} milliseconds")
+    }
+
+    void loadBuiltins() {
+        registerSCM("git", GitSCM)
+        registerSCM("none", NoneSCM)
+        registerTask("gradle", GradleTask)
+        registerTask("groovy", GroovyScriptTask)
+        registerTask("command", CommandTask)
+        registerTask("git", GitTask)
+        registerTask("make", MakeTask)
     }
 
     /**
@@ -338,6 +341,18 @@ class CI {
         def dir = new File(configRoot, "artifacts")
         dir.mkdir()
         return dir
+    }
+
+    void registerTask(String name, Class<? extends Task> taskType, Closure callback = {}) {
+        taskTypes[name] = taskType
+        eventBus.dispatch("ci.task.register", [ name: name, type: taskType ])
+        callback()
+    }
+
+    void registerSCM(String name, Class<? extends SCM> scmType, Closure callback = {}) {
+        scmTypes[name] = scmType
+        eventBus.dispatch("ci.scm.register", [ name: name, type: scmType ])
+        callback()
     }
 
     static CI getInstance() {
