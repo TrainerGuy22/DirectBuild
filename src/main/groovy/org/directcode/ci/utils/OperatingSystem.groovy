@@ -1,7 +1,7 @@
 package org.directcode.ci.utils
 
 class OperatingSystem {
-    private String name = System.getProperty("os.name").toLowerCase()
+    private final String name = System.getProperty("os.name").toLowerCase()
 
     static OperatingSystem current() {
         return new OperatingSystem()

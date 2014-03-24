@@ -11,8 +11,8 @@ import java.nio.file.Path
 class CIStorage {
     private final Map<String, Map<String, Object>> storages = [:]
     private Path storagePath
-    private Worker worker = new Worker()
-    private boolean autoSave = true
+    private final Worker worker = new Worker()
+    private final boolean autoSave = true
 
     void load() {
         storagePath.eachFileRecurse(FileType.FILES) { Path path ->
