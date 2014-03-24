@@ -38,4 +38,4 @@ Execute the following command:
 
 Edit the config.groovy file to match your configuration.
 
-SimpleCI uses a custom storage system to storage Job History and Status information.
+SimpleCI uses a custom storage system to store all information inclduing Build Status and Build History.
