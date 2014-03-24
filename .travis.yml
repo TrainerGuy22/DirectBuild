@@ -1,12 +1,6 @@
 language: groovy
 jdk: oraclejdk8
-before_install:
-  - "wget http://cdn.bitbucket.org/directmyfile/simpleci/downloads/dmd.deb -Odmd.deb"
 install:
-  - "sudo apt-get update"
-  - "sudo apt-get install gcc-multilib"
-  - "sudo dpkg -i dmd.deb"
-  - "rm dmd.deb"
   - "TERM=dumb ./gradlew assemble"
 script:
   - "TERM=dumb ./gradlew check"
