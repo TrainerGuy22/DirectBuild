@@ -1,26 +1,16 @@
 package org.directcode.ci.scm
 
 import org.directcode.ci.api.SCM
-import org.directcode.ci.core.CI
 import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.utils.Utils
 
 class GitSCM extends SCM {
 
-    private final Map gitConfig
-
-    GitSCM(CI ci) {
-        this.gitConfig = ci.config.getProperty("git", [
-                logLength: 4
-        ]) as Map
-    }
-
-    @Override
     void clone(Job job) {
         def cmd = [findGit().absolutePath, "clone", "--recursive", job.SCM.url as String, job.buildDir.absolutePath]
 
-        def proc = execute(job, cmd)
+        def proc = execute(cmd)
         job.logFile.parentFile.mkdirs()
         def log = job.logFile.newPrintWriter()
         proc.inputStream.eachLine {
@@ -34,16 +24,15 @@ class GitSCM extends SCM {
         if (exitCode != 0) {
             throw new ToolMissingException("Git failed to clone repository!")
         }
-        updateSubmodules(job)
+        updateSubmodules()
     }
 
-    @Override
-    void update(Job job) {
+    void update() {
         def cmd = [findGit().absolutePath, "pull", "--all"]
 
-        updateSubmodules(job)
+        updateSubmodules()
 
-        def proc = execute(job, cmd)
+        def proc = execute(cmd)
 
         def log = job.logFile.newPrintWriter()
         proc.inputStream.eachLine {
@@ -59,22 +48,29 @@ class GitSCM extends SCM {
         }
     }
 
-    @Override
-    boolean exists(Job job) {
+    boolean exists() {
         def gitDir = new File(job.buildDir, ".git")
 
         return gitDir.exists()
     }
 
+    void execute() {
+        if (exists()) {
+            update()
+        } else {
+            clone()
+        }
+    }
+
     @Override
-    Changelog changelog(Job job) {
+    Changelog changelog() {
         def changelog = new Changelog()
 
-        if (!exists(job)) {
+        if (!exists()) {
             clone(job)
         }
 
-        def proc = execute(job, [findGit().absolutePath, "log", "-${gitConfig['logLength'].toString()}".toString(), "--pretty=%H%n%an%n%s"])
+        def proc = execute([findGit().absolutePath, "log", "-4", "--pretty=%H%n%an%n%s"])
 
         proc.waitFor()
 
@@ -108,7 +104,7 @@ class GitSCM extends SCM {
         return changelog
     }
 
-    public static File findGit() {
+    static File findGit() {
         def gitCommand = Utils.findCommandOnPath("git")
         if (gitCommand == null) {
             throw new ToolMissingException("Could not find Git on System!")
@@ -116,15 +112,11 @@ class GitSCM extends SCM {
         return gitCommand
     }
 
-    private static boolean detectSubmodules(File dir) {
-        return "${findGit().absolutePath} submodule status".execute([], dir) != ""
+    boolean updateSubmodules() {
+        return execute([findGit().absolutePath, "submodule", "update", "--init", "--recursive"]).waitFor() == 0
     }
 
-    static boolean updateSubmodules(Job job) {
-        return execute(job, [findGit().absolutePath, "submodule", "update", "--init", "--recursive"]).waitFor() == 0
-    }
-
-    private static Process execute(Job job, List<String> command) {
+    Process execute(List<String> command) {
         def builder = new ProcessBuilder(command)
         builder.directory(job.buildDir)
         builder.redirectErrorStream(true)

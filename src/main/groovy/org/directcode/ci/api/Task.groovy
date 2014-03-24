@@ -14,11 +14,13 @@ abstract class Task {
 
     /**
      * Executes this Task
-     * @param params The JSON object of this task - Includes two more types: job, and ci
-     * @return
      */
     abstract void execute();
 
+    /**
+     * Configures this Task
+     * @param closure closure that will configure the task
+     */
     abstract void configure(Closure closure);
 
     static File file(File parent = new File("."), String name) {

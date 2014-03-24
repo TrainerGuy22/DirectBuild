@@ -73,7 +73,10 @@ class CI {
     /**
      * Source Code Manager Types
      */
-    final Map<String, SCM> scmTypes = [:]
+    final Map<String, Class<? extends SCM>> scmTypes = [
+            git: GitSCM,
+            none: NoneSCM
+    ]
 
     /**
      * CI Jobs
@@ -124,9 +127,6 @@ class CI {
         eventBus.dispatch("ci.init", [
                 time: System.currentTimeMillis()
         ])
-
-        scmTypes['git'] = new GitSCM(this)
-        scmTypes['none'] = new NoneSCM()
 
         timer.stop()
 
@@ -217,6 +217,8 @@ class CI {
                 job.buildDir.mkdirs()
             }
 
+            def jobLog = new JobLog(job.logFile)
+
             if (scmShouldRun) {
                 def scmConfig = job.SCM
 
@@ -226,22 +228,20 @@ class CI {
                     tasksShouldRun = false
                 }
 
-                def scm = scmTypes[scmConfig.type as String]
+                def scm = scmTypes[scmConfig.type as String].newInstance()
+
+                scm.ci = this
+                scm.job = job
+                scm.log = jobLog
 
                 try {
-                    if (scm.exists(job)) {
-                        scm.update(job)
-                    } else {
-                        scm.clone(job)
-                    }
+                    scm.execute()
                 } catch (CIException e) {
                     logger.info "Job '${job.name}' (SCM): ${e.message}"
                     tasksShouldRun = false
                     success = false
                 }
             }
-
-            def jobLog = new JobLog(job.logFile)
 
             if (tasksShouldRun) {
                 def tasks = job.tasks
