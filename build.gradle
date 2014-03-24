@@ -45,14 +45,6 @@ dependencies {
 
 check.dependsOn 'jar'
 
-/* TODO: Port dbot.sh script to Gradle */
-task makeDBot(type: Exec) {
-    inputs.dir file("src/main/c")
-    inputs.dir file("src/main/d")
-    outputs.dir file("build/natives")
-    commandLine "./gradle/dbot.sh", jdkHome
-}
-
 compileGroovy {
     groovyOptions.optimizationOptions.indy = true
 }
@@ -69,8 +61,6 @@ tasks.withType(CodeNarc) {
 sourceSets.main.java.srcDirs = []
 sourceSets.main.groovy.srcDirs += ["src/main/java"]
 
-sourceSets.main.resources.srcDirs += "build/binaries"
-
 sourceCompatibility = 8
 targetCompatibility = 8
 
@@ -84,11 +74,6 @@ jar {
     // Pack Dependencies
     from configurations.compile.collect { it.directory ? it : zipTree(it) }
 
-    // Pack Natives
-    into("natives") {
-        from fileTree("build/binaries/natives")
-    }
-
     // Makes Jar Clean
     exclude "overviewj.html"
     exclude "overview.html"
@@ -99,7 +84,7 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.0-20140322230012+0000"
+    gradleVersion = "2.0-20140323230014+0000"
 }
 
 apply from: 'gradle/pom.gradle'
