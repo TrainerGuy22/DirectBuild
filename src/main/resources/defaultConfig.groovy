@@ -11,19 +11,6 @@ web = [
         port: 8080
 ]
 
-irc = [
-        enabled: false,
-        host: "irc.esper.net",
-        port: 6667,
-        nickname: "SimpleCI",
-        username: "SimpleCI",
-        channels: [
-                "#DirectMyFile"
-        ],
-        commandPrefix: "!",
-        admins: []
-]
-
 git = [
         logLength: 4
 ]

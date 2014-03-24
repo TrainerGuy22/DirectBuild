@@ -8,7 +8,6 @@ import org.directcode.ci.jobs.JobLog
 import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
-import org.directcode.ci.notify.IRCBot
 import org.directcode.ci.plugins.PluginManager
 import org.directcode.ci.scm.GitSCM
 import org.directcode.ci.scm.NoneSCM
@@ -61,11 +60,6 @@ class CI {
     final CIStorage storage = new CIStorage()
 
     /**
-     * CI IRC Bot
-     */
-    final IRCBot ircBot = new IRCBot()
-
-    /**
      * CI Task Types
      */
     final Map<String, Class<? extends Task>> taskTypes = [
@@ -111,17 +105,11 @@ class CI {
     }
 
     /**
-     * Starts the IRC Bot
-     * <p><b>NOTICE:</b> Must be run on Main Thread</p>
-     */
-    void startBot() {
-        ircBot.start(this)
-    }
-
-    /**
      * Initializes this CI Server
      */
     private void init() {
+        def timer = new ExecutionTimer()
+        timer.start()
         config.load()
 
         def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
@@ -130,7 +118,6 @@ class CI {
         jobQueue = new LinkedBlockingQueue<Job>(config.ciSection()['queueSize'] as int)
         storage.storagePath = new File(configRoot, "storage").toPath()
         storage.start()
-        logger.info "Connected to Database"
         new File(configRoot, 'logs').mkdirs()
         pluginManager.loadPlugins()
 
@@ -140,6 +127,10 @@ class CI {
 
         scmTypes['git'] = new GitSCM(this)
         scmTypes['none'] = new NoneSCM()
+
+        timer.stop()
+
+        logger.info("Completed Initialization in ${timer.time} milliseconds")
     }
 
     /**

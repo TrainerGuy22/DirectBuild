@@ -7,10 +7,6 @@ import org.apache.log4j.Logger as Log4j
 
 class Main {
 
-    /* Running states */
-    private static def ciRunning = true
-    private static def botRunning = false
-
     private static final logger = Logger.getLogger("Console")
 
     @SuppressWarnings("GroovyEmptyStatementBody")
@@ -24,16 +20,6 @@ class Main {
                     logger.error("An unexpected error occurred in SimpleCI", e)
                 }
         ] as Thread.UncaughtExceptionHandler
-
-        addShutdownHook { ->
-            logger.info "Shutdown sequence initiated"
-            ciRunning = false
-
-            /* Run through the states allowing them to shutdown */
-            while (botRunning);
-
-            logger.info "Shutdown sequence complete"
-        }
 
         def ci = CI.instance
 
@@ -82,18 +68,5 @@ class Main {
                 }
             }
         }
-
-        // Must run on the main thread
-        ci.startBot()
-    }
-
-    /* Shut down & startup methods */
-
-    static boolean isRunning() {
-        return ciRunning
-    }
-
-    static void setBotState(boolean running) {
-        botRunning = running
     }
 }
