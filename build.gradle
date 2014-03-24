@@ -5,6 +5,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'codenarc'
 apply plugin: 'maven'
 apply plugin: 'distribution'
+apply plugin: 'idea'
 
 
 defaultTasks 'jar'
