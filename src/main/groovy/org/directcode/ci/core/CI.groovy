@@ -135,6 +135,7 @@ class CI {
         registerTask("command", CommandTask)
         registerTask("git", GitTask)
         registerTask("make", MakeTask)
+        registerTask("ant", AntTask)
     }
 
     /**
