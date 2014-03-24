@@ -1,9 +1,8 @@
 package org.directcode.ci.tasks
 
 import org.directcode.ci.api.Task
-import org.directcode.ci.exception.JobConfigurationException
 import org.directcode.ci.exception.TaskFailedException
-import org.directcode.ci.exception.ToolException
+import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
 
@@ -18,7 +17,7 @@ class GradleTask extends Task {
 
         if (wrapper) {
             if (!file(job.buildDir, "gradlew").exists()) {
-                throw new JobConfigurationException("Gradle Wrapper not found in Job: ${job.name}")
+                throw new ToolMissingException("Gradle Wrapper not found in Job: ${job.name}")
             }
 
             if (OperatingSystem.current().unix) {
@@ -29,7 +28,7 @@ class GradleTask extends Task {
         } else {
             def c = Utils.findCommandOnPath("gradle")
             if (c == null) {
-                throw new ToolException("Gradle not found on this system.")
+                throw new ToolMissingException("Gradle not found on this system.")
             }
             command.add(c.absolutePath)
         }

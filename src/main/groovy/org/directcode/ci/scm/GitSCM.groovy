@@ -2,7 +2,7 @@ package org.directcode.ci.scm
 
 import org.directcode.ci.api.SCM
 import org.directcode.ci.core.CI
-import org.directcode.ci.exception.ToolException
+import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.utils.Utils
 
@@ -32,7 +32,7 @@ class GitSCM extends SCM {
         log.close()
         def exitCode = proc.waitFor()
         if (exitCode != 0) {
-            throw new ToolException("Git failed to clone repository!")
+            throw new ToolMissingException("Git failed to clone repository!")
         }
         updateSubmodules(job)
     }
@@ -55,7 +55,7 @@ class GitSCM extends SCM {
         log.flush()
         log.close()
         if (exitCode != 0) {
-            throw new ToolException("Git failed to pull changes!")
+            throw new ToolMissingException("Git failed to pull changes!")
         }
     }
 
@@ -111,7 +111,7 @@ class GitSCM extends SCM {
     public static File findGit() {
         def gitCommand = Utils.findCommandOnPath("git")
         if (gitCommand == null) {
-            throw new ToolException("Could not find Git on System!")
+            throw new ToolMissingException("Could not find Git on System!")
         }
         return gitCommand
     }
