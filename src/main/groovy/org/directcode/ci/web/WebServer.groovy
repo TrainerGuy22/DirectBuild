@@ -153,33 +153,18 @@ class WebServer {
             def jobName = r.params['name'] as String
 
             if (!ci.jobs.containsKey(jobName)) {
-                writeResource(r, "404.html")
+                r.response.end(Utils.encodeJSON([
+                        code : 404,
+                        error: [
+                                message: "Job Not Found"
+                        ]
+                ]))
                 return
             }
 
             def job = ci.jobs[jobName]
 
-            def history = job.history
-
-            def out = [:]
-
-            out["length"] = history.entries.size()
-
-            def histories = new ArrayList<Map<String, Object>>(history.latestBuild?.number ?: 0)
-
-            history.entries.each { entry ->
-                histories.add([
-                        id       : entry.id,
-                        number   : entry.number,
-                        status   : entry.status,
-                        log      : entry.log,
-                        timestamp: entry.when as String
-                ])
-            }
-
-            out["history"] = histories
-
-            r.response.end(Utils.encodeJSON(out))
+            r.response.end(Utils.encodeJSON(ci.storage.get("job_history").get(jobName, [])))
         }
 
         matcher.get('/login') { HttpServerRequest r ->

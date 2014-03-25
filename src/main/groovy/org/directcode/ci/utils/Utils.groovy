@@ -24,7 +24,8 @@ class Utils {
     @CompileStatic
     static ExecuteResult execute(@DelegatesTo(ExecuteSpec) Closure closure) {
         def spec = new ExecuteSpec()
-        spec.with(closure)
+        closure.delegate = spec
+        closure()
         return spec.execute()
     }
 

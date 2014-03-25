@@ -53,7 +53,7 @@ class CIStorage {
         }
     }
 
-    void save(String storageName) {
+    synchronized void save(String storageName) {
         def storageFile = new File(storagePath.toFile(), "${storageName}.json").toPath()
         def builder = new JsonBuilder(storages[storageName])
         storageFile.write(builder.toPrettyString() + System.lineSeparator())
@@ -81,5 +81,14 @@ class CIStorage {
 
     Map<String, Map<String, Object>> all() {
         return storages
+    }
+
+    String getJSON(String storageName) {
+        def file = new File(storagePath.toFile(), "${storageName}.json")
+        if (!file.exists()) {
+            return null
+        } else {
+            return file.text
+        }
     }
 }

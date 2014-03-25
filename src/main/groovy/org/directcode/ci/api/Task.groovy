@@ -38,6 +38,10 @@ abstract class Task {
             arguments(command.drop(1))
             directory(workingDir)
             environment(env)
+            streamOutput { line ->
+                ci.logger.debug("${line}")
+                log.write("${line}")
+            }
         }
 
         log.write(">> Command Complete { code: ${result.code} }")

@@ -11,7 +11,11 @@ class ExecuteSpec {
     String executable
     List<String> args = []
     File directory = new File(".")
-    Map<String, String> environment = [:]
+    Map<String, String> environment = {
+        def env = [:]
+        env.putAll(System.getenv())
+        env
+    }()
 
     void directory(File directory) {
         this.directory = directory
@@ -88,5 +92,6 @@ class ExecuteSpec {
         input.each { entry ->
             output.add("${entry.key}=${entry.value}")
         }
+        return output
     }
 }

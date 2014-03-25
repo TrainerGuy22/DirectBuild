@@ -29,7 +29,7 @@ class EventBus {
      */
     void dispatch(String eventName, Map<String, Object> options = [:]) {
         def eventHandlers = handlers[eventName]
-        if (eventHandlers.empty) { // No Event Handlers to call
+        if (eventHandlers?.empty) { // No Event Handlers to call
             return
         }
         workerPool.submit(new PowerTask() {
