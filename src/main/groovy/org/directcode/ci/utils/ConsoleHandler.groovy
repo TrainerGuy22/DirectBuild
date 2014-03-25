@@ -1,10 +1,13 @@
 package org.directcode.ci.utils
 
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
+
 class ConsoleHandler {
     static BufferedReader reader = System.in.newReader()
     static boolean looping = false
 
-    static void readLine(Closure handler = {}) {
+    static void readLine(@ClosureParams(value=SimpleType.class, options="java.lang.String") Closure handler = {}) {
         def line = reader.readLine()
         if (line == null || line.trim() == "") {
             return
@@ -15,7 +18,7 @@ class ConsoleHandler {
         handler(cmd, args)
     }
 
-    static void loop(Closure handler = {}, Closure<Boolean> stopHandler = { false }) {
+    static void loop(@ClosureParams(value=SimpleType.class, options="java.lang.String") Closure handler = {}, Closure<Boolean> stopHandler = { false }) {
         if (looping) {
             throw new IllegalStateException("Console is already looping.")
         }
@@ -27,5 +30,9 @@ class ConsoleHandler {
             }
             looping = false
         }
+    }
+
+    static void readLines(@ClosureParams(value=SimpleType.class, options="java.util.List") Closure handler = {}) {
+        handler(reader.readLines())
     }
 }

@@ -1,5 +1,7 @@
 package org.directcode.ci.core
 
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 import jpower.core.Task as PowerTask
 import jpower.core.WorkerPool
 import org.directcode.ci.utils.MultiMap
@@ -16,7 +18,7 @@ class EventBus {
      * @param name Event Name
      * @param handler Event Handler
      */
-    void on(String name, Closure handler) {
+    void on(String name, @ClosureParams(value=SimpleType.class, options="java.util.Map<String, Object>") Closure handler) {
         handlers[name].add(handler)
     }
 
