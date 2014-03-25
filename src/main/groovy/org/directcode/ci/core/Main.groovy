@@ -26,7 +26,6 @@ class Main {
         ci.start()
 
         ConsoleHandler.loop { String command, List<String> args ->
-            command
             if (command == 'build') {
 
                 if (args.size() == 0) {
