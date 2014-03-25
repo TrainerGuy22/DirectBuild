@@ -28,6 +28,7 @@ class GitSCM extends SCM {
         return gitDir.exists()
     }
 
+    @Override
     void execute() {
         if (exists()) {
             update()
