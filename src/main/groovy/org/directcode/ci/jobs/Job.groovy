@@ -66,7 +66,7 @@ class Job {
         def scm = ci.scmTypes[SCM.type as String].newInstance()
         scm.ci = ci
         scm.job = this
-        scm.log = new JobLog(File.createTempFile("ci", "changelog"))
+        scm.log = new JobLog(File.createTempFile("simpleci", "changelog"))
         return scm.changelog()
     }
 
