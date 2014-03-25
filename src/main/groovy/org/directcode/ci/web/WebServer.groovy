@@ -1,5 +1,4 @@
 package org.directcode.ci.web
-
 import groovy.json.JsonBuilder
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
@@ -133,15 +132,19 @@ class WebServer {
 
         matcher.get('/api/changes/:name') { HttpServerRequest r ->
             def jobName = r.params['name'] as String
+            def count = (r.params['count'] ?: 8) as int
 
             if (!ci.jobs.containsKey(jobName)) {
-                writeResource(r, "404.html")
+                r.response.end(Utils.encodeJSON([
+                        code : 404,
+                        error: [
+                                message: "Job Not Found"
+                        ]
+                ]))
                 return
             }
 
-            def job = ci.jobs[jobName]
-
-            def changelog = job.changelog.entries
+            def changelog = ci.jobs[jobName].getChangelog(count).entries
 
             r.response.end(Utils.encodeJSON(changelog))
         }
