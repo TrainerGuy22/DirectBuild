@@ -1,8 +1,10 @@
 package org.directcode.ci.api
 
 import org.directcode.ci.core.CI
+import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobLog
+import org.directcode.ci.utils.Utils
 
 /**
  * A CI build Task
@@ -27,20 +29,22 @@ abstract class Task {
         return new File(parent, name)
     }
 
-    int run(List<String> command, File directory = job.buildDir, Map<String, String> env = [:]) {
+    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [:], boolean handleExitCode = true) {
         CI.logger.debug("Executing: '${command.join(" ")}'")
-        log.write("Executing Command: '${command.join(' ')}'")
-        def builder = new ProcessBuilder().command(command)
-        builder.directory(directory)
-        builder.environment().putAll(env)
-        builder.redirectErrorStream(true)
-        def proc = builder.start()
-        proc.inputStream.eachLine { line ->
-            CI.logger.debug(line)
-            log.write(line)
+        log.write("\$ '${command.join(' ')}'")
+
+        def result = Utils.execute { ->
+            executable(command[0])
+            arguments(command.drop(1))
+            directory(workingDir)
+            environment(env)
         }
-        def exitCode = proc.waitFor()
-        log.write("Process Exited with Code: ${exitCode}")
-        return exitCode
+
+        log.write(">> Command Complete { code: ${result.code} }")
+
+        if (handleExitCode && result.code != 0) {
+            throw new TaskFailedException("Command exited with non-zero status!")
+        }
+        return result.code
     }
 }

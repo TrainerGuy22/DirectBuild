@@ -1,7 +1,6 @@
 package org.directcode.ci.tasks
 
 import org.directcode.ci.api.Task
-import org.directcode.ci.exception.TaskFailedException
 
 /**
  * Executes a Command
@@ -12,10 +11,7 @@ class CommandTask extends Task {
 
     @Override
     void execute() {
-        def exitCode = run(command.tokenize())
-        if (exitCode != 0) {
-            throw new TaskFailedException("Process Exited with Code: ${exitCode}")
-        }
+        run(command.tokenize())
     }
 
     @Override

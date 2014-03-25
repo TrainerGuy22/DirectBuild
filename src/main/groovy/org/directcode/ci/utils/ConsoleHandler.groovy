@@ -18,7 +18,8 @@ class ConsoleHandler {
         handler(cmd, args)
     }
 
-    static void loop(@ClosureParams(value = FromString, options = [ "String", "List<String>" ]) Closure handler = {}, Closure<Boolean> stopHandler = { false }) {
+    static void loop(@ClosureParams(value = FromString, options = ["String", "List<String>"]) Closure handler = {
+    }, Closure<Boolean> stopHandler = { false }) {
         if (looping) {
             throw new IllegalStateException("Console is already looping.")
         }

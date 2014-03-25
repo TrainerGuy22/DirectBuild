@@ -22,6 +22,13 @@ class Utils {
     }
 
     @CompileStatic
+    static ExecuteResult execute(@DelegatesTo(ExecuteSpec) Closure closure) {
+        def spec = new ExecuteSpec()
+        spec.with(closure)
+        return spec.execute()
+    }
+
+    @CompileStatic
     @Memoized(maxCacheSize = 10)
     static File findCommandOnPath(String executableName) {
         def systemPath = System.getenv("PATH")

@@ -48,7 +48,8 @@ class FileMatcher {
      * @param extension file extension
      * @param closure closure to call
      */
-    void withExtension(String extension, @ClosureParams(value=SimpleType.class, options="java.io.File") Closure closure) {
+    void withExtension(String extension,
+                       @ClosureParams(value = SimpleType.class, options = "java.io.File") Closure closure) {
         def allFiles = recursive(FileType.FILES)
         List<File> matched = []
         allFiles.findAll { File file ->
@@ -65,7 +66,8 @@ class FileMatcher {
      * @param extensions file extensions
      * @param closure closure to call
      */
-    void withExtensions(List<String> extensions, @ClosureParams(value=SimpleType.class, options="java.io.File") Closure closure) {
+    void withExtensions(List<String> extensions,
+                        @ClosureParams(value = SimpleType.class, options = "java.io.File") Closure closure) {
         extensions.each { String extension ->
             withExtension(extension, closure)
         }

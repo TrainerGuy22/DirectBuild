@@ -38,14 +38,14 @@ class GitSCM extends SCM {
     }
 
     @Override
-    Changelog changelog() {
+    Changelog changelog(int count = 4) {
         def changelog = new Changelog()
 
         if (!exists()) {
             gitClone()
         }
 
-        def proc = execute([findGit().absolutePath, "log", "-4", "--pretty=%H%n%an%n%s"])
+        def proc = execute([findGit().absolutePath, "log", "-${count}", "--pretty=%H%n%an%n%s"])
 
         proc.waitFor()
 

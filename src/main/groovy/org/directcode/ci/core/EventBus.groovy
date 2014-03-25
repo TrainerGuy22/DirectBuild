@@ -18,7 +18,8 @@ class EventBus {
      * @param name Event Name
      * @param handler Event Handler
      */
-    void on(String name, @ClosureParams(value=SimpleType.class, options="java.util.Map<String, Object>") Closure handler) {
+    void on(String name,
+            @ClosureParams(value = SimpleType.class, options = "java.util.Map<String, Object>") Closure handler) {
         handlers[name].add(handler)
     }
 

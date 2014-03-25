@@ -1,7 +1,6 @@
 package org.directcode.ci.tasks
 
 import org.directcode.ci.api.Task
-import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
@@ -36,11 +35,7 @@ class GradleTask extends Task {
         command.addAll(opts)
         command.addAll(tasks)
 
-        def exitCode = run(command, job.buildDir, [TERM: "dumb"])
-
-        if (exitCode != 0) {
-            throw new TaskFailedException("Gradle exited with a non-zero status!")
-        }
+        run(command, job.buildDir, [TERM: "dumb"])
     }
 
     @Override

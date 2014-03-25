@@ -1,4 +1,5 @@
 package org.directcode.ci.core
+
 import org.directcode.ci.api.SCM
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
@@ -359,7 +360,7 @@ class CI {
 
     void registerTask(String name, Class<? extends Task> taskType, Closure callback = {}) {
         taskTypes[name] = taskType
-        eventBus.dispatch("ci.task.register", [ name: name, type: taskType ])
+        eventBus.dispatch("ci.task.register", [name: name, type: taskType])
         callback()
     }
 
