@@ -11,10 +11,6 @@ web = [
         port: 8080
 ]
 
-git = [
-        logLength: 4
-]
-
 security = [
         enabled: false
 ]

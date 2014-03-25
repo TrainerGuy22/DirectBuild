@@ -10,7 +10,7 @@ class NoneSCM extends SCM {
     }
 
     @Override
-    Changelog changelog() {
+    Changelog changelog(int count) {
         return new Changelog()
     }
 }
