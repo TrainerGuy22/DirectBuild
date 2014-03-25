@@ -45,7 +45,7 @@ class GitSCM extends SCM {
             gitClone()
         }
 
-        def proc = execute([findGit().absolutePath, "log", "-${count}", "--pretty=%H%n%an%n%s"])
+        def proc = execute([findGit().absolutePath, "log", "-${count}".toString(), "--pretty=%H%n%an%n%s"])
 
         proc.waitFor()
 

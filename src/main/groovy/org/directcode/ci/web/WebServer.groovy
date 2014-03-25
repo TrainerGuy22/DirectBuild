@@ -110,7 +110,7 @@ class WebServer {
             ci.jobs.values().each { job ->
                 jobInfo += [
                         name  : job.name,
-                        status: job.status.ordinal()
+                        status: job.status?.ordinal() ?: -1
                 ]
             }
 
