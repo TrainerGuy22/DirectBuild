@@ -71,7 +71,6 @@ jar {
     from configurations.compile.findAll {
         it.name != "groovy-all-${groovyVersion - ":indy"}.jar"
     }.collect {
-        println "Including ${it.name} in the Jar"
         it.directory ? it : zipTree(it)
     }
 
