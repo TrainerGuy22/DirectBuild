@@ -18,7 +18,7 @@ class Job {
     Job(CI ci, File file) {
         this.ci = ci
         this.jobFile = file
-        this.buildConfig = JobScript.from(file)
+        this.buildConfig = JobScript.from(file, this)
         buildDir.mkdirs()
     }
 

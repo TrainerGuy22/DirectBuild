@@ -6,7 +6,7 @@ import groovy.transform.stc.SimpleType
 import java.nio.file.Path
 
 @SuppressWarnings("GroovyMissingReturnStatement")
-class ExecuteSpec {
+class Execute {
     Closure streamOutput = null
     String executable
     List<String> args = []
@@ -93,5 +93,12 @@ class ExecuteSpec {
             output.add("${entry.key}=${entry.value}")
         }
         return output
+    }
+
+    static ExecuteResult use(@DelegatesTo(Execute) Closure closure) {
+        def executor = new Execute()
+        closure.delegate = executor
+        closure()
+        return executor.execute()
     }
 }

@@ -42,7 +42,7 @@ abstract class JobScript extends Script {
         }
     }
 
-    void tasks(Closure closure) {
+    void tasks(@DelegatesTo(TaskContainer) Closure closure) {
         new TaskContainer().with(closure)
     }
 
@@ -54,11 +54,11 @@ abstract class JobScript extends Script {
         artifacts.file(location)
     }
 
-    void artifacts(Closure closure) {
+    void artifacts(@DelegatesTo(ArtifactSpec) Closure closure) {
         artifacts.with(closure)
     }
 
-    void notifier(String name, Closure closure) {
+    void notifier(String name, @DelegatesTo(Map) Closure closure) {
         def opts = [:]
         opts.with(closure)
         notify[name] = opts
