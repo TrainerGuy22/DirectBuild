@@ -80,7 +80,8 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.0-20140323230014+0000"
+    gradleVersion = "2.0-20140324234643+0000"
+    distributionUrl = "http://services.gradle.org/distributions-snapshots/gradle-${gradleVersion}-all.zip"
 }
 
 apply from: 'gradle/pom.gradle'
