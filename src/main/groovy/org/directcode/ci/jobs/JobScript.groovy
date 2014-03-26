@@ -14,6 +14,8 @@ abstract class JobScript extends Script {
         config
     }()
 
+    protected Job job
+
     String name = this.class.simpleName
     List<TaskConfiguration> tasks = []
     ArtifactSpec artifacts = new ArtifactSpec()
@@ -62,6 +64,11 @@ abstract class JobScript extends Script {
         notify[name] = opts
     }
 
+    void webhooks(@DelegatesTo(WebHooks) Closure closure) {
+        closure.delegate = job.webHooks
+        closure()
+    }
+
     class TaskContainer {
         @Override
         Object invokeMethod(String name, Object args) {
@@ -74,7 +81,7 @@ abstract class JobScript extends Script {
         }
     }
 
-    static JobScript from(File file) {
+    static JobScript from(File file, Job job) {
 
         if (!file.exists()) {
             throw new JobConfigurationException("No Such Job Configuration File: ${file.absolutePath}")
@@ -82,6 +89,7 @@ abstract class JobScript extends Script {
 
         def shell = new GroovyShell(compilerConfig)
         def script = shell.parse(file) as JobScript
+        script.job = job
         script.run()
         return script
     }

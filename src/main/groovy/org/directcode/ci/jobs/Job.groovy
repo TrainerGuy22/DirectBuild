@@ -13,6 +13,8 @@ class Job {
 
     private JobScript buildConfig
 
+    final WebHooks webHooks = new WebHooks(this)
+
     Job(CI ci, File file) {
         this.ci = ci
         this.jobFile = file
@@ -45,9 +47,10 @@ class Job {
     }
 
     void setStatus(JobStatus status) {
-        this.status = status
+        forceStatus(status)
         def jobInfo = ci.storage["jobs"][name] as Map<String, Object>
         jobInfo.status = status.ordinal()
+        ci.storage.save("jobs")
     }
 
     JobStatus getStatus() {
@@ -55,7 +58,7 @@ class Job {
     }
 
     void reload() {
-        this.buildConfig = JobScript.from(jobFile)
+        this.buildConfig = JobScript.from(jobFile, this)
     }
 
     void forceStatus(JobStatus status) {

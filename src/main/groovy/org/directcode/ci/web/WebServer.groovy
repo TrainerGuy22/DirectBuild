@@ -1,4 +1,5 @@
 package org.directcode.ci.web
+
 import groovy.json.JsonBuilder
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
@@ -35,11 +36,11 @@ class WebServer {
         }
 
         matcher.get('/img/:file') { HttpServerRequest r ->
-            writeImage(r, "img/${r.params['file']}")
+            writeResource(r, "img/${r.params['file']}")
         }
 
         matcher.get('/fonts/:file') { HttpServerRequest r ->
-            writeImage(r, "fonts/${r.params['file']}")
+            writeResource(r, "fonts/${r.params['file']}")
         }
 
         matcher.get('/job/:name') { HttpServerRequest r ->
@@ -110,7 +111,7 @@ class WebServer {
             ci.jobs.values().each { job ->
                 jobInfo += [
                         name  : job.name,
-                        status: job.status?.ordinal() ?: -1
+                        status: job.status?.ordinal() ?: 2
                 ]
             }
 
@@ -162,8 +163,6 @@ class WebServer {
                 return
             }
 
-            def job = ci.jobs[jobName]
-
             r.response.end(Utils.encodeJSON(ci.storage.get("job_history").get(jobName, [])))
         }
 
@@ -195,27 +194,18 @@ class WebServer {
     }
 
     private def writeResource(HttpServerRequest r, String path) {
-
+        def mimeType = MimeTypes.get(path)
         def stream = getStream(path)
+
+        r.headers.add("content-type", mimeType)
 
         if (stream == null) {
             writeResource(r, "404.html")
         }
 
-        r.response.end(stream.text)
-    }
+        def buffer = new Buffer(stream.bytes)
 
-    private void writeImage(HttpServerRequest request, String path) {
-        request.response.putHeader("content-type", "image/*")
-
-        def stream = getStream(path)
-
-        if (stream == null) {
-            request.response.statusCode = 404
-            writeResource(request, "404.html")
-        } else {
-            request.response.end(new Buffer().appendBytes(stream.bytes))
-        }
+        r.response.end(buffer)
     }
 
     private def getStream(String path) {

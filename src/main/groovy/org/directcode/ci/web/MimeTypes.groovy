@@ -6,13 +6,14 @@ class MimeTypes {
             "text/html"             : [".html", ".htm"],
             "application/json"      : [".json"],
             "application/javascript": [".js"],
-            "text/css"              : [".css"]
+            "text/css"              : [".css"],
+            "image/*"               : [".png", ".jpeg"]
     ]
 
     static String get(String fileName) {
         def extension
 
-        def split = fileName.tokenize("\\.")
+        def split = fileName.tokenize('.')
 
         if (split.size() == 1) {
             extension = ""
