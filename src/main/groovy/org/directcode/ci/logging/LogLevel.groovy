@@ -1,5 +1,8 @@
 package org.directcode.ci.logging
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 enum LogLevel {
     ERROR, INFO, WARNING, DEBUG, DISABLED;
 

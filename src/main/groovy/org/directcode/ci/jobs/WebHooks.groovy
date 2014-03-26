@@ -1,7 +1,9 @@
 package org.directcode.ci.jobs
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.utils.Utils
 
+@CompileStatic
 class WebHooks {
     private Job job
     private List<WebHook> jobDone = []
@@ -10,16 +12,16 @@ class WebHooks {
     protected WebHooks(Job job) {
         this.job = job
 
-        job.ci.eventBus.on("ci.job.done") { event ->
-            if (event.jobName == job.name) {
+        job.ci.eventBus.on("ci.job.done") { Map<String, ? extends Object> event ->
+            if (event["jobName"] == job.name) {
                 for (hook in jobDone) {
                     hook(event)
                 }
             }
         }
 
-        job.ci.eventBus.on("ci.job.running") { event ->
-            if (event.jobName == job.name) {
+        job.ci.eventBus.on("ci.job.running") { Map<String, ? extends Object> event ->
+            if (event["jobName"] == job.name) {
                 for (hook in jobStarted) {
                     hook(event)
                 }
@@ -46,8 +48,8 @@ class WebHooks {
             def connection = url.toURL().openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.connect()
-            connection.outputStream.withPrintWriter { w ->
-                w.write(Utils.encodeJSON(data))
+            connection.outputStream.withPrintWriter { PrintWriter w ->
+                w.write(Utils.encodeJSON(data) as String)
             }
             connection.disconnect()
         }

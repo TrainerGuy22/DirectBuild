@@ -1,5 +1,8 @@
 package org.directcode.ci.jobs
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 enum JobStatus {
     SUCCESS, FAILURE, NOT_STARTED, RUNNING, WAITING;
 

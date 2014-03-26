@@ -1,5 +1,8 @@
 package org.directcode.ci.config
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class ArtifactSpec {
     final List<String> files = []
     final List<String> directories = []

@@ -1,7 +1,10 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
+
 import java.util.regex.Pattern
 
+@CompileStatic
 class FileSpec {
     private final FileMatcher matcher
 

@@ -1,7 +1,9 @@
 package org.directcode.ci.config
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.utils.Utils
 
+@CompileStatic
 class GConfig {
     private final File configFile
     private Binding config

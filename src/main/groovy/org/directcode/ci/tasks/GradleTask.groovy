@@ -1,10 +1,12 @@
 package org.directcode.ci.tasks
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
 import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
 
+@CompileStatic
 class GradleTask extends Task {
     boolean wrapper = false
     List<String> opts = []

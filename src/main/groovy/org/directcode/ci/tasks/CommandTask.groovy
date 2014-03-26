@@ -1,10 +1,12 @@
 package org.directcode.ci.tasks
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
 
 /**
  * Executes a Command
  */
+@CompileStatic
 class CommandTask extends Task {
 
     String command

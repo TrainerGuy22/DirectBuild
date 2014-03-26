@@ -1,9 +1,11 @@
 package org.directcode.ci.scm
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.api.SCM
 import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.Utils
 
+@CompileStatic
 class GitSCM extends SCM {
 
     void gitClone() {

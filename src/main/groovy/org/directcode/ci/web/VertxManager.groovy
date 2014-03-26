@@ -9,7 +9,7 @@ import org.vertx.groovy.core.eventbus.EventBus
  */
 class VertxManager {
 
-    def vertx = Vertx.newVertx()
+    Vertx vertx = Vertx.newVertx()
     CI ci
 
     WebServer webServer

@@ -1,11 +1,13 @@
 package org.directcode.ci.jobs
 
+import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.config.ArtifactSpec
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.exception.JobConfigurationException
 
+@CompileStatic
 abstract class JobScript extends Script {
 
     private static final CompilerConfiguration compilerConfig = {

@@ -1,5 +1,8 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class MultiMap<V> {
     private final Map<String, List<V>> delegate = [:]
 
@@ -7,8 +10,8 @@ class MultiMap<V> {
         return get(key)
     }
 
-    void putAt(String key, Object value) {
-        delegate[key] = value
+    void putAt(String key, V value) {
+        delegate[key].add(value)
     }
 
     List<V> get(String key) {

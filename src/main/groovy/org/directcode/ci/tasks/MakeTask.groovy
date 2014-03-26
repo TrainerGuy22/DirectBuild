@@ -1,7 +1,9 @@
 package org.directcode.ci.tasks
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
 
+@CompileStatic
 class MakeTask extends Task {
 
     List<String> targets = []

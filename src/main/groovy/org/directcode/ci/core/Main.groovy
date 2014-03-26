@@ -1,13 +1,16 @@
 package org.directcode.ci.core
 
+import groovy.transform.CompileStatic
 import org.apache.log4j.Level as Log4jLevel
 import org.apache.log4j.Logger as Log4j
+import org.directcode.ci.jobs.Job
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.ConsoleHandler
 
+@CompileStatic
 class Main {
 
-    private static final logger = Logger.getLogger("Console")
+    private static final Logger logger = Logger.getLogger("Console")
 
     @SuppressWarnings("GroovyEmptyStatementBody")
     static void main(String[] consoleArgs) {
@@ -21,7 +24,7 @@ class Main {
                 }
         ] as Thread.UncaughtExceptionHandler
 
-        def ci = CI.instance
+        CI ci = CI.instance
 
         ci.start()
 
@@ -58,7 +61,7 @@ class Main {
 
                 def jobName = args[0]
 
-                def job = ci.jobs[jobName]
+                Job job = ci.jobs[jobName]
 
                 if (job == null) {
                     println "No Such Job: ${jobName}"

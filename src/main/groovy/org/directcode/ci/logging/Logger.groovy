@@ -1,16 +1,18 @@
 package org.directcode.ci.logging
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.core.EventBus
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
+@CompileStatic
 class Logger {
     private static final Map<String, Logger> loggers = [:]
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.default)
 
     final String name
-    private final eventBus = new EventBus()
+    private final EventBus eventBus = new EventBus()
     LogLevel currentLevel = LogLevel.INFO
 
     Logger(String name) {
@@ -76,12 +78,12 @@ class Logger {
     }
 
     void logTo(File file) {
-        eventBus.on('log') { Map event ->
-            def message = event.complete as String
-            def exception = event.exception
+        eventBus.on('log') { Map<String, ? extends Object> event ->
+            def message = event["complete"] as String
+            def exception = event["exception"] as Exception
             file.append("${message}\n")
             if (exception) {
-                (exception as Throwable).printStackTrace(file.newPrintWriter())
+                exception.printStackTrace(file.newPrintWriter())
             }
         }
     }

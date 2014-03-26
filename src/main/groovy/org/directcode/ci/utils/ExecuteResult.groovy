@@ -1,5 +1,8 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class ExecuteResult {
     final List<String> output
     final int code

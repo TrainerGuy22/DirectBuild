@@ -1,5 +1,8 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class OperatingSystem {
     private final String name
 

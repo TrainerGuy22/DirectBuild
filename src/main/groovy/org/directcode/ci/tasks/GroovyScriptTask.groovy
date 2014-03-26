@@ -1,8 +1,10 @@
 package org.directcode.ci.tasks
 
+import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.api.Task
 
+@CompileStatic
 class GroovyScriptTask extends Task {
     String script
 

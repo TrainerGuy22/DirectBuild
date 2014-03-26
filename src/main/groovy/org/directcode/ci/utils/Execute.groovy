@@ -1,16 +1,19 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 
 import java.nio.file.Path
 
+@CompileStatic
 @SuppressWarnings("GroovyMissingReturnStatement")
 class Execute {
     Closure streamOutput = null
     String executable
     List<String> args = []
     File directory = new File(".")
+
     Map<String, String> environment = {
         def env = [:]
         env.putAll(System.getenv())
@@ -69,17 +72,17 @@ class Execute {
         def process = "${executable} ${args.join(" ")}".execute(convertToList(environment), directory)
         def lines = []
         Thread.startDaemon("ExecuteProcessErrorStream") { ->
-            process.errorStream.eachLine { line ->
+            process.errorStream.eachLine { String line ->
                 lines.add(line)
                 if (streamOutput) {
-                    streamOutput(line)
+                    streamOutput.call(line)
                 }
             }
         }
-        process.inputStream.eachLine { line ->
+        process.inputStream.eachLine { String line ->
             lines.add(line)
             if (streamOutput) {
-                streamOutput(line)
+                streamOutput.call(line)
             }
         }
         def code = process.waitFor()
@@ -98,7 +101,7 @@ class Execute {
     static ExecuteResult use(@DelegatesTo(Execute) Closure closure) {
         def executor = new Execute()
         closure.delegate = executor
-        closure()
+        closure.call()
         return executor.execute()
     }
 }

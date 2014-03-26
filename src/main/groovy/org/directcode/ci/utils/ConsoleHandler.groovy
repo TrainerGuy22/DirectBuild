@@ -1,5 +1,6 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromString
 
@@ -7,6 +8,7 @@ class ConsoleHandler {
     static BufferedReader reader = System.in.newReader()
     static boolean looping = false
 
+    @CompileStatic
     static void readLine(@ClosureParams(value = FromString, options = "String") Closure handler = {}) {
         def line = reader.readLine()
         if (line == null || line.trim() == "") {
@@ -18,6 +20,7 @@ class ConsoleHandler {
         handler(cmd, args)
     }
 
+    @CompileStatic
     static void loop(@ClosureParams(value = FromString, options = ["String", "List<String>"]) Closure handler = {
     }, Closure<Boolean> stopHandler = { false }) {
         if (looping) {

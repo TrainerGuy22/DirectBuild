@@ -38,7 +38,7 @@ abstract class Task {
             arguments(command.drop(1))
             directory(workingDir)
             environment(env)
-            streamOutput { line ->
+            streamOutput { String line ->
                 ci.logger.debug("${line}")
                 log.write("${line}")
             }
@@ -49,6 +49,7 @@ abstract class Task {
         if (handleExitCode && result.code != 0) {
             throw new TaskFailedException("Command exited with non-zero status!")
         }
+
         return result.code
     }
 }

@@ -2,14 +2,16 @@ package org.directcode.ci.core
 
 import groovy.io.FileType
 import groovy.json.JsonBuilder
+import groovy.transform.CompileStatic
 import jpower.core.Task
 import jpower.core.Worker
 import org.directcode.ci.utils.Utils
 
 import java.nio.file.Path
 
+@CompileStatic
 class CIStorage {
-    private final Map<String, Map<String, Object>> storages = [:]
+    private final Map<String, Map<String, ? extends Object>> storages = [:]
     private Path storagePath
     private final Worker worker = new Worker()
     private final boolean autoSave = true
@@ -68,7 +70,7 @@ class CIStorage {
         return storagePath
     }
 
-    Map<String, Object> get(String storageName) {
+    Map<String, ? extends Object> get(String storageName) {
         if (!(storageName in storages.keySet())) {
             if (new File(storagePath.toFile(), "${storageName}.json").exists()) {
                 load(storageName)
@@ -79,7 +81,7 @@ class CIStorage {
         return storages[storageName]
     }
 
-    Map<String, Map<String, Object>> all() {
+    Map<String, Map<String, ? extends Object>> all() {
         return storages
     }
 

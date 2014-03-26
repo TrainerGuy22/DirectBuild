@@ -1,6 +1,6 @@
 package org.directcode.ci.jobs
 
-
+import org.directcode.ci.config.ArtifactSpec
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.scm.Changelog
@@ -13,16 +13,17 @@ class Job {
 
     private JobScript buildConfig
 
-    final WebHooks webHooks = new WebHooks(this)
+    final WebHooks webHooks
 
     Job(CI ci, File file) {
         this.ci = ci
+        this.webHooks = new WebHooks(this)
         this.jobFile = file
         this.buildConfig = JobScript.from(file, this)
         buildDir.mkdirs()
     }
 
-    def getName() {
+    String getName() {
         return buildConfig.name
     }
 
@@ -30,19 +31,19 @@ class Job {
         return buildConfig.tasks
     }
 
-    def getBuildDir() {
+    File getBuildDir() {
         return new File(ci.configRoot, "workspace/${name}")
     }
 
-    def getSCM() {
+    Map<String, Object> getSCM() {
         return buildConfig.scm
     }
 
-    def getArtifacts() {
+    ArtifactSpec getArtifacts() {
         return buildConfig.artifacts
     }
 
-    def getLogFile() {
+    File getLogFile() {
         return new File(ci.configRoot, "logs/${name}.log")
     }
 
@@ -73,13 +74,13 @@ class Job {
         return scm.changelog(count)
     }
 
-    def getHistory() {
+    JobHistory getHistory() {
         def history = new JobHistory(this)
         history.load()
         return history
     }
 
-    def getNotifications() {
+    Map<String, Object> getNotifications() {
         return buildConfig.notify
     }
 }

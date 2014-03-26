@@ -1,8 +1,10 @@
 package org.directcode.ci.jobs
 
+import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.directcode.ci.core.CI
 
+@CompileStatic
 class JobHistory {
     private final List<Entry> entries = []
     private final Job job

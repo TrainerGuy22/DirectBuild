@@ -1,6 +1,7 @@
 package org.directcode.ci.utils
 
 import groovy.io.FileType
+import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 
@@ -9,6 +10,7 @@ import java.util.regex.Pattern
 /**
  * Find files in a directory.
  */
+@CompileStatic
 class FileMatcher {
     final File parent
 
@@ -96,7 +98,7 @@ class FileMatcher {
     List<File> matching(Pattern pattern) {
         recursive(FileType.FILES).findAll { File file ->
             file.name.matches(pattern)
-        }
+        } as List<File>
     }
 
     List<File> directory(String name) {

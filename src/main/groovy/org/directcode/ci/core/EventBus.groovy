@@ -1,5 +1,6 @@
 package org.directcode.ci.core
 
+import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import jpower.core.Task as PowerTask
@@ -9,6 +10,7 @@ import org.directcode.ci.utils.MultiMap
 /**
  * A Groovy Event Bus that uses JPower's Worker Pool
  */
+@CompileStatic
 class EventBus {
     private final MultiMap<Closure<?>> handlers = new MultiMap<Closure<?>>()
     private final WorkerPool workerPool = new WorkerPool(4)
@@ -19,7 +21,7 @@ class EventBus {
      * @param handler Event Handler
      */
     void on(String name,
-            @ClosureParams(value = SimpleType.class, options = "java.util.Map<String, Object>") Closure handler) {
+            @ClosureParams(value = SimpleType.class, options = "java.util.Map") Closure handler) {
         handlers[name].add(handler)
     }
 
@@ -27,7 +29,7 @@ class EventBus {
      * Dispatch an Event
      * @param data Event Data
      */
-    void dispatch(String eventName, Map<String, Object> options = [:]) {
+    void dispatch(String eventName, Map<String, ? extends Object> options = [:]) {
         def eventHandlers = handlers[eventName]
         if (eventHandlers?.empty) { // No Event Handlers to call
             return

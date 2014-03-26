@@ -1,7 +1,9 @@
 package org.directcode.ci.plugins
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.core.CI
 
+@CompileStatic
 class PluginManager {
     CI ci
     final List<PluginProvider> providers = []

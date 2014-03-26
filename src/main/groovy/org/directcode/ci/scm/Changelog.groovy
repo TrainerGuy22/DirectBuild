@@ -1,5 +1,8 @@
 package org.directcode.ci.scm
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class Changelog {
     List<Entry> entries = []
 

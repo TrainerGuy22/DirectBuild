@@ -1,6 +1,6 @@
 package org.directcode.ci.plugins
 
-
+import groovy.transform.CompileStatic
 import org.directcode.ci.utils.FileMatcher
 
 import javax.script.ScriptEngineManager
@@ -8,6 +8,7 @@ import javax.script.ScriptEngineManager
 /**
  * A Plugin Provider that uses the Java Scripting API to provide for all types of scripts.
  */
+@CompileStatic
 class ScriptPluginProvider extends PluginProvider {
     @Override
     void loadPlugins() {

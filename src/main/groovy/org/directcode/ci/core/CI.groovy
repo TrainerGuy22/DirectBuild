@@ -1,5 +1,6 @@
 package org.directcode.ci.core
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.api.SCM
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
@@ -102,6 +103,7 @@ class CI {
     /**
      * Initializes this CI Server
      */
+    @CompileStatic
     private void init() {
         def timer = new ExecutionTimer()
         timer.start()
@@ -131,6 +133,7 @@ class CI {
         logger.info("Completed Initialization in ${timer.time} milliseconds")
     }
 
+    @CompileStatic
     private void loadBuiltins() {
         registerSCM("git", GitSCM)
         registerSCM("none", NoneSCM)
@@ -147,13 +150,13 @@ class CI {
      * Loads Jobs from Database and Job Files
      */
     void loadJobs() {
-        def jobRoot = new File(configRoot, "jobs")
+        File jobRoot = new File(configRoot, "jobs")
 
         if (!jobRoot.exists()) {
             jobRoot.mkdir()
         }
 
-        def jobStorage = storage.get("jobs")
+        Map<String, ? extends Object> jobStorage = storage.get("jobs")
 
         FileMatcher.create(jobRoot).withExtension("groovy") { File file ->
             def job = new Job(this, file)
@@ -344,6 +347,7 @@ class CI {
     /**
      * Updates all Jobs from the Database and parses Job Files
      */
+    @CompileStatic
     void updateJobs() {
         jobs.values()*.reload()
     }
@@ -352,18 +356,21 @@ class CI {
      * Gets where artifacts are stored
      * @return Artifact Directory
      */
-    def getArtifactDir() {
-        def dir = new File(configRoot, "artifacts")
+    @CompileStatic
+    File getArtifactDir() {
+        File dir = new File(configRoot, "artifacts")
         dir.mkdir()
         return dir
     }
 
+    @CompileStatic
     void registerTask(String name, Class<? extends Task> taskType, Closure callback = {}) {
         taskTypes[name] = taskType
         eventBus.dispatch("ci.task.register", [name: name, type: taskType])
         callback()
     }
 
+    @CompileStatic
     void registerSCM(String name, Class<? extends SCM> scmType, Closure callback = {}) {
         scmTypes[name] = scmType
         eventBus.dispatch("ci.scm.register", [name: name, type: scmType])

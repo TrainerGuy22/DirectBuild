@@ -26,7 +26,7 @@ class Utils {
         return Execute.use(closure)
     }
 
-    @CompileStatic
+
     @Memoized(maxCacheSize = 10)
     static File findCommandOnPath(String executableName) {
         def systemPath = System.getenv("PATH")

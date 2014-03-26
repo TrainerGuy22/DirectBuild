@@ -1,7 +1,10 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
+
 import java.util.concurrent.TimeUnit
 
+@CompileStatic
 class ExecutionTimer {
     long time
     private long startTime
@@ -21,5 +24,4 @@ class ExecutionTimer {
     String toString() {
         return String.format("%d minutes %d seconds", TimeUnit.MILLISECONDS.toMinutes(time), TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)))
     }
-
 }

@@ -1,5 +1,8 @@
 package org.directcode.ci.jobs
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class JobLog {
     final File file
     final PrintWriter out

@@ -1,6 +1,7 @@
 package org.directcode.ci.web
 
 import groovy.json.JsonBuilder
+import groovy.transform.CompileStatic
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
 import org.vertx.groovy.core.buffer.Buffer
@@ -8,6 +9,7 @@ import org.vertx.groovy.core.http.HttpServer
 import org.vertx.groovy.core.http.HttpServerRequest
 import org.vertx.groovy.core.http.RouteMatcher
 
+@CompileStatic
 class WebServer {
     HttpServer server
     CI ci
@@ -17,12 +19,14 @@ class WebServer {
         server = ci.vertxManager.vertx.createHttpServer()
     }
 
-    def start(int port, String ip) {
-        server.requestHandler(configure(new RouteMatcher()).asClosure())
+    void start(int port, String ip) {
+        def matcher = new RouteMatcher()
+        configure(matcher)
+        server.requestHandler(matcher.asClosure())
         server.listen(port, ip)
     }
 
-    private def configure(RouteMatcher matcher) {
+    private void configure(RouteMatcher matcher) {
         matcher.get('/') { HttpServerRequest r ->
             writeResource(r, "index.html")
         }
@@ -63,7 +67,7 @@ class WebServer {
             }
         }
 
-        matcher.get('/hook/:name') {
+        matcher.get('/hook/:name') { HttpServerRequest it ->
             def jobName = it.params['name'] as String
             it.response.end('')
 
@@ -118,7 +122,7 @@ class WebServer {
             r.response.end(Utils.encodeJSON(jobInfo) as String)
         }
 
-        matcher.post('/github/:name') {
+        matcher.post('/github/:name') { HttpServerRequest it ->
             def jobName = it.params['name'] as String
             it.response.end('')
 
@@ -141,13 +145,13 @@ class WebServer {
                         error: [
                                 message: "Job Not Found"
                         ]
-                ]))
+                ]) as String)
                 return
             }
 
             def changelog = ci.jobs[jobName].getChangelog(count).entries
 
-            r.response.end(Utils.encodeJSON(changelog))
+            r.response.end(Utils.encodeJSON(changelog) as String)
         }
 
         matcher.get('/api/history/:name') { HttpServerRequest r ->
@@ -159,43 +163,25 @@ class WebServer {
                         error: [
                                 message: "Job Not Found"
                         ]
-                ]))
+                ]) as String)
                 return
             }
 
-            r.response.end(Utils.encodeJSON(ci.storage.get("job_history").get(jobName, [])))
+            r.response.end(Utils.encodeJSON(ci.storage.get("job_history").get(jobName, [])) as String)
         }
 
         matcher.get('/login') { HttpServerRequest r ->
             writeResource(r, "login.html")
         }
 
-        /*matcher.post("/login") { HttpServerRequest request ->
-            request.expectMultiPart = true
-            request.endHandler { end ->
-                println request
-                def user = request.formAttributes.get("username")
-                def pass = request.formAttributes.get("password")
-                if (!user || !pass) {
-                    request.response.statusCode = 400
-                    request.response.end(Utils.encodeJSON([
-                            error: "Invalid Request",
-                            info: [
-                                    "Both Username and Password is required."
-                            ]
-                    ]))
-                }
-            }
-        }*/
-
         matcher.noMatch { HttpServerRequest r ->
             writeResource(r, "404.html")
         }
     }
 
-    private def writeResource(HttpServerRequest r, String path) {
-        def mimeType = MimeTypes.get(path)
-        def stream = getStream(path)
+    private void writeResource(HttpServerRequest r, String path) {
+        String mimeType = MimeTypes.get(path)
+        InputStream stream = getStream(path)
 
         r.headers.add("content-type", mimeType)
 
@@ -208,14 +194,16 @@ class WebServer {
         r.response.end(buffer)
     }
 
-    private def getStream(String path) {
-        def dir = new File(ci.configRoot, "www")
+    private InputStream getStream(String path) {
+        File dir = new File(ci.configRoot, "www")
         InputStream stream
         if (!dir.exists()) {
             stream = Utils.resource("simpleci/${path}")
         } else {
-            def file = new File(dir, path)
-            if (!file.exists()) return null
+            File file = new File(dir, path)
+            if (!file.exists()) {
+                return null
+            }
             stream = file.newInputStream()
         }
         return stream

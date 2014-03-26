@@ -1,5 +1,8 @@
 package org.directcode.ci.web
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class MimeTypes {
     static Map<String, List<String>> types = [
             "font/x-woff"           : [".woff"],
@@ -23,9 +26,10 @@ class MimeTypes {
 
         def type = "text/plain"
 
-        for (entry in types) {
-            if (entry.value.contains(extension)) {
-                type = entry.key
+        types.keySet().each { key ->
+            List<String> value = types[key]
+            if (value.contains(extension)) {
+                type = key
             }
         }
 
