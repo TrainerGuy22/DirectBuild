@@ -11,7 +11,7 @@ class WebHooks {
         this.job = job
 
         job.ci.eventBus.on("ci.job.done") { event ->
-            if (event.name == job.name) {
+            if (event.jobName == job.name) {
                 for (hook in jobDone) {
                     hook(event)
                 }
@@ -19,7 +19,7 @@ class WebHooks {
         }
 
         job.ci.eventBus.on("ci.job.running") { event ->
-            if (event.name == job.name) {
+            if (event.jobName == job.name) {
                 for (hook in jobStarted) {
                     hook(event)
                 }
