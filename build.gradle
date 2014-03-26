@@ -68,7 +68,12 @@ jar {
     }
 
     // Pack Dependencies
-    from configurations.compile.collect { it.directory ? it : zipTree(it) }
+    from configurations.compile.findAll {
+        it.name != "groovy-all-${groovyVersion - ":indy"}.jar"
+    }.collect {
+        println "Including ${it.name} in the Jar"
+        it.directory ? it : zipTree(it)
+    }
 
     // Makes Jar Clean
     exclude "overviewj.html"
@@ -80,7 +85,7 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.0-20140324234643+0000"
+    gradleVersion = "2.0-20140326084803+0000"
     distributionUrl = "http://services.gradle.org/distributions-snapshots/gradle-${gradleVersion}-all.zip"
 }
 
