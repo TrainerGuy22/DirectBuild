@@ -156,6 +156,7 @@ class CI {
     /**
      * Loads Jobs from Database and Job Files
      */
+    @CompileStatic
     void loadJobs() {
         File jobRoot = new File(configRoot, "jobs")
 
@@ -172,9 +173,10 @@ class CI {
                 def jobInfo = jobStorage[job.name] as Map<String, Object>
                 job.status = JobStatus.parse(jobInfo.status as int)
             } else {
-                jobStorage[job.name] = [
+                def info = [
                         status: JobStatus.NOT_STARTED.ordinal()
                 ]
+                jobStorage[job.name] = info
             }
 
             jobs[job.name] = job
@@ -185,12 +187,13 @@ class CI {
         eventBus.dispatch("ci.jobs.loaded")
     }
 
+    @CompileStatic
     private void debuggingSystem() {
         eventBus.on("ci.task.register") { event ->
-            logger.debug("Registered task '${event.name}' with type '${event.type.name}'")
+            logger.debug("Registered task '${event.name}' with type '${(event["type"] as Class<?>).name}'")
         }
         eventBus.on("ci.scm.register") { event ->
-            logger.debug("Registered SCM '${event.name}' with type '${event.type.name}'")
+            logger.debug("Registered SCM '${event.name}' with type '${(event["type"] as Class<?>).name}'")
         }
     }
 
@@ -385,6 +388,7 @@ class CI {
         callback()
     }
 
+    @CompileStatic
     static CI getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new CI()

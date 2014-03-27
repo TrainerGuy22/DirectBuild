@@ -15,6 +15,7 @@ class CIStorage {
     private Path storagePath
     private final Worker worker = new Worker()
     private final boolean autoSave = true
+    private final EventBus eventBus = new EventBus()
 
     void load() {
         storagePath.eachFileRecurse(FileType.FILES) { Path path ->
@@ -34,7 +35,7 @@ class CIStorage {
     protected void start() {
         worker.start()
 
-        addShutdownHook { ->
+        addShutdownHook { h ->
             save()
         }
 
@@ -50,15 +51,17 @@ class CIStorage {
     }
 
     void save() {
-        storages.keySet().each { storageName ->
+        storages.keySet().each { String storageName ->
             save(storageName)
         }
+        eventBus.dispatch("all.saved")
     }
 
     synchronized void save(String storageName) {
         def storageFile = new File(storagePath.toFile(), "${storageName}.json").toPath()
         def builder = new JsonBuilder(storages[storageName])
         storageFile.write(builder.toPrettyString() + System.lineSeparator())
+        eventBus.dispatch("${storageName}.saved")
     }
 
     void setStoragePath(Path path) {
@@ -92,5 +95,9 @@ class CIStorage {
         } else {
             return file.text
         }
+    }
+
+    void whenSaved(String storageName = null, Closure closure) {
+        eventBus.on("${storageName ?: "all"}.saved", closure)
     }
 }
