@@ -17,6 +17,7 @@ class Execute {
     Map<String, String> environment = {
         def env = [:]
         env.putAll(System.getenv())
+        env["JAVA_HOME"] = System.getProperty("java.home")
         env
     }()
 

@@ -25,6 +25,9 @@ class JobHistory {
             entry.when = result.timeStamp as String
             entry.status = result.status as int
             def artifactDir = new File(job.ci.artifactDir, "${job.name}/${entry.number}")
+            if (!artifactDir.exists()) {
+                artifactDir.mkdirs()
+            }
             def files = FileMatcher.create(artifactDir).recursive(FileType.FILES)
             files.each { file ->
                 def a = new Artifact()

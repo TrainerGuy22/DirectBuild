@@ -3,7 +3,7 @@ package org.directcode.ci.scm
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.SCM
 import org.directcode.ci.exception.ToolMissingException
-import org.directcode.ci.utils.Utils
+import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
 class GitSCM extends SCM {
@@ -40,7 +40,7 @@ class GitSCM extends SCM {
     }
 
     @Override
-    Changelog changelog(int count = 4) {
+    Changelog changelog(int count) {
         def changelog = new Changelog()
 
         if (!exists()) {
@@ -82,7 +82,7 @@ class GitSCM extends SCM {
     }
 
     static File findGit() {
-        def gitCommand = Utils.findCommandOnPath("git")
+        def gitCommand = CommandFinder.find("git")
         if (gitCommand == null) {
             throw new ToolMissingException("Could not find Git on System!")
         }

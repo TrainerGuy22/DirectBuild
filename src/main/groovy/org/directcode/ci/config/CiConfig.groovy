@@ -44,4 +44,8 @@ class CiConfig extends GConfig {
                 enabled: false
         ]) as Map<String, Object>
     }
+
+    Map<String, String> pathsSection() {
+        return getProperty("paths", [:]) as Map<String, String>
+    }
 }

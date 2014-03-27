@@ -34,7 +34,7 @@ class CI {
     /**
      * Configuration Root
      */
-    File configRoot = new File(".")
+    File configRoot = new File(".").absoluteFile
 
     /**
      * CI Server Web Port

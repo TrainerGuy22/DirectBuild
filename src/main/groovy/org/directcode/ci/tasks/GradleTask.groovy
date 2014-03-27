@@ -3,8 +3,8 @@ package org.directcode.ci.tasks
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
 import org.directcode.ci.exception.ToolMissingException
+import org.directcode.ci.utils.CommandFinder
 import org.directcode.ci.utils.OperatingSystem
-import org.directcode.ci.utils.Utils
 
 @CompileStatic
 class GradleTask extends Task {
@@ -25,9 +25,9 @@ class GradleTask extends Task {
                 command.add("sh")
             }
 
-            command.add("gradlew")
+            command.add(CommandFinder.forScript(job.buildDir, "gradlew.bat", "gradlew"))
         } else {
-            def c = Utils.findCommandOnPath("gradle")
+            def c = CommandFinder.find("git")
             if (c == null) {
                 throw new ToolMissingException("Gradle not found on this system.")
             }
