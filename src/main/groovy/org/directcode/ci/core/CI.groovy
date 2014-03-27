@@ -110,6 +110,8 @@ class CI {
 
         debuggingSystem()
 
+        eventBus.dispatch("ci.config.loaded")
+
         config.load()
 
         def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
@@ -118,11 +120,16 @@ class CI {
         jobQueue = new LinkedBlockingQueue<Job>(config.ciSection()['queueSize'] as int)
         storage.storagePath = new File(configRoot, "storage").absoluteFile.toPath()
         storage.start()
+        eventBus.dispatch("ci.storage.started")
         new File(configRoot, 'logs').absoluteFile.mkdirs()
 
         loadBuiltins()
 
+        eventBus.dispatch("ci.builtins.loaded")
+
         pluginManager.loadPlugins()
+
+        eventBus.dispatch("ci.plugins.loaded")
 
         eventBus.dispatch("ci.init", [
                 time: System.currentTimeMillis()
@@ -350,6 +357,7 @@ class CI {
     @CompileStatic
     void updateJobs() {
         jobs.values()*.reload()
+        eventBus.dispatch("ci.jobs.reloaded")
     }
 
     /**
