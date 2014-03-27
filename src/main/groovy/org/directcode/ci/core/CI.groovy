@@ -335,7 +335,7 @@ class CI {
 
             def job_history = storage.get("job_history")
 
-            def history = ((List<Map<String, Object>>) job_history.get(job.name, []))
+            def history = ((List<Map<String, ? extends Object>>) job_history.get(job.name, []))
 
             history.add(number: number, status: job.status.ordinal(), log: base64Log, buildTime: buildTime, timeStamp: new Date().toString())
 

@@ -1,6 +1,7 @@
 package org.directcode.ci.web
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 
 @CompileStatic
 class MimeTypes {
@@ -16,7 +17,7 @@ class MimeTypes {
     static String get(String fileName) {
         def extension
 
-        def split = fileName.tokenize('.')
+        def split = fileName.tokenize('.' as char)
 
         if (split.size() == 1) {
             extension = ""
@@ -32,6 +33,8 @@ class MimeTypes {
                 type = key
             }
         }
+
+        CI.logger.debug("'${fileName}' determined to have the mimetype '${type}'")
 
         return type
     }

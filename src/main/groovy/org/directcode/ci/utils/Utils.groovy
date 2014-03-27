@@ -26,7 +26,7 @@ class Utils {
         return Execute.use(closure)
     }
 
-
+    @CompileStatic
     @Memoized(maxCacheSize = 10)
     static File findCommandOnPath(String executableName) {
         def systemPath = System.getenv("PATH")
@@ -105,5 +105,11 @@ class Utils {
     @CompileStatic
     static def prettyJSON(String json) {
         return JsonOutput.prettyPrint(json)
+    }
+
+    @CompileStatic
+    static void copy(Object source, Object target) {
+        target.properties.clear()
+        target.properties.putAll(source.properties)
     }
 }
