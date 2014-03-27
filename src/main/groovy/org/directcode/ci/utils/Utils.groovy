@@ -93,7 +93,7 @@ class Utils {
     }
 
     @CompileStatic
-    static def encodeJSON(Object object) {
+    static String encodeJSON(Object object) {
         return new JsonBuilder(object).toPrettyString()
     }
 

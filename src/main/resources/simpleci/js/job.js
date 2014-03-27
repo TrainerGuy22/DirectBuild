@@ -3,30 +3,6 @@ var jobName = window.location.pathname.replace("/job/", "");
 document.title = jobName + " - SimpleCI";
 $(".job-name").html(jobName);
 
-var parseStatus = function (id) {
-    switch (id) {
-        case 0:
-            return "Success";
-        case 1:
-            return "Failure";
-        case 2:
-            return "Not Started";
-        default:
-            return "Unknown";
-    }
-};
-
-var getStatusClass = function (id) {
-    switch (id) {
-        case 0:
-            return "success";
-        case 1:
-            return "danger";
-        default:
-            return "";
-    }
-};
-
 $(document).ready(function () {
     // Provide class='active' switching on the tabs.
     $(".nav-tabs li").each(function (index, tab) {
@@ -56,16 +32,21 @@ $(document).ready(function () {
     });
 
     $.getJSON("/api/history/" + jobName, function (history) {
-        var $history = $("#history");
+        var $history = $("#job-history");
 
-        history["history"].forEach(function (entry) {
+        history.forEach(function (entry) {
             var status = entry["status"];
-            var number = entry["number"];
-            var timestamp = entry["timestamp"];
+            var number = entry["number"].toString();
+            var timestamp = entry["timeStamp"];
+            var log = atob(entry["log"]);
+            var buildTime = entry["buildTime"];
 
-            var msg = number + " - " + parseStatus(status);
-
-            $history.append("<p>" + msg + "</p>");
+            $history.append("<p class=\"list-group-item\">"
+                + number.bold() + ": "
+                + ci.parseStatus(status)
+                + " - "
+                + timestamp
+                + "</p>");
         });
     });
 });

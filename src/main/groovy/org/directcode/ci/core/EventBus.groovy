@@ -22,7 +22,7 @@ class EventBus {
      */
     void on(String name,
             @ClosureParams(value = SimpleType.class, options = "java.util.Map") Closure handler) {
-        handlers[name].add(handler)
+        handlers.add(name, handler)
     }
 
     /**
@@ -30,10 +30,10 @@ class EventBus {
      * @param data Event Data
      */
     void dispatch(String eventName, Map<String, ? extends Object> options = [:]) {
-        def eventHandlers = handlers[eventName]
-        if (eventHandlers?.empty) { // No Event Handlers to call
+        if (handlers.empty(eventName)) { // No Event Handlers to call
             return
         }
+        def eventHandlers = handlers[eventName]
         workerPool.submit(new PowerTask() {
             @Override
             void execute() {

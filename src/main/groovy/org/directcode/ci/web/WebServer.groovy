@@ -115,7 +115,7 @@ class WebServer {
             ci.jobs.values().each { job ->
                 jobInfo += [
                         name  : job.name,
-                        status: job.status?.ordinal() ?: 2
+                        status: job.status.ordinal()
                 ]
             }
 
@@ -167,7 +167,9 @@ class WebServer {
                 return
             }
 
-            r.response.end(Utils.encodeJSON(ci.storage.get("job_history").get(jobName, [])) as String)
+            def job = ci.jobs[jobName]
+
+            r.response.end(Utils.encodeJSON(job.history.entries))
         }
 
         matcher.get('/login') { HttpServerRequest r ->

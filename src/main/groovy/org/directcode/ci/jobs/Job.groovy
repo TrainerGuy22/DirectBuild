@@ -52,6 +52,7 @@ class Job {
         def jobInfo = ci.storage["jobs"][name] as Map<String, Object>
         jobInfo.status = status.ordinal()
         ci.storage.save("jobs")
+        ci.logger.debug("Job '${name}': Status updated to '${status}'")
     }
 
     JobStatus getStatus() {
@@ -63,7 +64,7 @@ class Job {
     }
 
     void forceStatus(JobStatus status) {
-        this.status = status
+        this.@status = status
     }
 
     Changelog getChangelog(int count = 4) {

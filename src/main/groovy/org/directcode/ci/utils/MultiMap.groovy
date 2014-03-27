@@ -15,13 +15,18 @@ class MultiMap<V> {
     }
 
     List<V> get(String key) {
-        if (!(key in delegate.keySet())) {
-            delegate[key] = []
+        if (!delegate.containsKey(key)) {
+            return delegate[key] = []
+        } else {
+            return delegate[key]
         }
-        return delegate[key]
     }
 
-    void add(String key, Object value) {
-        this[key].add(value)
+    void add(String key, V value) {
+        get(key).add(value)
+    }
+
+    boolean empty(String key) {
+        return !delegate.containsKey(key) || delegate[key].empty
     }
 }

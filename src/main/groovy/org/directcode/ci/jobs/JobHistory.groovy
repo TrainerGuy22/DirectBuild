@@ -1,8 +1,10 @@
 package org.directcode.ci.jobs
 
+import groovy.io.FileType
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.directcode.ci.core.CI
+import org.directcode.ci.utils.FileMatcher
 
 @CompileStatic
 class JobHistory {
@@ -22,6 +24,13 @@ class JobHistory {
             entry.log = result.log as String
             entry.when = result.timeStamp as String
             entry.status = result.status as int
+            def artifactDir = new File(job.ci.artifactDir, "${job.name}/${entry.number}")
+            def files = FileMatcher.create(artifactDir).recursive(FileType.FILES)
+            files.each { file ->
+                def a = new Artifact()
+                a.name = file.absolutePath.replace(artifactDir.absolutePath + "/", "")
+                entry.artifacts.add(a)
+            }
         }
     }
 
@@ -43,5 +52,10 @@ class JobHistory {
         int id, status, number
         String log
         String when
+        List<Artifact> artifacts = []
+    }
+
+    static class Artifact {
+        String name
     }
 }
