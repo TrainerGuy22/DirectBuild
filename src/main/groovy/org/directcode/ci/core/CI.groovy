@@ -116,9 +116,9 @@ class CI {
         logger.currentLevel = logLevel
 
         jobQueue = new LinkedBlockingQueue<Job>(config.ciSection()['queueSize'] as int)
-        storage.storagePath = new File(configRoot, "storage").toPath()
+        storage.storagePath = new File(configRoot, "storage").absoluteFile.toPath()
         storage.start()
-        new File(configRoot, 'logs').mkdirs()
+        new File(configRoot, 'logs').absoluteFile.mkdirs()
 
         loadBuiltins()
 
@@ -294,7 +294,7 @@ class CI {
                     }
                 }
 
-                def artifactsDir = new File(artifactDir, "${job.name}/${number}")
+                def artifactsDir = new File(artifactDir, "${job.name}/${number}").absoluteFile
                 artifactsDir.mkdirs()
                 job.artifacts.files.each { location ->
                     def source = new File(job.buildDir, location)
@@ -358,7 +358,7 @@ class CI {
      */
     @CompileStatic
     File getArtifactDir() {
-        File dir = new File(configRoot, "artifacts")
+        File dir = new File(configRoot, "artifacts").absoluteFile
         dir.mkdir()
         return dir
     }

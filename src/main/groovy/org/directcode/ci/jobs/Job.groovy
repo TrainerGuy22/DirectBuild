@@ -32,7 +32,7 @@ class Job {
     }
 
     File getBuildDir() {
-        return new File(ci.configRoot, "workspace/${name}")
+        return new File(ci.configRoot, "workspace/${name}").absoluteFile
     }
 
     Map<String, Object> getSCM() {
@@ -44,7 +44,7 @@ class Job {
     }
 
     File getLogFile() {
-        return new File(ci.configRoot, "logs/${name}.log")
+        return new File(ci.configRoot, "logs/${name}.log").absoluteFile
     }
 
     void setStatus(JobStatus status) {
