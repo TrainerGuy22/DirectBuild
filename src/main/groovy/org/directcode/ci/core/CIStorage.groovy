@@ -35,7 +35,7 @@ class CIStorage {
     protected void start() {
         worker.start()
 
-        addShutdownHook { h ->
+        addShutdownHook { ->
             save()
         }
 

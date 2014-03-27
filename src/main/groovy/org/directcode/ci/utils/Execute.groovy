@@ -70,25 +70,29 @@ class Execute {
     }
 
     ExecuteResult execute() {
-        def process = "${executable} ${args.join(" ")}".execute(convertToList(environment), directory)
-        def lines = []
-        Thread.startDaemon("ExecuteProcessErrorStream") { ->
-            process.errorStream.eachLine { String line ->
+        try {
+            def process = "${executable} ${args.join(" ")}".execute(convertToList(environment), directory)
+            def lines = []
+            Thread.startDaemon("ExecuteProcessErrorStream") { ->
+                process.errorStream.eachLine { String line ->
+                    lines.add(line)
+                    if (streamOutput) {
+                        streamOutput.call(line)
+                    }
+                }
+            }
+            process.inputStream.eachLine { String line ->
                 lines.add(line)
                 if (streamOutput) {
                     streamOutput.call(line)
                 }
             }
+            def code = process.waitFor()
+            process.closeStreams()
+            return new ExecuteResult(code, lines)
+        } catch (ignored) {
+            return null
         }
-        process.inputStream.eachLine { String line ->
-            lines.add(line)
-            if (streamOutput) {
-                streamOutput.call(line)
-            }
-        }
-        def code = process.waitFor()
-        process.closeStreams()
-        return new ExecuteResult(code, lines)
     }
 
     private static List<String> convertToList(Map<String, String> input) {

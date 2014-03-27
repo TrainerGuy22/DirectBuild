@@ -20,7 +20,11 @@ class Main {
 
         Thread.defaultUncaughtExceptionHandler = [
                 uncaughtException: { Thread thread, Throwable e ->
-                    logger.error("An unexpected error occurred in SimpleCI", e)
+                    logger.error("An unexpected error occurred in SimpleCI")
+                    logger.error("Sending Crash Report")
+                    CrashReporter.report(e) { String id ->
+                        logger.error("Crash Report Sent. ID: ${id}")
+                    }
                 }
         ] as Thread.UncaughtExceptionHandler
 
