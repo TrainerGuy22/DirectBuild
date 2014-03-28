@@ -27,7 +27,7 @@ class GradleTask extends Task {
 
             command.add(CommandFinder.forScript(job.buildDir, "gradlew.bat", "gradlew"))
         } else {
-            def c = CommandFinder.find("git")
+            def c = CommandFinder.find("gradle")
             if (c == null) {
                 throw new ToolMissingException("Gradle not found on this system.")
             }
