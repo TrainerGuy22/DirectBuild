@@ -112,4 +112,11 @@ class Utils {
         target.properties.clear()
         target.properties.putAll(source.properties)
     }
+
+    @CompileStatic
+    static String toString(Throwable throwable) {
+        def writer = new StringWriter()
+        throwable.printStackTrace(new PrintWriter(writer))
+        return writer.toString()
+    }
 }

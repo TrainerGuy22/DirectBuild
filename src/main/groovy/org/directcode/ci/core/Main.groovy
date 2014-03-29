@@ -6,11 +6,12 @@ import org.apache.log4j.Logger as Log4j
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.ConsoleHandler
+import org.directcode.ci.utils.Utils
 
 @CompileStatic
 class Main {
 
-    private static final Logger logger = Logger.getLogger("Console")
+    static final Logger logger = Logger.getLogger("Console")
 
     @SuppressWarnings("GroovyEmptyStatementBody")
     static void main(String[] consoleArgs) {
@@ -20,11 +21,9 @@ class Main {
 
         Thread.defaultUncaughtExceptionHandler = [
                 uncaughtException: { Thread thread, Throwable e ->
-                    logger.error("An unexpected error occurred in SimpleCI")
-                    logger.error("Sending Crash Report")
-                    CrashReporter.report(e) { String id ->
-                        logger.error("Crash Report Sent. ID: ${id}")
-                    }
+                    def output = new File("ci.log").toPath()
+                    output.append("${Utils.toString(e)}")
+                    CrashReporter.report(output)
                 }
         ] as Thread.UncaughtExceptionHandler
 
@@ -42,7 +41,7 @@ class Main {
 
                 def jobName = args[0]
 
-                def job = ci.jobs[jobName]
+                def job = ci.jobs[jobName] as Job
 
                 if (job == null) {
                     println "No Such Job: ${jobName}"

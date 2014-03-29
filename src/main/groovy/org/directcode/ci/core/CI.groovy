@@ -16,6 +16,7 @@ import org.directcode.ci.scm.NoneSCM
 import org.directcode.ci.tasks.*
 import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
+import org.directcode.ci.utils.HTTP
 import org.directcode.ci.utils.Utils
 import org.directcode.ci.web.VertxManager
 
@@ -114,8 +115,7 @@ class CI {
 
         config.load()
 
-        def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
-        logger.currentLevel = logLevel
+        loggingSystem()
 
         jobQueue = new LinkedBlockingQueue<Job>(config.ciSection()['queueSize'] as int)
         storage.storagePath = new File(configRoot, "storage").absoluteFile.toPath()
@@ -138,6 +138,26 @@ class CI {
         timer.stop()
 
         logger.info("Completed Initialization in ${timer.time} milliseconds")
+    }
+
+    @CompileStatic
+    private void loggingSystem() {
+        // Initialize a few loggers
+        HTTP.logger
+        CrashReporter.logger
+
+
+        def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
+
+        Logger.globalLogLevel = logLevel
+
+        def logFile = new File(configRoot, "ci.log")
+
+        if (logFile.exists()) {
+            logFile.renameTo("ci.log.old")
+        }
+
+        Logger.logAllTo(logFile.toPath())
     }
 
     @CompileStatic

@@ -1,45 +1,39 @@
 package org.directcode.ci.core
 
+import groovy.transform.CompileStatic
 import jpower.core.Task
 import jpower.core.Worker
+import org.directcode.ci.logging.Logger
+import org.directcode.ci.utils.HTTP
+
+import java.nio.file.Path
 
 /**
  * Reports Exceptions from SimpleCI to the crash reporter
  */
+@CompileStatic
 class CrashReporter {
+    static final Logger logger = Logger.getLogger("CrashReporter")
     static
     final String reporter = "https://script.google.com/macros/s/AKfycby4kKJjBVLyrfS83qec8_nJBzSWN2LKqfNMDzBsph_R20tfOhc/exec"
 
     private static Worker worker = new Worker()
 
-    static void queue(String log, Closure handler) {
+    static void report(Path path) {
         if (!worker.running) {
             worker.start()
         }
         worker.addTask(new Task() {
             @Override
             void execute() {
-                def url = reporter.toURL()
-                def connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "POST"
-                connection.doOutput = true
-                connection.connect()
-                connection.outputStream.withWriter { it ->
-                    it.write("log=" + log)
+                logger.error("An unexpected error occurred in SimpleCI")
+                logger.error("Sending Crash Report")
+                HTTP.post(data: [log: path.text], url: reporter) { Map<String, Object> data ->
+                    def id = data.get("data", "Unknown") as String
+                    logger.error("Crash Report Sent. ID: ${id}")
+                    Runtime.runtime.halt(1)
                 }
-                def id = connection.inputStream.text
-                connection.disconnect()
-                handler(id)
-                System.exit(1)
             }
         })
-    }
-
-    static void report(Throwable exception, Closure handler) {
-        def writer = new StringWriter()
-        def out = new PrintWriter(writer)
-        exception.printStackTrace(out)
-        def content = writer.toString()
-        queue(content, handler)
     }
 }

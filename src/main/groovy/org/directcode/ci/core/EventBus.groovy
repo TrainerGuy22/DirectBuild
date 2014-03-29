@@ -37,7 +37,7 @@ class EventBus {
         workerPool.submit(new PowerTask() {
             @Override
             void execute() {
-                eventHandlers.each { Closure handler ->
+                for (Closure handler in eventHandlers) {
                     handler(options)
                 }
             }

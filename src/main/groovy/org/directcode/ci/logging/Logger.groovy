@@ -3,6 +3,7 @@ package org.directcode.ci.logging
 import groovy.transform.CompileStatic
 import org.directcode.ci.core.EventBus
 
+import java.nio.file.Path
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -17,6 +18,18 @@ class Logger {
 
     Logger(String name) {
         this.name = name
+    }
+
+    static void setGlobalLogLevel(LogLevel level) {
+        loggers.values().each { logger ->
+            logger.currentLevel = level
+        }
+    }
+
+    static void logAllTo(Path path) {
+        loggers.values().each { logger ->
+            logger.logTo(path)
+        }
     }
 
     static Logger getLogger(String name) {
@@ -77,13 +90,13 @@ class Logger {
         e.printStackTrace()
     }
 
-    void logTo(File file) {
+    void logTo(Path path) {
         eventBus.on('log') { Map<String, ? extends Object> event ->
             def message = event["complete"] as String
             def exception = event["exception"] as Exception
-            file.append("${message}\n")
+            path.append("${message}\n")
             if (exception) {
-                exception.printStackTrace(file.newPrintWriter())
+                exception.printStackTrace(path.newPrintWriter())
             }
         }
     }
