@@ -22,6 +22,7 @@ class ConsoleHandler {
 
     @CompileStatic
     static void loop(@ClosureParams(value = FromString, options = ["String", "List<String>"]) Closure handler = {
+        void
     }, Closure<Boolean> stopHandler = { false }) {
         if (looping) {
             throw new IllegalStateException("Console is already looping.")

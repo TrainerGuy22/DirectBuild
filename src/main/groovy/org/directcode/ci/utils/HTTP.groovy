@@ -7,7 +7,7 @@ import org.directcode.ci.logging.Logger
 class HTTP {
     static final Logger logger = Logger.getLogger("HTTP")
 
-    static void post(Map<String, ? extends Object> options, Closure callback = {}) {
+    static void post(Map<String, ? extends Object> options, Closure callback = { void }) {
         logger.debug("Posting to '${options.url}'")
         def url = option(options, "url", true) as String
         def data = option(options, "data", false, [:]) as Map<String, Object>

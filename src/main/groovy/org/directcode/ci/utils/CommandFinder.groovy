@@ -1,7 +1,9 @@
 package org.directcode.ci.utils
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.core.CI
 
+@CompileStatic
 class CommandFinder {
     static File find(String command) {
         def path = getPath(command)

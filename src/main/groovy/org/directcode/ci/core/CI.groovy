@@ -367,7 +367,7 @@ class CI {
 
             def history = ((List<Map<String, ? extends Object>>) job_history.get(job.name, []))
 
-            history.add(number: number, status: job.status.ordinal(), log: base64Log, buildTime: buildTime, timeStamp: new Date().toString())
+            history.add([number: number, status: job.status.ordinal(), log: base64Log, buildTime: buildTime, timeStamp: new Date().toString()])
 
             jobQueue.remove(job)
             logger.debug "Job '${job.name}' removed from queue"
