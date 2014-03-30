@@ -28,7 +28,7 @@ function check_java_version() {
 }
 
 function build() {
-    git clone --recursive --depth 1 git://github.com/DirectMyFile/SimpleCI.git _build_
+    git clone --recursive --branch master --depth 1 git://github.com/DirectMyFile/SimpleCI.git _build_
     if [[ ${?} -ne 0 ]]; then
         echo "ERROR: Failed to clone SimpleCI."
         exit 1
