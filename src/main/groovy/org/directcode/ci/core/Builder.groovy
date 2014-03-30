@@ -37,6 +37,13 @@ class Builder implements Runnable {
             def build = builderQueue.first()
             current = build
             builderQueue.remove(build)
+
+            ci.eventBus.dispatch("ci.build.queued", [
+                    jobName: build.job.name,
+                    number : build.number,
+                    build  : build
+            ])
+
             def count = 0
             while (ci.jobQueue.isBuilding(build.job, this)) {
                 count++
