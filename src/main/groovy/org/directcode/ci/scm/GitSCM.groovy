@@ -13,7 +13,7 @@ class GitSCM extends SCM {
         cmd << "clone"
         cmd << "--recursive"
         cmd << "--depth"
-        cmd << option("depth", 1)
+        cmd << option("depth", 10)
         if (option("branch")) {
             cmd << "--branch"
             cmd << option("branch")
