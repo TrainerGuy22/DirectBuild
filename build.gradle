@@ -1,12 +1,9 @@
-apply from: 'gradle/version.gradle'
-
 apply plugin: 'groovy'
 apply plugin: 'build-dashboard'
 apply plugin: 'codenarc'
 apply plugin: 'maven'
 apply plugin: 'distribution'
 apply plugin: 'idea'
-
 
 defaultTasks 'jar'
 
@@ -88,6 +85,4 @@ task wrapper(type: Wrapper) {
     distributionUrl = "http://services.gradle.org/distributions-snapshots/gradle-${gradleVersion}-all.zip"
 }
 
-apply from: 'gradle/pom.gradle'
-apply from: 'gradle/upload.gradle'
 apply from: 'gradle/dist.gradle'
