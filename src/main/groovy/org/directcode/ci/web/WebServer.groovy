@@ -135,25 +135,6 @@ class WebServer {
             ci.runJob(job)
         }
 
-        matcher.get('/api/changes/:name') { HttpServerRequest r ->
-            def jobName = r.params['name'] as String
-            def count = (r.params['count'] ?: 8) as int
-
-            if (!ci.jobs.containsKey(jobName)) {
-                r.response.end(Utils.encodeJSON([
-                        code : 404,
-                        error: [
-                                message: "Job Not Found"
-                        ]
-                ]) as String)
-                return
-            }
-
-            def changelog = ci.jobs[jobName].getChangelog(count).entries
-
-            r.response.end(Utils.encodeJSON(changelog) as String)
-        }
-
         matcher.get('/api/history/:name') { HttpServerRequest r ->
             def jobName = r.params['name'] as String
 

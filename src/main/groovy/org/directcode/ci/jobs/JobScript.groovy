@@ -21,8 +21,7 @@ abstract class JobScript extends Script {
     String name = this.class.simpleName
     List<TaskConfiguration> tasks = []
     ArtifactSpec artifacts = new ArtifactSpec()
-    Map<String, Object> notify = [:]
-    Map<String, Object> scm = [:]
+    Map<String, ? extends Object> source = [type: "none"]
     List<String> requirements = []
 
     void name(String name) {
@@ -48,8 +47,8 @@ abstract class JobScript extends Script {
         new TaskContainer().with(closure)
     }
 
-    void scm(Map<String, Object> opts) {
-        scm = opts
+    void source(Map<String, Object> opts) {
+        source.putAll(opts)
     }
 
     void artifact(String location) {
@@ -58,12 +57,6 @@ abstract class JobScript extends Script {
 
     void artifacts(@DelegatesTo(ArtifactSpec) Closure closure) {
         artifacts.with(closure)
-    }
-
-    void notifier(String name, @DelegatesTo(Map) Closure closure) {
-        def opts = [:]
-        opts.with(closure)
-        notify[name] = opts
     }
 
     void webhooks(@DelegatesTo(WebHooks) Closure closure) {

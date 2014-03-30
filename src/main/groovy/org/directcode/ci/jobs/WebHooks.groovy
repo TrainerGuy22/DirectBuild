@@ -13,18 +13,24 @@ class WebHooks {
     protected WebHooks(Job job) {
         this.job = job
 
-        job.ci.eventBus.on("ci.job.done") { Map<String, ? extends Object> event ->
+        job.ci.eventBus.on("ci.build.done") { Map<String, ? extends Object> event ->
+            def data = [:]
+            data.putAll(event)
+            data.remove("build")
             if (event["jobName"] == job.name) {
                 for (hook in jobDone) {
-                    hook(event)
+                    hook(data)
                 }
             }
         }
 
-        job.ci.eventBus.on("ci.job.running") { Map<String, ? extends Object> event ->
+        job.ci.eventBus.on("ci.build.started") { Map<String, ? extends Object> event ->
+            def data = [:]
+            data.putAll(event)
+            data.remove("build")
             if (event["jobName"] == job.name) {
                 for (hook in jobStarted) {
-                    hook(event)
+                    hook(data)
                 }
             }
         }

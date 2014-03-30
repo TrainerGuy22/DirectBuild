@@ -1,11 +1,13 @@
-package org.directcode.ci.scm
+package org.directcode.ci.source
 
-import org.directcode.ci.api.SCM
+import groovy.transform.CompileStatic
+import org.directcode.ci.api.Source
 import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.CommandFinder
 
-class GitSCM extends SCM {
+@CompileStatic
+class GitSource extends Source {
 
     void gitClone() {
         def cmd = []
@@ -60,9 +62,8 @@ class GitSCM extends SCM {
         }
     }
 
-    @Override
-    Changelog changelog(int count) {
-        def changelog = new Changelog()
+    SCMChangelog changelog(int count) {
+        def changelog = new SCMChangelog()
 
         if (!exists()) {
             gitClone()

@@ -36,4 +36,20 @@ class OperatingSystem {
     boolean isUnsupported() {
         return !(unix || windows)
     }
+
+    String getScriptExtension() {
+        if (windows) {
+            return ".bat"
+        } else {
+            return ".sh"
+        }
+    }
+
+    String getScriptFirstLine() {
+        if (windows) {
+            return "@echo off"
+        } else {
+            return "#!${CommandFinder.shell().absolutePath}"
+        }
+    }
 }

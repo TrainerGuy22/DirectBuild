@@ -1,5 +1,5 @@
 ci = [
-        queueSize: 4
+        builders: 4
 ]
 
 logging = [

@@ -1,27 +1,21 @@
 package org.directcode.ci.core
 
 import groovy.transform.CompileStatic
-import org.directcode.ci.api.SCM
+import org.directcode.ci.api.Source
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
-import org.directcode.ci.exception.CIException
 import org.directcode.ci.jobs.Job
-import org.directcode.ci.jobs.JobLog
 import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.plugins.PluginManager
-import org.directcode.ci.scm.GitSCM
-import org.directcode.ci.scm.NoneSCM
+import org.directcode.ci.source.GitSource
+import org.directcode.ci.source.NoneSource
 import org.directcode.ci.tasks.*
 import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
 import org.directcode.ci.utils.HTTP
-import org.directcode.ci.utils.Utils
 import org.directcode.ci.web.VertxManager
-
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
 
 @CompileStatic
 class CI {
@@ -71,7 +65,7 @@ class CI {
     /**
      * Source Code Manager Types
      */
-    final Map<String, Class<? extends SCM>> scmTypes = [:]
+    final Map<String, Class<? extends Source>> sourceTypes = [:]
 
     /**
      * CI Jobs
@@ -81,7 +75,7 @@ class CI {
     /**
      * Job Queue System
      */
-    BlockingQueue<Job> jobQueue
+    JobQueue jobQueue
 
     /**
      * Vert.x Manager for managing Vert.x related systems
@@ -117,11 +111,14 @@ class CI {
 
         loggingSystem()
 
-        jobQueue = new LinkedBlockingQueue<Job>(config.ciSection()['queueSize'] as int)
         storage.storagePath = new File(configRoot, "storage").absoluteFile.toPath()
         storage.start()
         eventBus.dispatch("ci.storage.started")
+
+        jobQueue = new JobQueue(this, config.ciSection()['builders'] as int)
+
         new File(configRoot, 'logs').absoluteFile.mkdirs()
+
 
         loadBuiltins()
 
@@ -144,6 +141,8 @@ class CI {
         // Initialize a few loggers
         HTTP.logger
         CrashReporter.logger
+        Build.logger
+        JobQueue.logger
 
 
         def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
@@ -160,8 +159,8 @@ class CI {
     }
 
     private void loadBuiltins() {
-        registerSCM("git", GitSCM)
-        registerSCM("none", NoneSCM)
+        registerSource("git", GitSource)
+        registerSource("none", NoneSource)
         registerTask("gradle", GradleTask)
         registerTask("groovy", GroovyScriptTask)
         registerTask("command", CommandTask)
@@ -208,176 +207,18 @@ class CI {
         eventBus.on("ci.task.register") { event ->
             logger.debug("Registered task '${event.name}' with type '${(event["type"] as Class<?>).name}'")
         }
-        eventBus.on("ci.scm.register") { event ->
-            logger.debug("Registered SCM '${event.name}' with type '${(event["type"] as Class<?>).name}'")
+        eventBus.on("ci.source.register") { event ->
+            logger.debug("Registered Source '${event.name}' with type '${(event["type"] as Class<?>).name}'")
         }
     }
 
     /**
      * Adds the Specified Job to the Queue
      * @param job Job to Add to Queue
+     * @return A Build that can be used to track status information
      */
-    void runJob(Job job) {
-        Thread.start("Builder[${job.name}]") { ->
-            int number
-            if (job.history.latestBuild) {
-                number = job.history.latestBuild.number
-            } else {
-                number = 1
-            }
-            def lastStatus = number == 1 ? JobStatus.NOT_STARTED : job.status
-            job.status = JobStatus.WAITING
-
-            logger.debug "Job '${job.name}' has been queued"
-
-            jobQueue.put(job)
-
-
-            def checkJobInQueue = {
-                jobQueue.count {
-                    it["name"] == job.name
-                } != 1
-            }
-
-            while (checkJobInQueue()) {
-                //noinspection GroovySwitchStatementWithNoDefault
-                switch (job.status) {
-                    case JobStatus.SUCCESS || JobStatus.FAILURE: break
-                }
-            }
-
-            // Update Number
-            if (job.history.latestBuild) {
-                number = job.history.latestBuild.number
-            } else {
-                number = 1
-            }
-
-            eventBus.dispatch("ci.job.running", [
-                    jobName   : job.name,
-                    lastStatus: lastStatus,
-                    number    : number
-            ])
-
-            def timer = new ExecutionTimer()
-
-            timer.start()
-
-            def success = true
-            def scmShouldRun = true
-            def tasksShouldRun = true
-
-            job.status = JobStatus.RUNNING
-            logger.info "Job '${job.name}' is Running"
-
-            if (!job.buildDir.exists()) {
-                job.buildDir.mkdirs()
-            }
-
-            def jobLog = new JobLog(job.logFile)
-
-            if (scmShouldRun) {
-                def scmConfig = job.SCM
-
-                if (!scmTypes.containsKey(scmConfig.type)) {
-                    logger.error "Job '${job.name}' is attempting to use a non-existant SCM Type '${scmConfig.type}!'"
-                    success = false
-                    tasksShouldRun = false
-                }
-
-                SCM scm = ((Class<? extends SCM>) scmTypes[scmConfig.type as String]).getConstructor().newInstance()
-
-                scm.ci = this
-                scm.job = job
-                scm.log = jobLog
-
-                try {
-                    scm.execute()
-                } catch (CIException e) {
-                    logger.info "Job '${job.name}' (SCM): ${e.message}"
-                    tasksShouldRun = false
-                    success = false
-                }
-            }
-
-            if (tasksShouldRun) {
-                def tasks = job.tasks
-
-                for (taskConfig in tasks) {
-                    def id = tasks.indexOf(taskConfig) + 1
-                    logger.info "Running Task ${id} of ${job.tasks.size()} for Job '${job.name}'"
-
-                    try {
-                        Class<? extends Task> taskType = (Class<? extends Task>) taskTypes[taskConfig.taskType as String]
-
-                        Task task = taskType.getConstructor().newInstance()
-
-                        task.ci = this
-                        task.job = job
-                        task.log = jobLog
-
-                        task.configure(taskConfig.configClosure)
-
-                        try {
-                            task.execute()
-                        } catch (e) {
-                            success = false
-                            job.logFile.append(e.class.simpleName + ": " + e.message)
-                            break
-                        }
-                    } catch (CIException e) {
-                        logger.info "Job '${job.name}' (Task #${id}): ${e.message}"
-                    }
-                }
-
-                def artifactsDir = new File(artifactDir, "${job.name}/${number}").absoluteFile
-                artifactsDir.mkdirs()
-                job.artifacts.files.each { location ->
-                    def source = new File(job.buildDir, location)
-                    def target = new File(artifactsDir, source.name)
-                    if (!source.exists()) {
-                        jobLog.write("Artifact '${location}' does not exist. Skipping.")
-                        return
-                    }
-                    target.bytes = source.bytes
-                }
-            }
-
-            def buildTime = timer.stop()
-
-            logger.debug "Job '${job.name}' completed in ${buildTime} milliseconds"
-
-            if (!success) {
-                logger.info "Job '${job.name}' has Failed"
-                job.status = JobStatus.FAILURE
-            } else {
-                logger.info "Job '${job.name}' has Completed"
-                job.status = JobStatus.SUCCESS
-            }
-
-            eventBus.dispatch("ci.job.done", [
-                    jobName   : job.name,
-                    status    : job.status,
-                    buildTime : buildTime,
-                    timeString: timer.toString(),
-                    number    : number
-            ])
-
-            jobLog.complete()
-
-            def log = job.logFile.text
-
-            def base64Log = Utils.encodeBase64(log)
-
-            def job_history = storage.get("job_history")
-
-            def history = ((List<Map<String, ? extends Object>>) job_history.get(job.name, []))
-
-            history.add([number: number, status: job.status.ordinal(), log: base64Log, buildTime: buildTime, timeStamp: new Date().toString()])
-
-            jobQueue.remove(job)
-            logger.debug "Job '${job.name}' removed from queue"
-        }
+    Build runJob(Job job) {
+        return jobQueue.add(job)
     }
 
     /**
@@ -404,9 +245,9 @@ class CI {
         callback()
     }
 
-    void registerSCM(String name, Class<? extends SCM> scmType, Closure callback = {}) {
-        scmTypes[name] = scmType
-        eventBus.dispatch("ci.scm.register", [name: name, type: scmType])
+    void registerSource(String name, Class<? extends Source> sourceType, Closure callback = {}) {
+        sourceTypes[name] = sourceType
+        eventBus.dispatch("ci.source.register", [name: name, type: sourceType])
         callback()
     }
 

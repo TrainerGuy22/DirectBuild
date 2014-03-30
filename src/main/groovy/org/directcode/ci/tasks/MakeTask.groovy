@@ -2,6 +2,8 @@ package org.directcode.ci.tasks
 
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
+import org.directcode.ci.exception.ToolMissingException
+import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
 class MakeTask extends Task {
@@ -10,7 +12,12 @@ class MakeTask extends Task {
 
     @Override
     void execute() {
-        def command = ["make"]
+        def command = []
+        def make = CommandFinder.find("make")
+        if (make == null) {
+            throw new ToolMissingException("Make not found on this system.")
+        }
+        command << make
         command.addAll(targets)
         run(command)
     }

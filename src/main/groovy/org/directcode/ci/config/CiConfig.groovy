@@ -29,7 +29,7 @@ class CiConfig extends GConfig {
 
     Map<String, Object> ciSection() {
         return getProperty("ci", [
-                queueSize: 2
+                builders: 4
         ]) as Map<String, Object>
     }
 

@@ -7,6 +7,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import org.codehaus.groovy.control.CompilerConfiguration
 
+import java.nio.file.Files
+import java.nio.file.Path
 import java.security.MessageDigest
 import java.security.SecureRandom
 
@@ -108,5 +110,15 @@ class Utils {
 
     static String urlEncode(String input) {
         return URLEncoder.encode(input, "UTF-8")
+    }
+
+    static ExecuteResult executeShellScript(String script, Path workingDir = new File(".").absoluteFile.toPath()) {
+        def file = Files.createTempFile("simpleci", OperatingSystem.current().scriptExtension)
+        file.write(OperatingSystem.current().scriptFirstLine + "\n" + script)
+        return execute { ->
+            executable(CommandFinder.shell())
+            argument(file.toFile().absolutePath)
+            directory(workingDir)
+        }
     }
 }
