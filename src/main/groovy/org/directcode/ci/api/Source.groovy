@@ -17,7 +17,7 @@ abstract class Source {
 
     abstract void execute();
 
-    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [:], boolean handleExitCode = true) {
+    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [TERM: "dumb"], boolean handleExitCode = true) {
         CI.logger.debug("Executing: '${command.join(" ")}'")
         log.write("\$ '${command.join(' ')}'")
 
