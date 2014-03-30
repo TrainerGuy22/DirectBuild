@@ -75,7 +75,7 @@ class GitSCM extends SCM {
         }
 
         changelog.entries.removeAll { entry ->
-            !entry.message || !entry.revision || !entry.author
+            !entry["message"] || !entry["revision"] || !entry["author"]
         }
 
         return changelog
