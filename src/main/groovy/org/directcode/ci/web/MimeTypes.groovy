@@ -1,6 +1,7 @@
 package org.directcode.ci.web
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import org.directcode.ci.core.CI
 
 @CompileStatic
@@ -14,10 +15,11 @@ class MimeTypes {
             "image/*"               : [".png", ".jpeg"]
     ]
 
+    @Memoized(maxCacheSize = 50)
     static String get(String fileName) {
         def extension
 
-        def split = fileName.tokenize('.' as char)
+        def split = fileName.split("\\.")
 
         if (split.size() == 1) {
             extension = ""
@@ -29,7 +31,9 @@ class MimeTypes {
 
         types.keySet().each { key ->
             List<String> value = types[key]
-            if (value.contains(extension)) {
+            if (value.findAll {
+                it == extension
+            }.size() != 0) {
                 type = key
             }
         }
