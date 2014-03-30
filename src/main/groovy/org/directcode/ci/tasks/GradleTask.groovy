@@ -22,7 +22,7 @@ class GradleTask extends Task {
             }
 
             if (OperatingSystem.current().unix) {
-                command.add(CommandFinder.find("sh")?.absolutePath ?: "bash")
+                command.add(CommandFinder.find("bash")?.absolutePath ?: "sh")
             }
 
             command.add(CommandFinder.forScript(job.buildDir, "gradlew.bat", "gradlew"))
