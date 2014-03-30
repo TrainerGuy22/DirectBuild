@@ -5,6 +5,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
+import jpower.core.Task
 import org.codehaus.groovy.control.CompilerConfiguration
 
 import java.security.MessageDigest
@@ -105,5 +106,14 @@ class Utils {
         def writer = new StringWriter()
         throwable.printStackTrace(new PrintWriter(writer))
         return writer.toString()
+    }
+
+    static Task task(Closure closure) {
+        return new Task() {
+            @Override
+            void execute() {
+                closure.call()
+            }
+        }
     }
 }
