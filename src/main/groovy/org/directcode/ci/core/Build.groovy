@@ -87,26 +87,22 @@ class Build {
                 def id = tasks.indexOf(taskConfig) + 1
                 logger.info "Running Task ${id} of ${job.tasks.size()} for Build '${job.name}:${number}'"
 
+                Class<? extends Task> taskType = (Class<? extends Task>) ci.taskTypes[taskConfig.taskType as String]
+
+                Task task = taskType.getConstructor().newInstance()
+
+                task.ci = ci
+                task.job = job
+                task.log = jobLog
+
+                task.configure(taskConfig.configClosure)
+
                 try {
-                    Class<? extends Task> taskType = (Class<? extends Task>) ci.taskTypes[taskConfig.taskType as String]
-
-                    Task task = taskType.getConstructor().newInstance()
-
-                    task.ci = ci
-                    task.job = job
-                    task.log = jobLog
-
-                    task.configure(taskConfig.configClosure)
-
-                    try {
-                        task.execute()
-                    } catch (e) {
-                        success = false
-                        job.logFile.append(e.class.simpleName + ": " + e.message)
-                        break
-                    }
-                } catch (CIException e) {
-                    logger.warning "Build '${job.name}:${number}' (Task #${id}): ${e.message}"
+                    task.execute()
+                } catch (e) {
+                    logger.error("Build '${job.name}:${number}' (Task #${id}): ${e.message}")
+                    success = false
+                    break
                 }
             }
 

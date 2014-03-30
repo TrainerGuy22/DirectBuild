@@ -52,4 +52,10 @@ abstract class Task {
 
         return result.code
     }
+
+    static void basicConfigure(Task task, Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = task
+        closure.call()
+    }
 }

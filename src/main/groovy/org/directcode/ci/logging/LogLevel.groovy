@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 enum LogLevel {
-    ERROR, INFO, WARNING, DEBUG, DISABLED;
+    DISABLED, ERROR, WARNING, INFO, DEBUG;
 
     static LogLevel parse(String name) {
         if (!(values()*.name().contains(name))) {
