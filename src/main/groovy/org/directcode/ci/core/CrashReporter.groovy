@@ -3,6 +3,7 @@ package org.directcode.ci.core
 import groovy.transform.CompileStatic
 import jpower.core.Task
 import jpower.core.Worker
+import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.HTTP
 
@@ -20,6 +21,9 @@ class CrashReporter {
     private static Worker worker = new Worker()
 
     static void report(Path path) {
+        if (logger.canLog(LogLevel.DEBUG)) {
+            return
+        }
         if (!worker.running) {
             worker.start()
         }

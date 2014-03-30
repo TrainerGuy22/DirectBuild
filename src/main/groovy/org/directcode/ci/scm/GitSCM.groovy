@@ -1,23 +1,41 @@
 package org.directcode.ci.scm
 
-import groovy.transform.CompileStatic
 import org.directcode.ci.api.SCM
+import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.CommandFinder
 
-@CompileStatic
 class GitSCM extends SCM {
 
     void gitClone() {
-        def cmd = [findGit().absolutePath, "clone", "--recursive", job.SCM.url as String, job.buildDir.absolutePath]
-
+        def cmd = []
+        cmd << findGit().absolutePath
+        cmd << "clone"
+        cmd << "--recursive"
+        cmd << "--depth"
+        cmd << option("depth", 1)
+        if (option("branch")) {
+            cmd << "--branch"
+            cmd << option("branch")
+        }
+        if (!option("url")) {
+            throw new TaskFailedException("Git requires the 'url' option!")
+        }
+        cmd << option("url")
+        cmd << job.buildDir.absolutePath
         run(cmd)
-
         updateSubmodules()
     }
 
     void update() {
-        def cmd = [findGit().absolutePath, "pull", "--all"]
+        def cmd = []
+        cmd << findGit().absolutePath
+        cmd << "pull"
+        cmd << "--all"
+
+        if (option("branch")) {
+            run([findGit().absolutePath, "checkout", job.SCM["branch"] as String])
+        }
 
         updateSubmodules()
 
@@ -25,13 +43,16 @@ class GitSCM extends SCM {
     }
 
     boolean exists() {
-        def gitDir = new File(job.buildDir, ".git")
-
-        return gitDir.exists()
+        return new File(job.buildDir, ".git").exists()
     }
 
     @Override
     void execute() {
+        if (option("clean", true)) {
+            job.buildDir.deleteDir()
+            job.buildDir.mkdirs()
+        }
+
         if (exists()) {
             update()
         } else {
@@ -75,7 +96,7 @@ class GitSCM extends SCM {
         }
 
         changelog.entries.removeAll { entry ->
-            !entry.message || !entry.revision || !entry.author
+            !entry["message"] || !entry["revision"] || !entry["author"]
         }
 
         return changelog
@@ -90,7 +111,13 @@ class GitSCM extends SCM {
     }
 
     void updateSubmodules() {
-        run([findGit().absolutePath, "submodule", "update", "--init", "--recursive"])
+        def cmd = []
+        cmd << findGit().absolutePath
+        cmd << "submodule"
+        cmd << "update"
+        cmd << "--init"
+        cmd << "--recursive"
+        run(cmd)
     }
 
     Process execute(List<String> command) {
