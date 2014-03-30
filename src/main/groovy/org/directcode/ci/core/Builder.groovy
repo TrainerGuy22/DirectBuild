@@ -36,6 +36,7 @@ class Builder implements Runnable {
             ci.logger.debug("Builder ${id} is busy.")
             def build = builderQueue.first()
             current = build
+            builderQueue.remove(build)
             def count = 0
             while (ci.jobQueue.isBuilding(build.job, this)) {
                 count++
@@ -45,7 +46,6 @@ class Builder implements Runnable {
                 }
                 sleep(50)
             }
-            builderQueue.remove(build)
             build.execute()
             busy = false
             ci.logger.debug("Builder ${id} is no longer busy.")
