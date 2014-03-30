@@ -4,6 +4,7 @@ import groovy.transform.CompileStatic
 import org.apache.log4j.Level as Log4jLevel
 import org.apache.log4j.Logger as Log4j
 import org.directcode.ci.jobs.Job
+import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.ConsoleHandler
 import org.directcode.ci.utils.Utils
@@ -21,6 +22,11 @@ class Main {
 
         Thread.defaultUncaughtExceptionHandler = [
                 uncaughtException: { Thread thread, Throwable e ->
+                    if (logger.canLog(LogLevel.DEBUG)) {
+                        e.printStackTrace()
+                        System.exit(1)
+                        return
+                    }
                     def output = new File("ci.log").toPath()
                     output.append("${Utils.toString(e)}")
                     CrashReporter.report(output)

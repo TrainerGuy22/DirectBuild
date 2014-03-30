@@ -45,6 +45,10 @@ abstract class SCM {
         if (handleExitCode && result.code != 0) {
             throw new TaskFailedException("Command exited with non-zero status!")
         }
-        return result.code
+        return result?.code ?: -1
+    }
+
+    Object option(String key, Object defaultValue = null) {
+        return job.SCM.get(key, defaultValue)
     }
 }
