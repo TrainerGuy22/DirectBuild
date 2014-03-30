@@ -59,7 +59,7 @@ class Logger {
                         cancelled = cancel
                     }
             ])
-            sleep(10)
+            sleep(5)
             if (!cancelled) {
                 println complete
                 if (e) {

@@ -37,11 +37,11 @@ class JobHistory {
         }
     }
 
-    def getEntries() {
+    List<Entry> getEntries() {
         return entries
     }
 
-    def getLatestBuild() {
+    Entry getLatestBuild() {
         entries.empty ? null : entries.last()
     }
 
@@ -51,6 +51,7 @@ class JobHistory {
     }
 
     @ToString
+    @CompileStatic
     static class Entry {
         int id, status, number
         String log
