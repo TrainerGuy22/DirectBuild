@@ -32,4 +32,8 @@ class OperatingSystem {
     boolean isUnix() {
         return name.contains("nix") || name.contains("nux") || name.contains("aix")
     }
+
+    boolean isUnsupported() {
+        return !(unix || windows)
+    }
 }

@@ -53,4 +53,12 @@ class CommandFinder {
             return new File(base, unix).absoluteFile
         }
     }
+
+    static File shell() {
+        if (OperatingSystem.current().windows) {
+            return find("cmd")
+        } else {
+            return find("bash") ?: find("sh") ?: find("zsh") ?: find("csh")
+        }
+    }
 }
