@@ -7,6 +7,7 @@ import org.directcode.ci.jobs.Job
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.ConsoleHandler
+import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
 
 @CompileStatic
@@ -16,6 +17,10 @@ class Main {
 
     @SuppressWarnings("GroovyEmptyStatementBody")
     static void main(String[] consoleArgs) {
+
+        if (OperatingSystem.current().unsupported) {
+            logger.warning("SimpleCI does not officially support your platform.")
+        }
 
         /* Configure log4j to fix warnings */
         Log4j.rootLogger.level = Log4jLevel.OFF
@@ -28,7 +33,7 @@ class Main {
                         return
                     }
                     def output = new File("ci.log").toPath()
-                    output.append("${Utils.toString(e)}")
+                    output.append("${Utils.exceptionToString(e)}")
                     CrashReporter.report(output)
                 }
         ] as Thread.UncaughtExceptionHandler

@@ -29,6 +29,13 @@ class HTTP {
         logger.debug("Disconnected from '${url}'")
     }
 
+    static void get(Map<String, ? extends Object> options, Closure callback = { void }) {
+        def url = option(options, "url", true) as String
+        logger.debug("Getting '${options.url}'")
+
+        callback(url.toURL().text)
+    }
+
     private
     static Object option(Map<String, ? extends Object> options, String option, boolean required = false, Object defaultValue = null) {
         if (!options.containsKey(option) && required) {

@@ -75,10 +75,10 @@ class Utils {
     static String generateHash(byte[] input) {
         def messageDigest = MessageDigest.getInstance("SHA-256")
         messageDigest.update(input)
-        return toString(messageDigest.digest())
+        return toHexString(messageDigest.digest())
     }
 
-    static String toString(byte[] input) {
+    static String toHexString(byte[] input) {
         return new BigInteger(1, input).toString(16).padLeft(40, '0')
     }
 
@@ -86,11 +86,12 @@ class Utils {
         return new JsonBuilder(object).toPrettyString()
     }
 
-    static def parseJSON(String text) {
+    static Object parseJSON(String text) {
         return jsonSlurper.parseText(text)
     }
 
-    static def prettyJSON(String json) {
+    @Memoized(maxCacheSize = 10)
+    static String prettyJSON(String json) {
         return JsonOutput.prettyPrint(json)
     }
 
@@ -99,9 +100,13 @@ class Utils {
         target.properties.putAll(source.properties)
     }
 
-    static String toString(Throwable throwable) {
+    static String exceptionToString(Throwable throwable) {
         def writer = new StringWriter()
         throwable.printStackTrace(new PrintWriter(writer))
         return writer.toString()
+    }
+
+    static String urlEncode(String input) {
+        return URLEncoder.encode(input, "UTF-8")
     }
 }

@@ -1,6 +1,7 @@
 package org.directcode.ci.utils
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 
 @CompileStatic
 class OperatingSystem {
@@ -14,10 +15,12 @@ class OperatingSystem {
         this.name = name.toLowerCase()
     }
 
+    @Memoized
     static OperatingSystem current() {
         return new OperatingSystem()
     }
 
+    @Memoized(maxCacheSize = 10)
     static OperatingSystem forName(String name) {
         return new OperatingSystem(name)
     }
@@ -28,5 +31,9 @@ class OperatingSystem {
 
     boolean isUnix() {
         return name.contains("nix") || name.contains("nux") || name.contains("aix")
+    }
+
+    boolean isUnsupported() {
+        return !(unix || windows)
     }
 }
