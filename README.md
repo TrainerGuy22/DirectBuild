@@ -9,7 +9,10 @@ SimpleCI is a Continuous Integration Server written in [Groovy](http://groovy.co
 - [Wiki](https://github.com/DirectMyFile/SimpleCI/wiki)
 - [Issues](https://github.com/DirectMyFile/SimpleCI/issues)
 
-## Building
+## Getting Started
 
-To build SimpleCI, execute the following command:
-```./gradlew jar```
+To Get Started using SimpleCI, run the following command in the directory you want SimpleCI to use:
+```bash
+curl --silent https://raw.githubusercontent.com/DirectMyFile/SimpleCI/master/src/bin/quickstart.sh | bash
+```
+Follow the instructions and you should be set!

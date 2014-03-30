@@ -10,23 +10,21 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import java.security.MessageDigest
 import java.security.SecureRandom
 
+@CompileStatic
 class Utils {
 
     static JsonSlurper jsonSlurper = new JsonSlurper()
 
-    @CompileStatic
     static Process execute(List<String> command) {
         def builder = new ProcessBuilder()
         builder.command(command)
         return builder.start()
     }
 
-    @CompileStatic
     static ExecuteResult execute(@DelegatesTo(Execute) Closure closure) {
         return Execute.use(closure)
     }
 
-    @CompileStatic
     @Memoized(maxCacheSize = 10)
     static File findCommandOnPath(String executableName) {
         def systemPath = System.getenv("PATH")
@@ -43,36 +41,32 @@ class Utils {
         return executable
     }
 
-    @CompileStatic
     static Script parseConfig(File file) {
         def cc = new CompilerConfiguration()
         return new GroovyShell(cc).parse(file)
     }
 
-    @CompileStatic
+
     static InputStream resource(String path) {
         return Utils.class.classLoader.getResourceAsStream(path)
     }
 
-    @CompileStatic
+
     @Memoized(maxCacheSize = 15)
     static def resourceToString(String path) {
         return resource(path).text
     }
 
-    @CompileStatic
     @Memoized(maxCacheSize = 15)
     static def encodeBase64(String input) {
         return input.bytes.encodeBase64().writeTo(new StringWriter()).toString()
     }
 
-    @CompileStatic
     @Memoized(maxCacheSize = 15)
     static def decodeBase64(String input) {
         return new String(input.decodeBase64())
     }
 
-    @CompileStatic
     static byte[] generateSalt(int size) {
         def random = new SecureRandom()
         def list = new byte[size]
@@ -80,40 +74,33 @@ class Utils {
         return list
     }
 
-    @CompileStatic
     static String generateHash(byte[] input) {
         def messageDigest = MessageDigest.getInstance("SHA-256")
         messageDigest.update(input)
         return toString(messageDigest.digest())
     }
 
-    @CompileStatic
     static String toString(byte[] input) {
         return new BigInteger(1, input).toString(16).padLeft(40, '0')
     }
 
-    @CompileStatic
     static String encodeJSON(Object object) {
         return new JsonBuilder(object).toPrettyString()
     }
 
-    @CompileStatic
     static def parseJSON(String text) {
         return jsonSlurper.parseText(text)
     }
 
-    @CompileStatic
     static def prettyJSON(String json) {
         return JsonOutput.prettyPrint(json)
     }
 
-    @CompileStatic
     static void copy(Object source, Object target) {
         target.properties.clear()
         target.properties.putAll(source.properties)
     }
 
-    @CompileStatic
     static String toString(Throwable throwable) {
         def writer = new StringWriter()
         throwable.printStackTrace(new PrintWriter(writer))

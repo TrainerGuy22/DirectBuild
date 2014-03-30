@@ -1,5 +1,6 @@
 package org.directcode.ci.web
 
+import groovy.transform.CompileStatic
 import org.directcode.ci.core.CI
 import org.vertx.groovy.core.Vertx
 import org.vertx.groovy.core.eventbus.EventBus
@@ -7,6 +8,7 @@ import org.vertx.groovy.core.eventbus.EventBus
 /**
  * Manages Vert.x Instances
  */
+@CompileStatic
 class VertxManager {
 
     Vertx vertx = Vertx.newVertx()

@@ -23,6 +23,7 @@ import org.directcode.ci.web.VertxManager
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
+@CompileStatic
 class CI {
 
     private static CI INSTANCE
@@ -104,7 +105,6 @@ class CI {
     /**
      * Initializes this CI Server
      */
-    @CompileStatic
     private void init() {
         def timer = new ExecutionTimer()
         timer.start()
@@ -140,7 +140,6 @@ class CI {
         logger.info("Completed Initialization in ${timer.time} milliseconds")
     }
 
-    @CompileStatic
     private void loggingSystem() {
         // Initialize a few loggers
         HTTP.logger
@@ -160,7 +159,6 @@ class CI {
         Logger.logAllTo(logFile.toPath())
     }
 
-    @CompileStatic
     private void loadBuiltins() {
         registerSCM("git", GitSCM)
         registerSCM("none", NoneSCM)
@@ -176,7 +174,6 @@ class CI {
     /**
      * Loads Jobs from Database and Job Files
      */
-    @CompileStatic
     void loadJobs() {
         File jobRoot = new File(configRoot, "jobs")
 
@@ -207,7 +204,6 @@ class CI {
         eventBus.dispatch("ci.jobs.loaded")
     }
 
-    @CompileStatic
     private void debuggingSystem() {
         eventBus.on("ci.task.register") { event ->
             logger.debug("Registered task '${event.name}' with type '${(event["type"] as Class<?>).name}'")
@@ -223,7 +219,12 @@ class CI {
      */
     void runJob(Job job) {
         Thread.start("Builder[${job.name}]") { ->
-            def number = (job.history.latestBuild?.number ?: 0) + 1
+            int number
+            if (job.history.latestBuild) {
+                number = job.history.latestBuild.number
+            } else {
+                number = 1
+            }
             def lastStatus = number == 1 ? JobStatus.NOT_STARTED : job.status
             job.status = JobStatus.WAITING
 
@@ -234,7 +235,7 @@ class CI {
 
             def checkJobInQueue = {
                 jobQueue.count {
-                    it.name == job.name
+                    it["name"] == job.name
                 } != 1
             }
 
@@ -246,7 +247,11 @@ class CI {
             }
 
             // Update Number
-            number = (job.history.latestBuild?.number ?: 0) + 1
+            if (job.history.latestBuild) {
+                number = job.history.latestBuild.number
+            } else {
+                number = 1
+            }
 
             eventBus.dispatch("ci.job.running", [
                     jobName   : job.name,
@@ -280,7 +285,7 @@ class CI {
                     tasksShouldRun = false
                 }
 
-                def scm = scmTypes[scmConfig.type as String].newInstance()
+                SCM scm = ((Class<? extends SCM>) scmTypes[scmConfig.type as String]).getConstructor().newInstance()
 
                 scm.ci = this
                 scm.job = job
@@ -303,8 +308,9 @@ class CI {
                     logger.info "Running Task ${id} of ${job.tasks.size()} for Job '${job.name}'"
 
                     try {
-                        def taskType = taskTypes[taskConfig.taskType as String]
-                        def task = taskType.newInstance()
+                        Class<? extends Task> taskType = (Class<? extends Task>) taskTypes[taskConfig.taskType as String]
+
+                        Task task = taskType.getConstructor().newInstance()
 
                         task.ci = this
                         task.job = job
@@ -377,7 +383,6 @@ class CI {
     /**
      * Updates all Jobs from the Database and parses Job Files
      */
-    @CompileStatic
     void updateJobs() {
         jobs.values()*.reload()
         eventBus.dispatch("ci.jobs.reloaded")
@@ -387,28 +392,24 @@ class CI {
      * Gets where artifacts are stored
      * @return Artifact Directory
      */
-    @CompileStatic
     File getArtifactDir() {
         File dir = new File(configRoot, "artifacts").absoluteFile
         dir.mkdir()
         return dir
     }
 
-    @CompileStatic
     void registerTask(String name, Class<? extends Task> taskType, Closure callback = {}) {
         taskTypes[name] = taskType
         eventBus.dispatch("ci.task.register", [name: name, type: taskType])
         callback()
     }
 
-    @CompileStatic
     void registerSCM(String name, Class<? extends SCM> scmType, Closure callback = {}) {
         scmTypes[name] = scmType
         eventBus.dispatch("ci.scm.register", [name: name, type: scmType])
         callback()
     }
 
-    @CompileStatic
     static CI getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new CI()
