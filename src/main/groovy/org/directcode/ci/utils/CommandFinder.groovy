@@ -58,7 +58,7 @@ class CommandFinder {
         if (OperatingSystem.current().windows) {
             return find("cmd")
         } else {
-            return find("bash") ?: find("sh") ?: find("zsh") ?: find("csh")
+            return find("shell") ?: find("bash") ?: find("sh")
         }
     }
 }
