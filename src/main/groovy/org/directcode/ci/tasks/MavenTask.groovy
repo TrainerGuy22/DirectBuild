@@ -7,7 +7,7 @@ import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
 class MavenTask extends Task {
-    List<String> tasks = []
+    List<String> goals = []
     List<String> opts = []
 
     @Override
@@ -24,7 +24,7 @@ class MavenTask extends Task {
 
         cmd.addAll(opts)
 
-        cmd.addAll(tasks)
+        cmd.addAll(goals)
 
         run(cmd)
     }

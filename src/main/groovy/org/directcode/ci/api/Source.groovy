@@ -7,7 +7,7 @@ import org.directcode.ci.jobs.JobLog
 import org.directcode.ci.utils.Utils
 
 /**
- *
+ * A Source is a provider for resources in the Build Workspace
  */
 abstract class Source {
 
