@@ -3,6 +3,10 @@
 # A QuickStart Script for SimpleCI #
 # Created by: Kenneth Endfinger    #
 ####################################
+# Options #
+USE_PREBUILTS="false"
+# End Options #
+
 function check_commands() {
     for cmd in git java; do
         if which ${cmd} > /dev/null 2>&1; then
@@ -36,8 +40,8 @@ function build() {
     cd _build_
     ./gradlew jar
     if [[ ${?} -ne 0 ]]; then
-        echo "ERROR: Failed to build SimpleCI."
-        exit 1
+        echo "ERROR: Failed to build SimpleCI. Falling back to prebuilts."
+        download_prebuilts
     fi
     cp -R build/libs/SimpleCI.jar ../SimpleCI.jar
     cd ..
@@ -45,10 +49,22 @@ function build() {
     rm -rf _build_
 }
 
-echo "Checking system for needed commands..."
-check_commands
-echo "Checking Java Version..."
-check_java_version
-echo "Building SimpleCI..."
-build
+function download_prebuilts() {
+    wget https://kaendfinger.ci.cloudbees.com/job/SimpleCI/lastSuccessfulBuild/artifact/build/libs/SimpleCI.jar -OSimpleCI.jar
+    if [[ ${?} -ne 0 ]]; then
+        echo "ERROR: Failed to download prebuilts."
+    fi
+    chmod a+x SimpleCI.jar # For Good Measure
+}
+
+if [[ ${USE_PREBUILTS} == true ]]; then
+    download_prebuilts
+else
+    echo "Checking system for needed commands..."
+    check_commands
+    echo "Checking Java Version..."
+    check_java_version
+    echo "Building SimpleCI..."
+    build
+fi
 echo "You may now start SimpleCI by typing 'java -jar SimpleCI.jar'"
