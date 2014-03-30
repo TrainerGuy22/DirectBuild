@@ -2,9 +2,8 @@ distributions {
     main {
         baseName = 'SimpleCI'
         contents {
-            from("${buildDir}/libs/SimpleCI-${version}.jar") {
+            from("${buildDir}/libs/SimpleCI.jar") {
                 into("lib")
-                rename("SimpleCI-${version}.jar", "CI.jar")
             }
         }
     }

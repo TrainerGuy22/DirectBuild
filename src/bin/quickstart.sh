@@ -39,7 +39,7 @@ function build() {
         echo "ERROR: Failed to build SimpleCI."
         exit 1
     fi
-    cp -R build/libs/*.jar ../SimpleCI.jar
+    cp -R build/libs/SimpleCI.jar ../SimpleCI.jar
     cd ..
     echo "Cleaning Up..."
     rm -rf _build_
