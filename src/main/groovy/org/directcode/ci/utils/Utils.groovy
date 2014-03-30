@@ -46,11 +46,9 @@ class Utils {
         return new GroovyShell(cc).parse(file)
     }
 
-
     static InputStream resource(String path) {
         return Utils.class.classLoader.getResourceAsStream(path)
     }
-
 
     @Memoized(maxCacheSize = 15)
     static def resourceToString(String path) {

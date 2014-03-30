@@ -87,7 +87,6 @@ class Logger {
 
     void error(String message, Throwable e) {
         log(LogLevel.ERROR, message, e)
-        e.printStackTrace()
     }
 
     void logTo(Path path) {
