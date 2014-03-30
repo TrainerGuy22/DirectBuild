@@ -9,15 +9,27 @@ import org.directcode.ci.utils.CommandFinder
 class GitSCM extends SCM {
 
     void gitClone() {
-        def cmd = [findGit().absolutePath, "clone", "--recursive", job.SCM.url as String, job.buildDir.absolutePath]
-
+        def cmd = [findGit().absolutePath]
+        cmd << "clone"
+        cmd << "--recursive"
+        cmd << "--depth"
+        cmd << "50"
+        if (job.SCM.containsKey("branch")) {
+            cmd << "--branch"
+            cmd << (job.SCM["branch"] as String)
+        }
+        cmd << (job.SCM["url"] as String)
+        cmd << job.buildDir.absolutePath
         run(cmd)
-
         updateSubmodules()
     }
 
     void update() {
         def cmd = [findGit().absolutePath, "pull", "--all"]
+
+        if (job.SCM.containsKey("branch")) {
+            run([findGit().absolutePath, "checkout", (job.SCM["branch"] as String)])
+        }
 
         updateSubmodules()
 
