@@ -7,7 +7,7 @@ import org.directcode.ci.exception.ToolMissingException
 import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
-class GitSource extends Source {
+class GitSource extends Source implements VCS {
 
     void gitClone() {
         def cmd = []
@@ -62,8 +62,9 @@ class GitSource extends Source {
         }
     }
 
-    SCMChangelog changelog(int count) {
-        def changelog = new SCMChangelog()
+    @Override
+    VCSChangelog changelog(int count) {
+        def changelog = new VCSChangelog()
 
         if (!exists()) {
             gitClone()

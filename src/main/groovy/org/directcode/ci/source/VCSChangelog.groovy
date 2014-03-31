@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
  * A Changelog for VCS Sources
  */
 @CompileStatic
-class SCMChangelog {
+class VCSChangelog {
     List<Entry> entries = []
 
     Entry newEntry() {
