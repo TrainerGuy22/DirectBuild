@@ -9,9 +9,8 @@ import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
-import org.directcode.ci.source.DownloadSource
 import org.directcode.ci.source.NoneSource
-import org.directcode.ci.tasks.*
+import org.directcode.ci.tasks.CommandTask
 import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
 import org.directcode.ci.utils.HTTP
@@ -161,12 +160,7 @@ class CI {
      */
     private void loadBuiltins() {
         registerSource("none", NoneSource)
-        registerSource("download", DownloadSource)
-        registerTask("groovy", GroovyScriptTask)
         registerTask("command", CommandTask)
-        registerTask("make", MakeTask)
-        registerTask("ant", AntTask)
-        registerTask("maven", MavenTask)
     }
 
     /**

@@ -1,17 +1,21 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
-import org.directcode.ci.plugins.GitPlugin
-import org.directcode.ci.plugins.GradlePlugin
+import org.directcode.ci.plugins.*
 
 /**
  * Plugin Provider for loading bundled org.directcode.ci.plugins
  */
 @CompileStatic
 class BundledPluginProvider extends PluginProvider {
-    static List<Class<? extends Plugin>> bundledPlugins = [
+    static final List<Class<? extends Plugin>> bundledPlugins = [
             GradlePlugin,
-            GitPlugin
+            GitPlugin,
+            MakePlugin,
+            AntPlugin,
+            MavenPlugin,
+            GroovyScriptPlugin,
+            DownloadSourcePlugin
     ]
 
     @Override
