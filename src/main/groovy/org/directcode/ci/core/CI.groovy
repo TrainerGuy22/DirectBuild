@@ -17,6 +17,7 @@ import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
 import org.directcode.ci.utils.HTTP
 import org.directcode.ci.web.VertxManager
+import org.jetbrains.annotations.NotNull
 
 @CompileStatic
 class CI {
@@ -222,7 +223,7 @@ class CI {
      * @param job Job to Add to Queue
      * @return A Build that can be used to track status information
      */
-    Build runJob(Job job) {
+    Build runJob(@NotNull Job job) {
         return jobQueue.add(job)
     }
 
@@ -244,13 +245,13 @@ class CI {
         return dir
     }
 
-    void registerTask(String name, Class<? extends Task> taskType, Closure callback = {}) {
+    void registerTask(@NotNull String name, @NotNull Class<? extends Task> taskType, Closure callback = {}) {
         taskTypes[name] = taskType
         eventBus.dispatch("ci.task.register", [name: name, type: taskType])
         callback()
     }
 
-    void registerSource(String name, Class<? extends Source> sourceType, Closure callback = {}) {
+    void registerSource(@NotNull String name, @NotNull Class<? extends Source> sourceType, Closure callback = {}) {
         sourceTypes[name] = sourceType
         eventBus.dispatch("ci.source.register", [name: name, type: sourceType])
         callback()

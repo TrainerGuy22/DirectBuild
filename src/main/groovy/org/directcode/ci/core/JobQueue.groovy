@@ -59,14 +59,4 @@ class JobQueue {
         }
         return build
     }
-
-    Set<Builder> getAllBuilding(Job job) {
-        def out = []
-        for (builder in builders) {
-            if (builder.busy && builder.current().job == job) {
-                out.add(job)
-            }
-        }
-        return out.toSet()
-    }
 }

@@ -9,6 +9,7 @@ import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.ConsoleHandler
 import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
+import org.jetbrains.annotations.NotNull
 
 @CompileStatic
 class Main {
@@ -16,7 +17,7 @@ class Main {
     static final Logger logger = Logger.getLogger("Console")
 
     @SuppressWarnings("GroovyEmptyStatementBody")
-    static void main(String[] consoleArgs) {
+    static void main(@NotNull String[] consoleArgs) {
 
         if (OperatingSystem.current().unsupported) {
             logger.warning("SimpleCI does not officially support your platform.")
