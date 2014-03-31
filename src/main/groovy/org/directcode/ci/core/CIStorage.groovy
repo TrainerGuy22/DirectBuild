@@ -9,6 +9,9 @@ import org.directcode.ci.utils.Utils
 
 import java.nio.file.Path
 
+/**
+ * Storage System for SimpleCI
+ */
 @CompileStatic
 class CIStorage {
     private final Map<String, Map<String, ? extends Object>> storages = [:]
