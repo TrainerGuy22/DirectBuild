@@ -160,6 +160,8 @@ class WebServer {
         matcher.noMatch { HttpServerRequest r ->
             writeResource(r, "404.html")
         }
+
+        ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: ci.vertxManager.vertx])
     }
 
     private void writeResource(HttpServerRequest r, String path) {
