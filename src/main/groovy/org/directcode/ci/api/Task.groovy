@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull
  * A CI build Task
  */
 abstract class Task {
-    CI ci
     Job job
     JobLog log
 
@@ -43,7 +42,7 @@ abstract class Task {
             directory(workingDir)
             environment(env)
             streamOutput { String line ->
-                ci.logger.debug("${line}")
+                CI.logger.debug("${line}")
                 log.write("${line}")
             }
         }

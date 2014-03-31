@@ -6,7 +6,7 @@ import org.directcode.ci.tasks.MavenTask
 
 class MavenPlugin extends Plugin {
     @Override
-    void apply(CI ci) {
-        ci.registerTask("maven", MavenTask)
+    void apply() {
+        CI.get().registerTask("maven", MavenTask)
     }
 }

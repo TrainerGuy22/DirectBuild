@@ -1,30 +1,10 @@
 package org.directcode.ci.config
-
 import groovy.transform.CompileStatic
-import org.directcode.ci.core.CI
 
 @CompileStatic
 class CiConfig extends GConfig {
-    private final CI ci
-
-    CiConfig(CI ci) {
-        super(new File(ci.configRoot, "config.groovy"))
-        this.ci = ci
-
+    CiConfig() {
         defaultConfig = this.class.classLoader.getResourceAsStream("defaultConfig.groovy").text
-    }
-
-    @Override
-    void load() {
-        super.load()
-
-        def web = getProperty("web", [
-                host: "0.0.0.0",
-                port: 8080
-        ]) as Map<String, Object>
-
-        ci.host = web['host'] as String
-        ci.port = web['port'] as int
     }
 
     Map<String, Object> ciSection() {
@@ -53,5 +33,12 @@ class CiConfig extends GConfig {
 
     Map<String, String> pathsSection() {
         return getProperty("paths", [:]) as Map<String, String>
+    }
+
+    Map<String, Object> webSection() {
+        return getProperty("web", [
+                host: "0.0.0.0",
+                port: 8080
+        ]) as Map<String, Object>
     }
 }

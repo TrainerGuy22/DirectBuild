@@ -28,7 +28,7 @@ class Main {
 
         Thread.defaultUncaughtExceptionHandler = [
                 uncaughtException: { Thread thread, Throwable e ->
-                    if (logger.canLog(LogLevel.DEBUG)) {
+                    if (logger.canLog(LogLevel.DEBUG) || (System.getProperty("ci.debug") as boolean)) {
                         e.printStackTrace()
                         System.exit(1)
                         return
@@ -39,7 +39,7 @@ class Main {
                 }
         ] as Thread.UncaughtExceptionHandler
 
-        CI ci = CI.instance
+        def ci = CI.get()
 
         ci.start()
 

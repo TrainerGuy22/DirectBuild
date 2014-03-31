@@ -15,7 +15,7 @@ class CommandFinder {
     }
 
     static File getPath(@NotNull String entryName) {
-        def paths = CI.instance.config.pathsSection()
+        def paths = CI.get().config.pathsSection()
         if (paths.containsKey(entryName)) {
             return new File(paths[entryName]).absoluteFile
         } else {

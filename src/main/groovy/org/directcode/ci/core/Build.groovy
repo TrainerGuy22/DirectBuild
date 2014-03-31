@@ -1,5 +1,4 @@
 package org.directcode.ci.core
-
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.Source
 import org.directcode.ci.api.Task
@@ -29,7 +28,7 @@ class Build {
     }
 
     protected void execute() {
-        def ci = job.ci
+        def ci = CI.get()
         this.waiting = false
         def eventBus = ci.eventBus
 
@@ -64,14 +63,13 @@ class Build {
                 success = false
                 tasksShouldRun = false
             } else {
-                Source scm = ((Class<? extends Source>) ci.sourceTypes[scmConfig.type as String]).getConstructor().newInstance()
+                Source source = ((Class<? extends Source>) ci.sourceTypes[scmConfig.type as String]).getConstructor().newInstance()
 
-                scm.ci = ci
-                scm.job = job
-                scm.log = jobLog
+                source.job = job
+                source.log = jobLog
 
                 try {
-                    scm.execute()
+                    source.execute()
                 } catch (CIException e) {
                     logger.info "Job '${job.name}' (Source): ${e.message}"
                     tasksShouldRun = false
@@ -87,11 +85,14 @@ class Build {
                 def id = tasks.indexOf(taskConfig) + 1
                 logger.info "Running Task ${id} of ${job.tasks.size()} for Build '${job.name}:${number}'"
 
-                Class<? extends Task> taskType = (Class<? extends Task>) ci.taskTypes[taskConfig.taskType as String]
+                if (!(taskConfig.taskType in ci.taskTypes.keySet())) {
+                    logger.error("Build '${job.name}:${number}': Unknown task type '${taskConfig.taskType}'")
+                    success = false
+                    break
+                }
 
-                Task task = taskType.getConstructor().newInstance()
+                Task task = taskConfig.create()
 
-                task.ci = ci
                 task.job = job
                 task.log = jobLog
 

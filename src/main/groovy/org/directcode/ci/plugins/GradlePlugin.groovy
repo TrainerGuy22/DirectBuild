@@ -6,7 +6,7 @@ import org.directcode.ci.tasks.GradleTask
 
 class GradlePlugin extends Plugin {
     @Override
-    void apply(CI ci) {
-        ci.registerTask("gradle", GradleTask)
+    void apply() {
+        CI.get().registerTask("gradle", GradleTask)
     }
 }

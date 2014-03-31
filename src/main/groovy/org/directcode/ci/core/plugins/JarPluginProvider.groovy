@@ -1,6 +1,7 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 import org.directcode.ci.exception.CIException
 import org.directcode.ci.utils.FileMatcher
 
@@ -10,14 +11,14 @@ import java.util.jar.JarFile
 class JarPluginProvider extends PluginProvider {
     @Override
     void loadPlugins() {
-        def pluginsDir = new File(ci.configRoot, "plugins")
+        def pluginsDir = new File(CI.get().configRoot, "plugins")
         FileMatcher.create(pluginsDir).withExtension("jar") { File file ->
             ((GroovyClassLoader) this.class.classLoader).addURL(file.toURI().toURL()) // This method will exist at runtime
             def jar = new JarFile(file)
             def manifest = jar.manifest.mainAttributes
             if ("Plugin" in manifest.keySet()) { // A Class that extends Plugin
                 def className = manifest.getValue("Plugin")
-                if (ci.config.pluginsSection()["disabled"]?.contains(className)) {
+                if (CI.get().config.pluginsSection()["disabled"]?.contains(className)) {
                     return
                 }
                 def clazz = this.class.classLoader.loadClass(className)
@@ -25,7 +26,7 @@ class JarPluginProvider extends PluginProvider {
                     throw new CIException("Plugin Jar's Class is not an instance of ${Plugin.class.name}")
                 }
                 def instance = clazz.newInstance() as Plugin
-                instance.apply(ci)
+                instance.apply()
             }
         }
     }

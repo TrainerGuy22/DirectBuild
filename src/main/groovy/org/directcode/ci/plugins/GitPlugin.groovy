@@ -7,8 +7,8 @@ import org.directcode.ci.tasks.GitTask
 
 class GitPlugin extends Plugin {
     @Override
-    void apply(CI ci) {
-        ci.registerTask("git", GitTask)
-        ci.registerSource("git", GitSource)
+    void apply() {
+        CI.get().registerTask("git", GitTask)
+        CI.get().registerSource("git", GitSource)
     }
 }

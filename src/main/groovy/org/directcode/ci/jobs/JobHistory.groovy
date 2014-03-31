@@ -16,7 +16,7 @@ class JobHistory {
     }
 
     void load() {
-        def history = ((List<Map<String, Object>>) CI.instance.storage.get("job_history").get(job.name, []))
+        def history = ((List<Map<String, Object>>) CI.get().storage.get("job_history").get(job.name, []))
         for (result in history) {
             def entry = new Entry()
             entries.add(entry)
@@ -24,7 +24,7 @@ class JobHistory {
             entry.log = result.log as String
             entry.when = result.timeStamp as String
             entry.status = result.status as int
-            def artifactDir = new File(job.ci.artifactDir, "${job.name}/${entry.number}")
+            def artifactDir = new File(CI.get().artifactDir, "${job.name}/${entry.number}")
             if (!artifactDir.exists()) {
                 artifactDir.mkdirs()
             }

@@ -1,6 +1,7 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 import org.directcode.ci.utils.FileMatcher
 
 import javax.script.ScriptEngineManager
@@ -15,9 +16,9 @@ class ScriptPluginProvider extends PluginProvider {
         def manager = new ScriptEngineManager()
         manager.engineFactories.each { factory ->
             def engine = factory.scriptEngine
-            engine.put("ci", ci)
-            engine.put("logger", ci.logger)
-            FileMatcher.create(new File(ci.configRoot, "plugins")).withExtensions(factory.extensions) { File file ->
+            engine.put("ci", CI.get())
+            engine.put("logger", CI.logger)
+            FileMatcher.create(new File(CI.get().configRoot, "plugins")).withExtensions(factory.extensions) { File file ->
                 engine.eval(file.newReader())
             }
         }

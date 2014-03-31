@@ -6,7 +6,7 @@ import org.directcode.ci.source.DownloadSource
 
 class DownloadSourcePlugin extends Plugin {
     @Override
-    void apply(CI ci) {
-        ci.registerSource("download", DownloadSource)
+    void apply() {
+        CI.get().registerSource("download", DownloadSource)
     }
 }

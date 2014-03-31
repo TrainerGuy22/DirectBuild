@@ -28,7 +28,7 @@ abstract class JobScript extends Script {
     }
 
     void task(String type, Closure closure) {
-        if (type in CI.instance.taskTypes.keySet()) {
+        if (type in CI.get().taskTypes.keySet()) {
             def config = new TaskConfiguration()
             config.taskType = type
             config.configClosure = closure

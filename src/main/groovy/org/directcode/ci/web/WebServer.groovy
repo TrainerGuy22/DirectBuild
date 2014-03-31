@@ -4,6 +4,7 @@ import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
+import org.vertx.groovy.core.Vertx
 import org.vertx.groovy.core.buffer.Buffer
 import org.vertx.groovy.core.http.HttpServer
 import org.vertx.groovy.core.http.HttpServerRequest
@@ -11,12 +12,12 @@ import org.vertx.groovy.core.http.RouteMatcher
 
 @CompileStatic
 class WebServer {
-    HttpServer server
-    CI ci
+    final HttpServer server
+    final Vertx vertx
 
-    WebServer(CI ci) {
-        this.ci = ci
-        server = ci.vertxManager.vertx.createHttpServer()
+    WebServer() {
+        vertx = Vertx.newVertx()
+        server = vertx.createHttpServer()
     }
 
     void start(int port, String ip) {
@@ -27,6 +28,8 @@ class WebServer {
     }
 
     private void configure(RouteMatcher matcher) {
+        def ci = CI.get()
+
         matcher.get('/') { HttpServerRequest r ->
             writeResource(r, "index.html")
         }
@@ -161,7 +164,7 @@ class WebServer {
             writeResource(r, "404.html")
         }
 
-        ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: ci.vertxManager.vertx])
+        ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: vertx])
     }
 
     private void writeResource(HttpServerRequest r, String path) {
@@ -179,13 +182,13 @@ class WebServer {
         r.response.end(buffer)
     }
 
-    private InputStream getStream(String path) {
-        File dir = new File(ci.configRoot, "www")
+    private static InputStream getStream(String path) {
+        File dir = new File(CI.get().configRoot, "www")
         InputStream stream
         if (!dir.exists()) {
             stream = Utils.resource("simpleci/${path}")
         } else {
-            File file = new File(dir, path)
+            def file = new File(dir, path)
             if (!file.exists()) {
                 return null
             }

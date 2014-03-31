@@ -10,20 +10,18 @@ import org.jetbrains.annotations.Nullable
 class JobQueue {
     static final Logger logger = Logger.getLogger("JobQueue")
     private final Set<Build> buildQueue
-    private final CI ci
     private final Set<Builder> builders
     private final Map<String, Integer> numbers
 
-    JobQueue(@NotNull CI ci, @NotNull int builderCount) {
-        this.ci = ci
+    JobQueue(@NotNull int builderCount) {
         this.buildQueue = new HashSet<>()
         this.builders = new HashSet<>(builderCount)
         1.upto(builderCount) { id ->
-            def builder = new Builder(ci, id as int)
+            def builder = new Builder(id as int)
             builder.start()
             builders.add(builder)
         }
-        this.numbers = ci.storage.get("build_numbers") as Map<String, Integer>
+        this.numbers = CI.get().storage.get("build_numbers") as Map<String, Integer>
         addShutdownHook { ->
             builders.each { builder ->
                 builder.shouldRun = false

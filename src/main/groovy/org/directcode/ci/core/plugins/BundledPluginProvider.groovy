@@ -1,6 +1,7 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 import org.directcode.ci.plugins.*
 
 /**
@@ -21,10 +22,10 @@ class BundledPluginProvider extends PluginProvider {
     @Override
     void loadPlugins() {
         for (plugin in bundledPlugins) {
-            if (ci.config.pluginsSection()["disabled"]?.contains(plugin.name)) {
+            if (CI.get().config.pluginsSection()["disabled"]?.contains(plugin.name)) {
                 return
             }
-            plugin.getConstructor().newInstance().apply(ci)
+            plugin.getConstructor().newInstance().apply()
         }
     }
 }

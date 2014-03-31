@@ -6,7 +6,7 @@ import org.directcode.ci.tasks.GroovyScriptTask
 
 class GroovyScriptPlugin extends Plugin {
     @Override
-    void apply(CI ci) {
-        ci.registerTask("groovy", GroovyScriptTask)
+    void apply() {
+        CI.get().registerTask("groovy", GroovyScriptTask)
     }
 }

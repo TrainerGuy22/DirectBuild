@@ -7,7 +7,7 @@ import org.directcode.ci.tasks.MakeTask
 class MakePlugin extends Plugin {
 
     @Override
-    void apply(CI ci) {
-        ci.registerTask("make", MakeTask)
+    void apply() {
+        CI.get().registerTask("make", MakeTask)
     }
 }

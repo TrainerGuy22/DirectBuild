@@ -5,16 +5,20 @@ import org.directcode.ci.utils.Utils
 
 @CompileStatic
 class GConfig {
-    private final File configFile
+    private File configFile
     private Binding config
     private String defaultConfig
 
-    GConfig(File configFile) {
+    GConfig(File configFile = null) {
         this.configFile = configFile
     }
 
     void setDefaultConfig(String defaultConfig) {
         this.defaultConfig = defaultConfig
+    }
+
+    void setConfigFile(File file) {
+        this.configFile = file
     }
 
     void load() {

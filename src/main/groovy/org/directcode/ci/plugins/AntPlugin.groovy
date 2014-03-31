@@ -6,7 +6,7 @@ import org.directcode.ci.tasks.AntTask
 
 class AntPlugin extends Plugin {
     @Override
-    void apply(CI ci) {
-        ci.registerTask("ant", AntTask)
+    void apply() {
+        CI.get().registerTask("ant", AntTask)
     }
 }

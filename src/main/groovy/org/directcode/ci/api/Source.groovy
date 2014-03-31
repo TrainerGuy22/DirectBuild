@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull
  * A Source is a provider for resources in the Build Workspace
  */
 abstract class Source {
-
-    CI ci
     Job job
     JobLog log
 
@@ -31,7 +29,7 @@ abstract class Source {
             directory(workingDir)
             environment(env)
             streamOutput { String line ->
-                ci.logger.debug("${line}")
+                CI.logger.debug("${line}")
                 log.write("${line}")
             }
         }
