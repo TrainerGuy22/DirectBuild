@@ -189,7 +189,7 @@ class WebServer {
             if (!file.exists()) {
                 return null
             }
-            stream = file.newInputStream()
+            stream = file.toPath().newInputStream()
         }
         return stream
     }
