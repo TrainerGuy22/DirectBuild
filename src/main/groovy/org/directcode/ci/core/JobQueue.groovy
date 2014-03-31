@@ -16,8 +16,8 @@ class JobQueue {
         this.ci = ci
         this.buildQueue = new HashSet<>()
         this.builders = new HashSet<>(builderCount)
-        builderCount.times { id ->
-            def builder = new Builder(ci, id)
+        1.upto(builderCount) { id ->
+            def builder = new Builder(ci, id as int)
             builder.start()
             builders.add(builder)
         }

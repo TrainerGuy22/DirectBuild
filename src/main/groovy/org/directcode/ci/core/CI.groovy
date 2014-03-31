@@ -9,6 +9,7 @@ import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.plugins.PluginManager
+import org.directcode.ci.source.DownloadSource
 import org.directcode.ci.source.GitSource
 import org.directcode.ci.source.NoneSource
 import org.directcode.ci.tasks.*
@@ -161,6 +162,7 @@ class CI {
     private void loadBuiltins() {
         registerSource("git", GitSource)
         registerSource("none", NoneSource)
+        registerSource("download", DownloadSource)
         registerTask("gradle", GradleTask)
         registerTask("groovy", GroovyScriptTask)
         registerTask("command", CommandTask)
