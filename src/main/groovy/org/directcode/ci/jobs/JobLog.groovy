@@ -10,7 +10,7 @@ class JobLog {
 
     JobLog(@NotNull File file) {
         this.file = file
-        this.out = file.newPrintWriter()
+        this.out = file.toPath().newPrintWriter()
     }
 
     void write(@NotNull String line) {
