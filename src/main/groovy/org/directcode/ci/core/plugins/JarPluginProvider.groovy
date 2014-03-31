@@ -10,7 +10,7 @@ import java.util.jar.JarFile
 class JarPluginProvider extends PluginProvider {
     @Override
     void loadPlugins() {
-        def pluginsDir = new File(ci.configRoot, "plugins")
+        def pluginsDir = new File(ci.configRoot, "org.directcode.ci.plugins")
         FileMatcher.create(pluginsDir).withExtension("jar") { File file ->
             ((GroovyClassLoader) this.class.classLoader).addURL(file.toURI().toURL()) // This method will exist at runtime
             def jar = new JarFile(file)

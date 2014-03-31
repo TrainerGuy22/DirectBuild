@@ -1,4 +1,4 @@
-package plugins
+package org.directcode.ci.plugins
 
 import org.directcode.ci.core.CI
 import org.directcode.ci.core.plugins.Plugin

@@ -125,7 +125,7 @@ class CI {
 
         pluginManager.loadPlugins()
 
-        eventBus.dispatch("ci.plugins.loaded")
+        eventBus.dispatch("ci.org.directcode.ci.plugins.loaded")
 
         eventBus.dispatch("ci.init", [
                 time: System.currentTimeMillis()

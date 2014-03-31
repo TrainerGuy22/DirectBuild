@@ -1,10 +1,10 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
-import plugins.GradlePlugin
+import org.directcode.ci.plugins.GradlePlugin
 
 /**
- * Plugin Provider for loading bundled plugins
+ * Plugin Provider for loading bundled org.directcode.ci.plugins
  */
 @CompileStatic
 class BundledPluginProvider extends PluginProvider {
