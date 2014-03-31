@@ -1,4 +1,4 @@
-package org.directcode.ci.plugins
+package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
 import org.directcode.ci.utils.FileMatcher

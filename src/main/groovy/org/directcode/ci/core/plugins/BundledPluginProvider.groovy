@@ -1,14 +1,16 @@
-package org.directcode.ci.plugins
+package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
-import org.directcode.ci.core.CI
+import plugins.GradlePlugin
 
 /**
  * Plugin Provider for loading bundled plugins
  */
 @CompileStatic
 class BundledPluginProvider extends PluginProvider {
-    static Set<Class<? extends Plugin<CI>>> bundledPlugins = []
+    static List<Class<? extends Plugin>> bundledPlugins = [
+            GradlePlugin
+    ]
 
     @Override
     void loadPlugins() {

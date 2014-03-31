@@ -4,11 +4,11 @@ import groovy.transform.CompileStatic
 import org.directcode.ci.api.Source
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
+import org.directcode.ci.core.plugins.PluginManager
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
-import org.directcode.ci.plugins.PluginManager
 import org.directcode.ci.source.DownloadSource
 import org.directcode.ci.source.GitSource
 import org.directcode.ci.source.NoneSource
@@ -121,10 +121,7 @@ class CI {
 
         new File(configRoot, 'logs').absoluteFile.mkdirs()
 
-
         loadBuiltins()
-
-        eventBus.dispatch("ci.builtins.loaded")
 
         pluginManager.loadPlugins()
 
@@ -167,7 +164,6 @@ class CI {
         registerSource("git", GitSource)
         registerSource("none", NoneSource)
         registerSource("download", DownloadSource)
-        registerTask("gradle", GradleTask)
         registerTask("groovy", GroovyScriptTask)
         registerTask("command", CommandTask)
         registerTask("git", GitTask)
