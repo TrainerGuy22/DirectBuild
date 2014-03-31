@@ -1,4 +1,5 @@
 package org.directcode.ci.config
+
 import groovy.transform.CompileStatic
 
 @CompileStatic

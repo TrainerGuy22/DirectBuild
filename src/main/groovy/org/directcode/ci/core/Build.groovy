@@ -1,4 +1,5 @@
 package org.directcode.ci.core
+
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.Source
 import org.directcode.ci.api.Task
