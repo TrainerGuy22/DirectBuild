@@ -3,6 +3,7 @@ package org.directcode.ci.jobs
 import org.directcode.ci.config.ArtifactSpec
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
+import org.jetbrains.annotations.NotNull
 
 class Job {
     private final File jobFile
@@ -14,7 +15,7 @@ class Job {
 
     final WebHooks webHooks
 
-    Job(CI ci, File file) {
+    Job(@NotNull CI ci, @NotNull File file) {
         this.ci = ci
         this.webHooks = new WebHooks(this)
         this.jobFile = file
@@ -46,7 +47,7 @@ class Job {
         return new File(ci.configRoot, "logs/${name}.log").absoluteFile
     }
 
-    void setStatus(JobStatus status) {
+    void setStatus(@NotNull JobStatus status) {
         forceStatus(status)
         def jobInfo = ci.storage["jobs"][name] as Map<String, Object>
         jobInfo.status = status.ordinal()
@@ -62,7 +63,7 @@ class Job {
         this.buildConfig = JobScript.from(jobFile, this)
     }
 
-    void forceStatus(JobStatus status) {
+    void forceStatus(@NotNull JobStatus status) {
         this.@status = status
     }
 

@@ -1,8 +1,10 @@
 package org.directcode.ci.source
 
+import org.jetbrains.annotations.NotNull
+
 /**
  * A Version Control System.
  */
 interface VCS {
-    VCSChangelog changelog(int count);
+    VCSChangelog changelog(@NotNull int count);
 }

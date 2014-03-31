@@ -6,6 +6,8 @@ import groovy.transform.CompileStatic
 import jpower.core.Task
 import jpower.core.Worker
 import org.directcode.ci.utils.Utils
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 import java.nio.file.Path
 
@@ -30,7 +32,7 @@ class CIStorage {
         }
     }
 
-    void load(String storageName) {
+    void load(@NotNull String storageName) {
         def path = new File(storagePath.toFile(), "${storageName}.json").toPath()
         storages[storageName] = Utils.parseJSON(path.text) as Map<String, Object>
     }
@@ -60,14 +62,14 @@ class CIStorage {
         eventBus.dispatch("all.saved")
     }
 
-    synchronized void save(String storageName) {
+    synchronized void save(@NotNull String storageName) {
         def storageFile = new File(storagePath.toFile(), "${storageName}.json").toPath()
         def builder = new JsonBuilder(storages[storageName])
         storageFile.write(builder.toPrettyString() + System.lineSeparator())
         eventBus.dispatch("${storageName}.saved")
     }
 
-    void setStoragePath(Path path) {
+    void setStoragePath(@NotNull Path path) {
         this.storagePath = path
         path.toFile().mkdirs()
     }
@@ -76,7 +78,7 @@ class CIStorage {
         return storagePath
     }
 
-    Map<String, ? extends Object> get(String storageName) {
+    Map<String, ? extends Object> get(@NotNull String storageName) {
         if (!(storageName in storages.keySet())) {
             if (new File(storagePath.toFile(), "${storageName}.json").exists()) {
                 load(storageName)
@@ -91,7 +93,7 @@ class CIStorage {
         return storages
     }
 
-    String getJSON(String storageName) {
+    String getJSON(@NotNull String storageName) {
         def file = new File(storagePath.toFile(), "${storageName}.json")
         if (!file.exists()) {
             return null
@@ -100,7 +102,7 @@ class CIStorage {
         }
     }
 
-    void whenSaved(String storageName = null, Closure closure) {
+    void whenSaved(@Nullable String storageName = null, Closure closure) {
         eventBus.on("${storageName ?: "all"}.saved", closure)
     }
 }

@@ -3,6 +3,8 @@ package org.directcode.ci.core
 import groovy.transform.CompileStatic
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.logging.Logger
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @CompileStatic
 class JobQueue {
@@ -12,7 +14,7 @@ class JobQueue {
     private final Set<Builder> builders
     private final Map<String, Integer> numbers
 
-    JobQueue(CI ci, int builderCount) {
+    JobQueue(@NotNull CI ci, @NotNull int builderCount) {
         this.ci = ci
         this.buildQueue = new HashSet<>()
         this.builders = new HashSet<>(builderCount)
@@ -33,7 +35,7 @@ class JobQueue {
         return buildQueue
     }
 
-    boolean isBuilding(Job job, Builder exclude = null) {
+    boolean isBuilding(@NotNull Job job, @Nullable Builder exclude = null) {
         for (builder in builders) {
             if (!builder.busy || (exclude != null && builder.is(exclude))) {
                 continue
@@ -45,7 +47,7 @@ class JobQueue {
         return false
     }
 
-    synchronized Build add(Job job) {
+    synchronized Build add(@NotNull Job job) {
         def number = numbers.get(job.name, 0) + 1
         numbers[job.name] = number
         def build = new Build(job, number)

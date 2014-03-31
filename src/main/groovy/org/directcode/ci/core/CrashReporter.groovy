@@ -6,6 +6,7 @@ import jpower.core.Worker
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.HTTP
+import org.jetbrains.annotations.NotNull
 
 import java.nio.file.Path
 
@@ -21,7 +22,7 @@ class CrashReporter {
 
     private static Worker worker = new Worker()
 
-    static void report(Path path) {
+    static void report(@NotNull Path path) {
         if (logger.canLog(LogLevel.DEBUG)) {
             return
         }
