@@ -82,7 +82,7 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.0-20140330013029+0000"
+    gradleVersion = "2.0-20140330233151+0000"
     distributionUrl = "http://services.gradle.org/distributions-snapshots/gradle-${gradleVersion}-all.zip"
 }
 
