@@ -22,14 +22,9 @@ abstract class JobScript extends Script {
     List<TaskConfiguration> tasks = []
     ArtifactSpec artifacts = new ArtifactSpec()
     Map<String, ? extends Object> source = [type: "none"]
-    List<String> requirements = []
 
     void name(String name) {
         this.name = name
-    }
-
-    void require(String name) {
-        requirements.add(name)
     }
 
     void task(String type, Closure closure) {
