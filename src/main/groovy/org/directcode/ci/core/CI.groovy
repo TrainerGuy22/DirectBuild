@@ -159,6 +159,9 @@ class CI {
         Logger.logAllTo(logFile.toPath())
     }
 
+    /**
+     * Loads Builtin Tasks and Sources
+     */
     private void loadBuiltins() {
         registerSource("git", GitSource)
         registerSource("none", NoneSource)
