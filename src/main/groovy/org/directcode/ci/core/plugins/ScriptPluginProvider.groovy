@@ -17,7 +17,7 @@ class ScriptPluginProvider extends PluginProvider {
             def engine = factory.scriptEngine
             engine.put("ci", ci)
             engine.put("logger", ci.logger)
-            FileMatcher.create(new File(ci.configRoot, "org.directcode.ci.plugins")).withExtensions(factory.extensions) { File file ->
+            FileMatcher.create(new File(ci.configRoot, "plugins")).withExtensions(factory.extensions) { File file ->
                 engine.eval(file.newReader())
             }
         }
