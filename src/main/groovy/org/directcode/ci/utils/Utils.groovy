@@ -85,7 +85,7 @@ class Utils {
     }
 
     static String encodeJSON(Object object) {
-        return new JsonBuilder(object).toPrettyString()
+        return new JsonBuilder(object).toPrettyString() + "\n"
     }
 
     static Object parseJSON(String text) {
