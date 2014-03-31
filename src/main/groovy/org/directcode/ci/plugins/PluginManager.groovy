@@ -12,6 +12,7 @@ class PluginManager {
         this.ci = ci
         providers.add(new JarPluginProvider())
         providers.add(new ScriptPluginProvider())
+        providers.add(new BundledPluginProvider())
     }
 
     void loadPlugins() {
