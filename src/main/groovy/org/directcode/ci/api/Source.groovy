@@ -4,13 +4,12 @@ import org.directcode.ci.core.CI
 import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobLog
-import org.directcode.ci.scm.Changelog
 import org.directcode.ci.utils.Utils
 
 /**
- * A Source Code Manager
+ * A Source is a provider for resources in the Build Workspace
  */
-abstract class SCM {
+abstract class Source {
 
     CI ci
     Job job
@@ -18,14 +17,7 @@ abstract class SCM {
 
     abstract void execute();
 
-    /**
-     * Makes Changelog from SCM
-     * @param count Changelog Entry Count
-     * @return SCM Changelog
-     */
-    abstract Changelog changelog(int count);
-
-    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [:], boolean handleExitCode = true) {
+    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [TERM: "dumb"], boolean handleExitCode = true) {
         CI.logger.debug("Executing: '${command.join(" ")}'")
         log.write("\$ '${command.join(' ')}'")
 

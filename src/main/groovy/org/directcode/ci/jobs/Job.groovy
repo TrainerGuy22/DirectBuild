@@ -3,7 +3,6 @@ package org.directcode.ci.jobs
 import org.directcode.ci.config.ArtifactSpec
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
-import org.directcode.ci.scm.Changelog
 
 class Job {
     private final File jobFile
@@ -36,7 +35,7 @@ class Job {
     }
 
     Map<String, Object> getSCM() {
-        return buildConfig.scm
+        return buildConfig.source
     }
 
     ArtifactSpec getArtifacts() {
@@ -67,21 +66,9 @@ class Job {
         this.@status = status
     }
 
-    Changelog getChangelog(int count = 4) {
-        def scm = ci.scmTypes[SCM.type as String].newInstance()
-        scm.ci = ci
-        scm.job = this
-        scm.log = new JobLog(File.createTempFile("simpleci", "changelog"))
-        return scm.changelog(count)
-    }
-
     JobHistory getHistory() {
         def history = new JobHistory(this)
         history.load()
         return history
-    }
-
-    Map<String, Object> getNotifications() {
-        return buildConfig.notify
     }
 }

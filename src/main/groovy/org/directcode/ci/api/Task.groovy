@@ -29,7 +29,7 @@ abstract class Task {
         return new File(parent, name)
     }
 
-    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [:], boolean handleExitCode = true) {
+    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [TERM: "dumb"], boolean handleExitCode = true) {
         CI.logger.debug("Executing: '${command.join(" ")}'")
         log.write("\$ '${command.join(' ')}'")
 
@@ -51,5 +51,11 @@ abstract class Task {
         }
 
         return result.code
+    }
+
+    static void basicConfigure(Task task, Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = task
+        closure.call()
     }
 }

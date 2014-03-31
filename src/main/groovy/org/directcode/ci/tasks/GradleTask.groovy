@@ -37,7 +37,7 @@ class GradleTask extends Task {
         command.addAll(opts)
         command.addAll(tasks)
 
-        run(command, job.buildDir, [TERM: "dumb"])
+        run(command)
     }
 
     @Override

@@ -15,6 +15,7 @@ import java.nio.file.Path
 @CompileStatic
 class CrashReporter {
     static final Logger logger = Logger.getLogger("CrashReporter")
+
     static
     final String reporter = "https://script.google.com/macros/s/AKfycby4kKJjBVLyrfS83qec8_nJBzSWN2LKqfNMDzBsph_R20tfOhc/exec"
 

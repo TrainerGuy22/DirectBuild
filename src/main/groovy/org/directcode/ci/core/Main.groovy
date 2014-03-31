@@ -59,12 +59,6 @@ class Main {
                 } else {
                     ci.runJob(job)
                 }
-            } else if (command == 'restart') {
-                ci.vertxManager.stopWebServer()
-                ci = null
-                sleep(200)
-                ci = new CI()
-                ci.start()
             } else if (command == 'stop') {
                 System.exit(0)
             } else if (command == 'clean') {

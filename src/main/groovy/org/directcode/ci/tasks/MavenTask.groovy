@@ -2,20 +2,29 @@ package org.directcode.ci.tasks
 
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
+import org.directcode.ci.exception.ToolMissingException
+import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
 class MavenTask extends Task {
-    List<String> tasks = []
+    List<String> goals = []
     List<String> opts = []
-    String mavenCommand = "mvn"
 
     @Override
     void execute() {
-        def cmd = [mavenCommand]
+        def cmd = []
+
+        def maven = CommandFinder.find("mvn")
+
+        if (maven == null) {
+            throw new ToolMissingException("Maven is not installed on this system.")
+        }
+
+        cmd << maven
 
         cmd.addAll(opts)
 
-        cmd.addAll(tasks)
+        cmd.addAll(goals)
 
         run(cmd)
     }

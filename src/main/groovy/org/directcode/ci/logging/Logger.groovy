@@ -41,7 +41,7 @@ class Logger {
     }
 
     boolean canLog(LogLevel input) {
-        return currentLevel != LogLevel.DISABLED && input == currentLevel || input == LogLevel.ERROR || input == LogLevel.INFO && currentLevel == LogLevel.DEBUG
+        return currentLevel.ordinal() >= input.ordinal()
     }
 
     void log(LogLevel level, String message, Throwable e = null) {

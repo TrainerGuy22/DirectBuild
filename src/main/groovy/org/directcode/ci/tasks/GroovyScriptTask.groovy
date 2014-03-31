@@ -1,31 +1,37 @@
 package org.directcode.ci.tasks
 
 import groovy.transform.CompileStatic
-import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.api.Task
+import org.directcode.ci.exception.TaskFailedException
+import org.directcode.ci.exception.ToolMissingException
+import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
 class GroovyScriptTask extends Task {
+    List<String> opts = []
     String script
 
+    @Override
     void execute() {
-
-        def compiler = new CompilerConfiguration()
-
-        compiler.output = log.out
-
-        def shell = new GroovyShell(compiler)
-
-        try {
-            def theScript = shell.parse(script)
-            theScript.run()
-        } catch (e) {
-            e.printStackTrace(compiler.output)
+        if (!script) {
+            throw new TaskFailedException("Script must be specified.")
         }
+        def cmd = []
+        def file = new File(job.buildDir, script).absoluteFile
+        if (!file.exists()) {
+            throw new TaskFailedException("Script file '${script}' does not exist!")
+        }
+        def groovy = CommandFinder.find("groovy")
+        if (groovy == null) {
+            throw new ToolMissingException("Groovy not found on this system.")
+        }
+        cmd << groovy
+        cmd.addAll(opts)
+        cmd << file
     }
 
     @Override
     void configure(Closure closure) {
-        with(closure)
+        basicConfigure(this, closure)
     }
 }

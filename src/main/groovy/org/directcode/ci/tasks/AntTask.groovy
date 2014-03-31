@@ -2,20 +2,29 @@ package org.directcode.ci.tasks
 
 import groovy.transform.CompileStatic
 import org.directcode.ci.api.Task
+import org.directcode.ci.exception.ToolMissingException
+import org.directcode.ci.utils.CommandFinder
 
 @CompileStatic
 class AntTask extends Task {
-    List<String> tasks = []
+    List<String> targets = []
     List<String> opts = []
-    String antCommand = "ant"
 
     @Override
     void execute() {
-        def cmd = [antCommand]
+        def cmd = []
+
+        def ant = CommandFinder.find("ant")
+
+        if (ant == null) {
+            throw new ToolMissingException("Ant was not found on this system.")
+        }
+
+        cmd << ant
 
         cmd.addAll(opts)
 
-        cmd.addAll(tasks)
+        cmd.addAll(targets)
 
         run(cmd)
     }

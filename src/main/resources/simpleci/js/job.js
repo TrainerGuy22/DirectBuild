@@ -20,17 +20,6 @@ $(document).ready(function () {
         });
     });
 
-    $.getJSON("/api/changes/" + jobName, function (changes) {
-        var $changes = $("#changelog");
-
-        changes.forEach(function (change) {
-            var rev = change["revision"];
-            var msg = change["message"];
-            var author = change["author"];
-            $changes.append("<p class=\"list-group-item\">" + msg + " by " + author.bold() + "</p>");
-        });
-    });
-
     $.getJSON("/api/history/" + jobName, function (history) {
         var $history = $("#job-history");
 

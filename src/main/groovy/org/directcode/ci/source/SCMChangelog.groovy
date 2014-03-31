@@ -1,9 +1,12 @@
-package org.directcode.ci.scm
+package org.directcode.ci.source
 
 import groovy.transform.CompileStatic
 
+/**
+ * A Changelog for VCS Sources
+ */
 @CompileStatic
-class Changelog {
+class SCMChangelog {
     List<Entry> entries = []
 
     Entry newEntry() {
