@@ -21,6 +21,9 @@ class BundledPluginProvider extends PluginProvider {
     @Override
     void loadPlugins() {
         for (plugin in bundledPlugins) {
+            if (ci.config.pluginsSection()["disabled"]?.contains(plugin.name)) {
+                return
+            }
             plugin.getConstructor().newInstance().apply(ci)
         }
     }

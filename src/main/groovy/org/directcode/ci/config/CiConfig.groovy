@@ -33,6 +33,12 @@ class CiConfig extends GConfig {
         ]) as Map<String, Object>
     }
 
+    Map<String, List<String>> pluginsSection() {
+        return getProperty("plugins", [
+                disabled: []
+        ]) as Map<String, List<String>>
+    }
+
     Map<String, Object> loggingSection() {
         return getProperty("logging", [
                 level: "INFO"
