@@ -10,7 +10,6 @@ import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
 import org.directcode.ci.source.DownloadSource
-import org.directcode.ci.source.GitSource
 import org.directcode.ci.source.NoneSource
 import org.directcode.ci.tasks.*
 import org.directcode.ci.utils.ExecutionTimer
@@ -161,12 +160,10 @@ class CI {
      * Loads Builtin Tasks and Sources
      */
     private void loadBuiltins() {
-        registerSource("git", GitSource)
         registerSource("none", NoneSource)
         registerSource("download", DownloadSource)
         registerTask("groovy", GroovyScriptTask)
         registerTask("command", CommandTask)
-        registerTask("git", GitTask)
         registerTask("make", MakeTask)
         registerTask("ant", AntTask)
         registerTask("maven", MavenTask)

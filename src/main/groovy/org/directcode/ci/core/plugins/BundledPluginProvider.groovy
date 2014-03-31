@@ -1,6 +1,7 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.plugins.GitPlugin
 import org.directcode.ci.plugins.GradlePlugin
 
 /**
@@ -9,7 +10,8 @@ import org.directcode.ci.plugins.GradlePlugin
 @CompileStatic
 class BundledPluginProvider extends PluginProvider {
     static List<Class<? extends Plugin>> bundledPlugins = [
-            GradlePlugin
+            GradlePlugin,
+            GitPlugin
     ]
 
     @Override
