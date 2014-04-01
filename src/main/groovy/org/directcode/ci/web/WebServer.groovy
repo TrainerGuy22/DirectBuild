@@ -171,7 +171,7 @@ class WebServer {
         String mimeType = MimeTypes.get(path)
         InputStream stream = getStream(path)
 
-        r.headers.add("content-type", mimeType)
+        r.response.headers.add("Content-Type", mimeType)
 
         if (stream == null) {
             writeResource(r, "404.html")
