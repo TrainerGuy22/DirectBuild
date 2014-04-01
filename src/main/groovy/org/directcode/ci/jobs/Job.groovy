@@ -33,7 +33,7 @@ class Job {
         return new File(CI.get().configRoot, "workspace/${name}").absoluteFile
     }
 
-    Map<String, Object> getSCM() {
+    Map<String, ? extends Object> getSource() {
         return buildConfig.source
     }
 

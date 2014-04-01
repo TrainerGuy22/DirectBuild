@@ -43,6 +43,6 @@ abstract class Source {
     }
 
     Object option(String key, Object defaultValue = null) {
-        return job.SCM.get(key, defaultValue)
+        return job.source.get(key, defaultValue)
     }
 }

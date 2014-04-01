@@ -36,7 +36,7 @@ class GitSource extends Source implements VCS {
         cmd << "--all"
 
         if (option("branch")) {
-            run([findGit().absolutePath, "checkout", job.SCM["branch"] as String])
+            run([findGit().absolutePath, "checkout", job.source["branch"] as String])
         }
 
         updateSubmodules()

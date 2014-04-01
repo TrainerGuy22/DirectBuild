@@ -57,7 +57,7 @@ class Build {
         def jobLog = new JobLog(job.logFile)
 
         if (scmShouldRun) {
-            def scmConfig = job.SCM
+            def scmConfig = job.source
 
             if (!ci.sourceTypes.containsKey(scmConfig.type)) {
                 logger.error "Build '${job.name}:${number}' is attempting to use a non-existant Source Type '${scmConfig.type}!'"
