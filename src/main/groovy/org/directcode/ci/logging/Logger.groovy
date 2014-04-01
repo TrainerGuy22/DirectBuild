@@ -2,6 +2,8 @@ package org.directcode.ci.logging
 
 import groovy.transform.CompileStatic
 import org.directcode.ci.core.EventBus
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 import java.nio.file.Path
 import java.text.DateFormat
@@ -16,23 +18,23 @@ class Logger {
     private final EventBus eventBus = new EventBus()
     LogLevel currentLevel = LogLevel.INFO
 
-    Logger(String name) {
+    Logger(@NotNull String name) {
         this.name = name
     }
 
-    static void setGlobalLogLevel(LogLevel level) {
+    static void setGlobalLogLevel(@NotNull LogLevel level) {
         loggers.values().each { logger ->
             logger.currentLevel = level
         }
     }
 
-    static void logAllTo(Path path) {
+    static void logAllTo(@NotNull Path path) {
         loggers.values().each { logger ->
             logger.logTo(path)
         }
     }
 
-    static Logger getLogger(String name) {
+    static Logger getLogger(@NotNull String name) {
         if (name in loggers) {
             return loggers[name]
         } else {
@@ -40,11 +42,11 @@ class Logger {
         }
     }
 
-    boolean canLog(LogLevel input) {
+    boolean canLog(@NotNull LogLevel input) {
         return currentLevel.ordinal() >= input.ordinal()
     }
 
-    void log(LogLevel level, String message, Throwable e = null) {
+    void log(@NotNull LogLevel level, @NotNull String message, @Nullable Throwable e = null) {
         if (canLog(level)) {
             def timestamp = dateFormat.format(new Date())
             def complete = "[${timestamp}][${name}][${level.name()}] ${message}"
@@ -69,27 +71,23 @@ class Logger {
         }
     }
 
-    void info(String message) {
+    void info(@NotNull String message) {
         log(LogLevel.INFO, message)
     }
 
-    void warning(String message) {
+    void warning(@NotNull String message) {
         log(LogLevel.WARNING, message)
     }
 
-    void debug(String message) {
+    void debug(@NotNull String message) {
         log(LogLevel.DEBUG, message)
     }
 
-    void error(String message) {
-        log(LogLevel.ERROR, message)
-    }
-
-    void error(String message, Throwable e) {
+    void error(@NotNull String message, @Nullable Throwable e = null) {
         log(LogLevel.ERROR, message, e)
     }
 
-    void logTo(Path path) {
+    void logTo(@NotNull Path path) {
         eventBus.on('log') { Map<String, ? extends Object> event ->
             def message = event["complete"] as String
             def exception = event["exception"] as Exception
@@ -100,7 +98,7 @@ class Logger {
         }
     }
 
-    void on(String eventName, Closure handler) {
+    void on(@NotNull String eventName, @NotNull Closure handler) {
         eventBus.on(eventName, handler)
     }
 }

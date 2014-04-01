@@ -1,6 +1,7 @@
 package org.directcode.ci.jobs
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 import org.directcode.ci.utils.HTTP
 import org.directcode.ci.utils.Utils
 
@@ -13,7 +14,7 @@ class WebHooks {
     protected WebHooks(Job job) {
         this.job = job
 
-        job.ci.eventBus.on("ci.build.done") { Map<String, ? extends Object> event ->
+        CI.get().eventBus.on("ci.build.done") { Map<String, ? extends Object> event ->
             def data = [:]
             data.putAll(event)
             data.remove("build")
@@ -24,7 +25,7 @@ class WebHooks {
             }
         }
 
-        job.ci.eventBus.on("ci.build.started") { Map<String, ? extends Object> event ->
+        CI.get().eventBus.on("ci.build.started") { Map<String, ? extends Object> event ->
             def data = [:]
             data.putAll(event)
             data.remove("build")

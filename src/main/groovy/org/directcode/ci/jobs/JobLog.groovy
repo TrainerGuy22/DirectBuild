@@ -1,18 +1,19 @@
 package org.directcode.ci.jobs
 
 import groovy.transform.CompileStatic
+import org.jetbrains.annotations.NotNull
 
 @CompileStatic
 class JobLog {
     final File file
     final PrintWriter out
 
-    JobLog(File file) {
+    JobLog(@NotNull File file) {
         this.file = file
-        this.out = file.newPrintWriter()
+        this.out = file.toPath().newPrintWriter()
     }
 
-    void write(String line) {
+    void write(@NotNull String line) {
         out.println(line)
         out.flush()
     }

@@ -5,19 +5,21 @@ import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobLog
 import org.directcode.ci.utils.Utils
+import org.jetbrains.annotations.NotNull
 
 /**
  * A Source is a provider for resources in the Build Workspace
  */
 abstract class Source {
-
-    CI ci
     Job job
     JobLog log
 
     abstract void execute();
 
-    int run(List<String> command, File workingDir = job.buildDir, Map<String, String> env = [TERM: "dumb"], boolean handleExitCode = true) {
+    int run(
+            @NotNull List<String> command,
+            @NotNull File workingDir = job.buildDir,
+            @NotNull Map<String, String> env = [TERM: "dumb"], @NotNull boolean handleExitCode = true) {
         CI.logger.debug("Executing: '${command.join(" ")}'")
         log.write("\$ '${command.join(' ')}'")
 
@@ -27,7 +29,7 @@ abstract class Source {
             directory(workingDir)
             environment(env)
             streamOutput { String line ->
-                ci.logger.debug("${line}")
+                CI.logger.debug("${line}")
                 log.write("${line}")
             }
         }

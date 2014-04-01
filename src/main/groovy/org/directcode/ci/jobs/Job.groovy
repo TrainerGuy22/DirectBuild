@@ -3,10 +3,10 @@ package org.directcode.ci.jobs
 import org.directcode.ci.config.ArtifactSpec
 import org.directcode.ci.config.TaskConfiguration
 import org.directcode.ci.core.CI
+import org.jetbrains.annotations.NotNull
 
 class Job {
     private final File jobFile
-    CI ci
 
     private JobStatus status
 
@@ -14,8 +14,7 @@ class Job {
 
     final WebHooks webHooks
 
-    Job(CI ci, File file) {
-        this.ci = ci
+    Job(@NotNull File file) {
         this.webHooks = new WebHooks(this)
         this.jobFile = file
         this.buildConfig = JobScript.from(file, this)
@@ -31,7 +30,7 @@ class Job {
     }
 
     File getBuildDir() {
-        return new File(ci.configRoot, "workspace/${name}").absoluteFile
+        return new File(CI.get().configRoot, "workspace/${name}").absoluteFile
     }
 
     Map<String, Object> getSCM() {
@@ -43,15 +42,15 @@ class Job {
     }
 
     File getLogFile() {
-        return new File(ci.configRoot, "logs/${name}.log").absoluteFile
+        return new File(CI.get().configRoot, "logs/${name}.log").absoluteFile
     }
 
-    void setStatus(JobStatus status) {
+    void setStatus(@NotNull JobStatus status) {
         forceStatus(status)
-        def jobInfo = ci.storage["jobs"][name] as Map<String, Object>
+        def jobInfo = CI.get().storage["jobs"][name] as Map<String, Object>
         jobInfo.status = status.ordinal()
-        ci.storage.save("jobs")
-        ci.logger.debug("Job '${name}': Status updated to '${status}'")
+        CI.get().storage.save("jobs")
+        CI.get().logger.debug("Job '${name}': Status updated to '${status}'")
     }
 
     JobStatus getStatus() {
@@ -62,7 +61,7 @@ class Job {
         this.buildConfig = JobScript.from(jobFile, this)
     }
 
-    void forceStatus(JobStatus status) {
+    void forceStatus(@NotNull JobStatus status) {
         this.@status = status
     }
 

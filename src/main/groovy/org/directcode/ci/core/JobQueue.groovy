@@ -3,25 +3,25 @@ package org.directcode.ci.core
 import groovy.transform.CompileStatic
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.logging.Logger
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @CompileStatic
 class JobQueue {
     static final Logger logger = Logger.getLogger("JobQueue")
     private final Set<Build> buildQueue
-    private final CI ci
     private final Set<Builder> builders
     private final Map<String, Integer> numbers
 
-    JobQueue(CI ci, int builderCount) {
-        this.ci = ci
+    JobQueue(@NotNull int builderCount) {
         this.buildQueue = new HashSet<>()
         this.builders = new HashSet<>(builderCount)
         1.upto(builderCount) { id ->
-            def builder = new Builder(ci, id as int)
+            def builder = new Builder(id as int)
             builder.start()
             builders.add(builder)
         }
-        this.numbers = ci.storage.get("build_numbers") as Map<String, Integer>
+        this.numbers = CI.get().storage.get("build_numbers") as Map<String, Integer>
         addShutdownHook { ->
             builders.each { builder ->
                 builder.shouldRun = false
@@ -33,7 +33,7 @@ class JobQueue {
         return buildQueue
     }
 
-    boolean isBuilding(Job job, Builder exclude = null) {
+    boolean isBuilding(@NotNull Job job, @Nullable Builder exclude = null) {
         for (builder in builders) {
             if (!builder.busy || (exclude != null && builder.is(exclude))) {
                 continue
@@ -45,7 +45,7 @@ class JobQueue {
         return false
     }
 
-    synchronized Build add(Job job) {
+    synchronized Build add(@NotNull Job job) {
         def number = numbers.get(job.name, 0) + 1
         numbers[job.name] = number
         def build = new Build(job, number)
@@ -58,15 +58,5 @@ class JobQueue {
             available.first().queue().add(build)
         }
         return build
-    }
-
-    Set<Builder> getAllBuilding(Job job) {
-        def out = []
-        for (builder in builders) {
-            if (builder.busy && builder.current().job == job) {
-                out.add(job)
-            }
-        }
-        return out.toSet()
     }
 }

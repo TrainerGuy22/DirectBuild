@@ -2,10 +2,11 @@ package org.directcode.ci.utils
 
 import groovy.transform.CompileStatic
 import org.directcode.ci.core.CI
+import org.jetbrains.annotations.NotNull
 
 @CompileStatic
 class CommandFinder {
-    static File find(String command) {
+    static File find(@NotNull String command) {
         def path = getPath(command)
         if (path == null) {
             path = findOnPath(command)
@@ -13,8 +14,8 @@ class CommandFinder {
         return path
     }
 
-    static File getPath(String entryName) {
-        def paths = CI.instance.config.pathsSection()
+    static File getPath(@NotNull String entryName) {
+        def paths = CI.get().config.pathsSection()
         if (paths.containsKey(entryName)) {
             return new File(paths[entryName]).absoluteFile
         } else {
@@ -22,7 +23,7 @@ class CommandFinder {
         }
     }
 
-    static File findOnPath(String command) {
+    static File findOnPath(@NotNull String command) {
         command = actualCommand(command)
         def systemPath = System.getenv("PATH")
         def pathDirs = systemPath.split(File.pathSeparator)
@@ -38,7 +39,7 @@ class CommandFinder {
         return executable?.absoluteFile
     }
 
-    static String actualCommand(String command) {
+    static String actualCommand(@NotNull String command) {
         if (OperatingSystem.current().windows) {
             return "${command}.exe"
         } else {
@@ -46,7 +47,7 @@ class CommandFinder {
         }
     }
 
-    static File forScript(File base, String windows, String unix) {
+    static File forScript(@NotNull File base, @NotNull String windows, @NotNull String unix) {
         if (OperatingSystem.current().windows) {
             return new File(base, windows).absoluteFile
         } else {

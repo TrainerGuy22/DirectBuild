@@ -6,6 +6,7 @@ import groovy.transform.stc.SimpleType
 import jpower.core.Task as PowerTask
 import jpower.core.WorkerPool
 import org.directcode.ci.utils.MultiMap
+import org.jetbrains.annotations.NotNull
 
 /**
  * A Groovy Event Bus that uses JPower's Worker Pool
@@ -20,8 +21,8 @@ class EventBus {
      * @param name Event Name
      * @param handler Event Handler
      */
-    void on(String name,
-            @ClosureParams(value = SimpleType.class, options = "java.util.Map") Closure handler) {
+    void on(@NotNull String name,
+            @NotNull @ClosureParams(value = SimpleType.class, options = "java.util.Map") Closure handler) {
         handlers.add(name, handler)
     }
 
@@ -29,7 +30,7 @@ class EventBus {
      * Dispatch an Event
      * @param data Event Data
      */
-    void dispatch(String eventName, Map<String, ? extends Object> options = [:]) {
+    void dispatch(@NotNull String eventName, @NotNull Map<String, ? extends Object> options = [:]) {
         if (handlers.empty(eventName)) { // No Event Handlers to call
             return
         }
@@ -57,7 +58,7 @@ class EventBus {
      * @param name Event Name
      * @return Handlers
      */
-    List<Closure<?>> handlers(String name) {
+    List<Closure<?>> handlers(@NotNull String name) {
         return handlers()[name]
     }
 }

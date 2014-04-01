@@ -9,6 +9,7 @@ import org.directcode.ci.logging.Logger
 import org.directcode.ci.utils.ConsoleHandler
 import org.directcode.ci.utils.OperatingSystem
 import org.directcode.ci.utils.Utils
+import org.jetbrains.annotations.NotNull
 
 @CompileStatic
 class Main {
@@ -16,7 +17,7 @@ class Main {
     static final Logger logger = Logger.getLogger("Console")
 
     @SuppressWarnings("GroovyEmptyStatementBody")
-    static void main(String[] consoleArgs) {
+    static void main(@NotNull String[] consoleArgs) {
 
         if (OperatingSystem.current().unsupported) {
             logger.warning("SimpleCI does not officially support your platform.")
@@ -27,7 +28,7 @@ class Main {
 
         Thread.defaultUncaughtExceptionHandler = [
                 uncaughtException: { Thread thread, Throwable e ->
-                    if (logger.canLog(LogLevel.DEBUG)) {
+                    if (logger.canLog(LogLevel.DEBUG) || (System.getProperty("ci.debug") as boolean)) {
                         e.printStackTrace()
                         System.exit(1)
                         return
@@ -38,7 +39,7 @@ class Main {
                 }
         ] as Thread.UncaughtExceptionHandler
 
-        CI ci = CI.instance
+        def ci = CI.get()
 
         ci.start()
 

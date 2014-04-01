@@ -4,7 +4,6 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 class Builder implements Runnable {
-    private final CI ci
     private final int id
     private final Thread thread = new Thread(this)
 
@@ -16,8 +15,7 @@ class Builder implements Runnable {
 
     private Build current = null
 
-    Builder(CI ci, int id) {
-        this.ci = ci
+    Builder(int id) {
         this.id = id
     }
 
@@ -27,6 +25,7 @@ class Builder implements Runnable {
 
     @Override
     void run() {
+        def ci = CI.get()
         ci.logger.debug("Builder ${id} starting up.")
         while (shouldRun) {
             while (builderQueue.empty) {

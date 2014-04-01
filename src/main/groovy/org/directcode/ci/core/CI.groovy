@@ -4,19 +4,18 @@ import groovy.transform.CompileStatic
 import org.directcode.ci.api.Source
 import org.directcode.ci.api.Task
 import org.directcode.ci.config.CiConfig
+import org.directcode.ci.core.plugins.PluginManager
 import org.directcode.ci.jobs.Job
 import org.directcode.ci.jobs.JobStatus
 import org.directcode.ci.logging.LogLevel
 import org.directcode.ci.logging.Logger
-import org.directcode.ci.plugins.PluginManager
-import org.directcode.ci.source.DownloadSource
-import org.directcode.ci.source.GitSource
 import org.directcode.ci.source.NoneSource
-import org.directcode.ci.tasks.*
+import org.directcode.ci.tasks.CommandTask
 import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
 import org.directcode.ci.utils.HTTP
-import org.directcode.ci.web.VertxManager
+import org.directcode.ci.web.WebServer
+import org.jetbrains.annotations.NotNull
 
 @CompileStatic
 class CI {
@@ -31,32 +30,22 @@ class CI {
     /**
      * Configuration Root
      */
-    File configRoot = new File(".").absoluteFile
-
-    /**
-     * CI Server Web Port
-     */
-    int port = 0
-
-    /**
-     * CI Server Web Host
-     */
-    String host = "0.0.0.0"
+    File configRoot
 
     /**
      * Plugin Manager
      */
-    final PluginManager pluginManager = new PluginManager(this)
+    final PluginManager pluginManager
 
     /**
      * CI Configuration
      */
-    final CiConfig config = new CiConfig(this)
+    final CiConfig config
 
     /**
      * CI Storage System
      */
-    final CIStorage storage = new CIStorage()
+    final CIStorage storage
 
     /**
      * CI Task Types
@@ -81,12 +70,21 @@ class CI {
     /**
      * Vert.x Manager for managing Vert.x related systems
      */
-    final VertxManager vertxManager = new VertxManager(this)
+    final WebServer webServer
 
     /**
      * CI Event Bus
      */
-    final EventBus eventBus = new EventBus()
+    final EventBus eventBus
+
+    private CI() {
+        configRoot = new File(".").absoluteFile
+        config = new CiConfig()
+        eventBus = new EventBus()
+        webServer = new WebServer()
+        storage = new CIStorage()
+        pluginManager = new PluginManager()
+    }
 
     /**
      * Starts CI Server
@@ -94,7 +92,12 @@ class CI {
     void start() {
         init()
         loadJobs()
-        vertxManager.setupWebServer()
+        Thread.startDaemon { ->
+            logger.debug("Extracting WWW Resources")
+            ResourceExtractor.extractWWW(new File(configRoot, "www"))
+            logger.debug("Starting Web Server")
+            webServer.start(config.webSection().get("port", 8080) as int, config.webSection().get("host", "0.0.0.0") as String)
+        }
     }
 
     /**
@@ -106,9 +109,11 @@ class CI {
 
         debuggingSystem()
 
-        eventBus.dispatch("ci.config.loaded")
+        config.configFile = new File(configRoot, "config.groovy")
 
         config.load()
+
+        eventBus.dispatch("ci.config.loaded")
 
         loggingSystem()
 
@@ -116,14 +121,11 @@ class CI {
         storage.start()
         eventBus.dispatch("ci.storage.started")
 
-        jobQueue = new JobQueue(this, config.ciSection()['builders'] as int)
+        jobQueue = new JobQueue(config.ciSection().get("builders", 4) as int)
 
         new File(configRoot, 'logs').absoluteFile.mkdirs()
 
-
         loadBuiltins()
-
-        eventBus.dispatch("ci.builtins.loaded")
 
         pluginManager.loadPlugins()
 
@@ -159,24 +161,19 @@ class CI {
         Logger.logAllTo(logFile.toPath())
     }
 
+    /**
+     * Loads Builtin Tasks and Sources
+     */
     private void loadBuiltins() {
-        registerSource("git", GitSource)
         registerSource("none", NoneSource)
-        registerSource("download", DownloadSource)
-        registerTask("gradle", GradleTask)
-        registerTask("groovy", GroovyScriptTask)
         registerTask("command", CommandTask)
-        registerTask("git", GitTask)
-        registerTask("make", MakeTask)
-        registerTask("ant", AntTask)
-        registerTask("maven", MavenTask)
     }
 
     /**
      * Loads Jobs from Database and Job Files
      */
     void loadJobs() {
-        File jobRoot = new File(configRoot, "jobs")
+        def jobRoot = new File(configRoot, "jobs")
 
         if (!jobRoot.exists()) {
             jobRoot.mkdir()
@@ -185,7 +182,7 @@ class CI {
         Map<String, ? extends Object> jobStorage = storage.get("jobs")
 
         FileMatcher.create(jobRoot).withExtension("groovy") { File file ->
-            def job = new Job(this, file)
+            def job = new Job(file)
 
             if (jobStorage.containsKey(job.name)) {
                 def jobInfo = jobStorage[job.name] as Map<String, Object>
@@ -219,7 +216,7 @@ class CI {
      * @param job Job to Add to Queue
      * @return A Build that can be used to track status information
      */
-    Build runJob(Job job) {
+    Build runJob(@NotNull Job job) {
         return jobQueue.add(job)
     }
 
@@ -241,19 +238,19 @@ class CI {
         return dir
     }
 
-    void registerTask(String name, Class<? extends Task> taskType, Closure callback = {}) {
+    void registerTask(@NotNull String name, @NotNull Class<? extends Task> taskType, Closure callback = {}) {
         taskTypes[name] = taskType
         eventBus.dispatch("ci.task.register", [name: name, type: taskType])
         callback()
     }
 
-    void registerSource(String name, Class<? extends Source> sourceType, Closure callback = {}) {
+    void registerSource(@NotNull String name, @NotNull Class<? extends Source> sourceType, Closure callback = {}) {
         sourceTypes[name] = sourceType
         eventBus.dispatch("ci.source.register", [name: name, type: sourceType])
         callback()
     }
 
-    static CI getInstance() {
+    static CI get() {
         if (INSTANCE == null) {
             INSTANCE = new CI()
         } else {
