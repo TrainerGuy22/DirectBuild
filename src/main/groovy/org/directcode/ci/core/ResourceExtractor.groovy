@@ -20,7 +20,9 @@ class ResourceExtractor {
     }
 
     static void extractWWW(@NotNull File destination) {
-        if (currentJar() == null) {
+        def disabled = true
+
+        if (currentJar() == null || disabled) {
             return
         }
         destination.deleteDir()
