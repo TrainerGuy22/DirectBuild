@@ -4,12 +4,11 @@
     <title>Job - SimpleCI</title>
     <link rel="stylesheet" href="/css/core.css">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/todc-bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
 
-<nav class="navbar navbar-masthead navbar-default navbar-fixed-top navbar-inverse" role="navigation">
-    <div class="navbar-header"><a class="navbar-brand" href="/">SimpleCI</a></div>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="navbar-header"><a class="navbar-brand" href="#">SimpleCI</a></div>
     <ul class="nav navbar-nav" id="navigate">
         <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
         <li><a href="/jobs">Jobs</a></li>
@@ -19,11 +18,12 @@
     </ul>
 </nav>
 
-<h1 class="page-header job-name"></h1>
+<h1 class="page-header job-name">
+    <small class="job-status"></small>
+</h1>
 
-<ul class="nav nav-tabs nav-tabs-google" id="info-tabs">
+<ul class="nav nav-tabs" id="info-tabs">
     <li data-target="history" class="active"><a href="#">History</a></li>
-    <li data-target="changes"><a href="#">Changes</a></li>
     <li data-target="artifacts"><a href="#">Artifacts</a></li>
 </ul>
 
@@ -33,7 +33,11 @@
 
         </div>
     </div>
-    <div style="display: none;" id="artifacts"></div>
+    <div style="display: none;" id="artifacts">
+        <div id="artifacts-list" class="list-group">
+
+        </div>
+    </div>
 </div>
 
 <script src="/js/jquery.min.js"></script>

@@ -92,7 +92,12 @@ class CI {
     void start() {
         init()
         loadJobs()
-        webServer.start(config.webSection().get("port", 8080) as int, config.webSection().get("host", "0.0.0.0") as String)
+        Thread.startDaemon { ->
+            logger.debug("Extracting WWW Resources")
+            ResourceExtractor.extractWWW(new File(configRoot, "www"))
+            logger.debug("Starting Web Server")
+            webServer.start(config.webSection().get("port", 8080) as int, config.webSection().get("host", "0.0.0.0") as String)
+        }
     }
 
     /**

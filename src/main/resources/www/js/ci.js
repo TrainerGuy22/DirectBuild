@@ -37,6 +37,20 @@ ci.parseStatus = function (id) {
     }
 };
 
+ci.artifactUrl = function (jobName, buildNumber, name) {
+    return "/artifacts/" + jobName + "/" + buildNumber + "/" + name;
+};
+
 ci.jobs = function (callback) {
     ci.fetch("/jobs", callback);
+};
+
+ci.jobStatus = function (name, callback) {
+    ci.jobs(function (jobs) {
+        jobs.forEach(function (job) {
+            if (job["name"] == name) {
+                callback(job["status"]);
+            }
+        });
+    });
 };

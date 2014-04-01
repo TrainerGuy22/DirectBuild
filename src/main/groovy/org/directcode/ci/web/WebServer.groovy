@@ -186,7 +186,7 @@ class WebServer {
         File dir = new File(CI.get().configRoot, "www")
         InputStream stream
         if (!dir.exists()) {
-            stream = Utils.resource("simpleci/${path}")
+            stream = Utils.resource("www/${path}")
         } else {
             def file = new File(dir, path)
             if (!file.exists()) {

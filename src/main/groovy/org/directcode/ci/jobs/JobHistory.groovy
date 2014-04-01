@@ -24,6 +24,7 @@ class JobHistory {
             entry.log = result.log as String
             entry.when = result.timeStamp as String
             entry.status = result.status as int
+            entry.buildTime = result.buildTime as long
             def artifactDir = new File(CI.get().artifactDir, "${job.name}/${entry.number}")
             if (!artifactDir.exists()) {
                 artifactDir.mkdirs()
@@ -53,9 +54,10 @@ class JobHistory {
     @ToString
     @CompileStatic
     static class Entry {
-        int id, status, number
+        int status, number
         String log
         String when
+        long buildTime
         List<Artifact> artifacts = []
     }
 

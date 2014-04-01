@@ -1,13 +1,16 @@
 var jobName = window.location.pathname.replace("/job/", "");
 
 document.title = jobName + " - SimpleCI";
-$(".job-name").html(jobName);
+$(".job-name").prepend(jobName);
+
+ci.jobStatus(jobName, function (status) {
+    $(".job-status").append(ci.parseStatus(status));
+});
 
 $(document).ready(function () {
     // Provide class='active' switching on the tabs.
     $(".nav-tabs li").each(function (index, tab) {
         tab = $(tab);
-        console.log("Applying Active Switch");
         $(tab).click(function () {
             $(".nav-tabs li").each(function (i, t) {
                 t = $(t);
@@ -20,22 +23,42 @@ $(document).ready(function () {
         });
     });
 
-    $.getJSON("/api/history/" + jobName, function (history) {
+    $.getJSON("/api/history/" + jobName, function (jobHistory) {
         var $history = $("#job-history");
+        var $artifacts = $("#artifacts-list");
 
-        history.forEach(function (entry) {
+        var latest = 0;
+
+        var lastBuild = null;
+
+        jobHistory.forEach(function (entry) {
             var status = entry["status"];
-            var number = entry["number"].toString();
-            var timestamp = entry["timeStamp"];
+            var number = entry["number"];
+            if (number > latest) {
+                latest = number;
+                lastBuild = entry;
+            }
+            var timestamp = entry["when"];
             var log = atob(entry["log"]);
             var buildTime = entry["buildTime"];
 
             $history.append("<p class=\"list-group-item\">"
-                + number.bold() + ": "
+                + number.toString().bold() + ": "
                 + ci.parseStatus(status)
                 + " - "
                 + timestamp
                 + "</p>");
+        });
+
+        lastBuild["artifacts"].forEach(function (artifact) {
+            var name = artifact["name"];
+            $artifacts.append('<p class="list-group-item">' +
+                '<a href="' +
+                ci.artifactUrl(jobName, latest, name) +
+                '">' +
+                name +
+                '<a/>' +
+                '</p>');
         });
     });
 });
