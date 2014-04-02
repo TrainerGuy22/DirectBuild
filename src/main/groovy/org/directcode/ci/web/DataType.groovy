@@ -9,6 +9,7 @@ interface DataType {
     static final DataType JSON = new DataType() {
         @Override
         void handle(HttpServerRequest request, Closure closure) {
+            request.response.putHeader("Content-Type", "application/json")
             def prettyPrint = request.params["prettyPrint"] != null
             def builder = new JsonBuilder()
             closure(request, builder)
@@ -19,6 +20,7 @@ interface DataType {
     static final DataType XML = new DataType() {
         @Override
         void handle(HttpServerRequest request, Closure closure) {
+            request.response.putHeader("Content-Type", "application/xml")
             def prettyPrint = request.params["prettyPrint"] != null
             def builder = new MarkupBuilder()
             closure(request, builder)
