@@ -217,7 +217,11 @@ class CI {
      * @return A Build that can be used to track status information
      */
     Build runJob(@NotNull Job job) {
-        return jobQueue.add(job)
+        if (!job.shouldBuild()) {
+            return null
+        } else {
+            return jobQueue.add(job)
+        }
     }
 
     /**
