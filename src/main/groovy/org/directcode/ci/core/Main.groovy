@@ -15,12 +15,17 @@ import org.jetbrains.annotations.NotNull
 class Main {
 
     static final Logger logger = Logger.getLogger("Console")
+    static boolean noReports = false;
 
     @SuppressWarnings("GroovyEmptyStatementBody")
     static void main(@NotNull String[] consoleArgs) {
 
         if (OperatingSystem.current().unsupported) {
             logger.warning("SimpleCI does not officially support your platform.")
+        }
+
+        if (consoleArgs.contains("--no-reports")) {
+            noReports = true;
         }
 
         /* Configure log4j to fix warnings */
@@ -61,7 +66,7 @@ class Main {
                     ci.runJob(job)
                 }
             } else if (command == 'stop') {
-                System.exit(0)
+                ci.jobs = null;
             } else if (command == 'clean') {
                 if (args.size() == 0) {
                     println "Usage: clean <job>"
@@ -80,5 +85,9 @@ class Main {
                 }
             }
         }
+    }
+
+    public static boolean noReports() {
+        return noReports;
     }
 }
