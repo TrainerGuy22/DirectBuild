@@ -1,5 +1,6 @@
 package org.directcode.ci.api
 
+import org.directcode.ci.core.Build
 import org.directcode.ci.core.CI
 import org.directcode.ci.exception.TaskFailedException
 import org.directcode.ci.jobs.Job
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull
  */
 abstract class Task {
     Job job
+    Build build
     JobLog log
 
     /**
@@ -35,6 +37,9 @@ abstract class Task {
             @NotNull Map<String, String> env = [TERM: "dumb"], @NotNull boolean handleExitCode = true) {
         CI.logger.debug("Executing: '${command.join(" ")}'")
         log.write("\$ '${command.join(' ')}'")
+
+        env["JOB_NAME"] = job.name
+        env["JOB_BUILD_NUMBER"] = build.number
 
         def result = Utils.execute { ->
             executable(command[0])
