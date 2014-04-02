@@ -2,7 +2,7 @@
 
 DirectBuild is a Continuous Integration Server written in [Groovy](http://groovy.codehaus.org/)
 
-[![Build Status](https://travis-ci.org/DirectMyFile/SimpleCI.svg?branch=master)](https://travis-ci.org/DirectBuild/DirectBuild)
+[![Build Status](https://travis-ci.org/DirectBuild/DirectBuild.svg?branch=master)](https://travis-ci.org/DirectBuild/DirectBuild)
 
 ## Links
 
