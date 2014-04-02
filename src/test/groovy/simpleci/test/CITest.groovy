@@ -1,10 +1,16 @@
 package simpleci.test
 
 import org.directcode.ci.core.CI
+import org.junit.After
+import org.junit.Before
 
-class TestUtils {
-    static void setupCIInstance() {
-        def ci = CI.get()
+class CITest {
+
+    protected CI ci
+
+    @Before
+    void setupCIInstance() {
+        ci = CI.get()
         ci.configRoot = new File("src/test/work/")
         if (!ci.configRoot.exists()) {
             ci.configRoot.mkdirs()
@@ -12,7 +18,8 @@ class TestUtils {
         ci.start()
     }
 
-    static void unloadCIInstance() {
-        CI.get().unload()
+    @After
+    void unloadCIInstance() {
+        ci.unload()
     }
 }

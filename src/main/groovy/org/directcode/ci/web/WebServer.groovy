@@ -2,6 +2,7 @@ package org.directcode.ci.web
 
 import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
 import org.vertx.groovy.core.Vertx
@@ -29,6 +30,7 @@ class WebServer {
 
     private void configure(RouteMatcher matcher) {
         def ci = CI.get()
+
 
         matcher.get('/') { HttpServerRequest r ->
             writeResource(r, "index.html")
@@ -163,6 +165,13 @@ class WebServer {
         ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: vertx])
     }
 
+    static void loadDCScripts(RouteMatcher matcher) {
+        def scripts = Utils.parseJSON(Utils.resourceToString("dcscripts.json"))
+        scripts.each { String scriptPath ->
+            loadDCScript(matcher, Utils.resource(scriptPath).newReader())
+        }
+    }
+
     private void writeResource(HttpServerRequest r, String path) {
         String mimeType = MimeTypes.get(path)
         InputStream stream = getStream(path)
@@ -176,6 +185,15 @@ class WebServer {
         def buffer = new Buffer(stream.bytes)
 
         r.response.end(buffer)
+    }
+
+    private static void loadDCScript(RouteMatcher router, Reader reader) {
+        def cc = new CompilerConfiguration()
+        cc.scriptBaseClass = DCScript.class.name
+        def shell = new GroovyShell(cc)
+        def script = shell.parse(reader) as DCScript
+        script.router = router
+        script.run()
     }
 
     private static InputStream getStream(String path) {
