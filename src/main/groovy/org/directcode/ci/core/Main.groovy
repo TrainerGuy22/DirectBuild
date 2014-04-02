@@ -15,17 +15,17 @@ import org.jetbrains.annotations.NotNull
 class Main {
 
     static final Logger logger = Logger.getLogger("Console")
-    static boolean noReports = false;
+    static boolean noReports = false
 
     @SuppressWarnings("GroovyEmptyStatementBody")
     static void main(@NotNull String[] consoleArgs) {
 
         if (OperatingSystem.current().unsupported) {
-            logger.warning("SimpleCI does not officially support your platform.")
+            logger.warning("DirectBuild does not officially support your platform.")
         }
 
-        if (consoleArgs.contains("--no-reports")) {
-            noReports = true;
+        if ("--no-reports" in consoleArgs) {
+            noReports = true
         }
 
         /* Configure log4j to fix warnings */
@@ -66,7 +66,7 @@ class Main {
                     ci.runJob(job)
                 }
             } else if (command == 'stop') {
-                ci.jobs = null;
+                System.exit(0)
             } else if (command == 'clean') {
                 if (args.size() == 0) {
                     println "Usage: clean <job>"
@@ -87,7 +87,7 @@ class Main {
         }
     }
 
-    public static boolean noReports() {
-        return noReports;
+    static boolean noReports() {
+        return noReports
     }
 }

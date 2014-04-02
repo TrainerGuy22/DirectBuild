@@ -1,6 +1,0 @@
-= SimpleCI
-
-SimpleCI is a easy-to-use Continuous Integration Server written in pure Groovy.
-
-== Setup
-include::setup.adoc[]
