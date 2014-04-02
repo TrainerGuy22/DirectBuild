@@ -11,6 +11,9 @@ SimpleCI is a Continuous Integration Server written in [Groovy](http://groovy.co
 
 ## Getting Started
 
+## Prerequisites
+- Oracle/OpenJDK JDK 8
+
 ### Linux
 
 To Get Started using SimpleCI, run the following command in the directory you want SimpleCI to use:
