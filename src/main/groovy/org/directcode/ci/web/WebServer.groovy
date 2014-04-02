@@ -114,19 +114,6 @@ class WebServer {
             writeResource(r, "jobs.html")
         }
 
-        matcher.get('/api/jobs') { HttpServerRequest r ->
-            def jobInfo = []
-
-            ci.jobs.values().each { job ->
-                jobInfo += [
-                        name  : job.name,
-                        status: job.status.ordinal()
-                ]
-            }
-
-            r.response.end(Utils.encodeJSON(jobInfo) as String)
-        }
-
         matcher.post('/github/:name') { HttpServerRequest it ->
             def jobName = it.params['name'] as String
             it.response.end('')

@@ -42,7 +42,7 @@ ci.artifactUrl = function (jobName, buildNumber, name) {
 };
 
 ci.jobs = function (callback) {
-    ci.fetch("/jobs", callback);
+    ci.fetch("/api/jobs.json", callback);
 };
 
 ci.jobStatus = function (name, callback) {

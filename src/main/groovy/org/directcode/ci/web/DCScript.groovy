@@ -26,5 +26,6 @@ abstract class DCScript extends Script {
                 }
             }
         }
+        mapping()
     }
 }
