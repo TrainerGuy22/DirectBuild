@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     compile("org.codehaus.groovy:groovy-all:${groovyVersion}")
-    compile('io.vertx:vertx-core:2.1RC1') {
+    compile('io.vertx:vertx-core:2.1RC3') {
         exclude group: "com.hazelcast", module: "hazelcast"
     }
     compile 'io.vertx:lang-groovy:2.1RC1'
