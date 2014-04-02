@@ -156,10 +156,6 @@ class WebServer {
             r.response.end(Utils.encodeJSON(job.history.entries))
         }
 
-        matcher.get('/login') { HttpServerRequest r ->
-            writeResource(r, "login.html")
-        }
-
         matcher.noMatch { HttpServerRequest r ->
             writeResource(r, "404.html")
         }

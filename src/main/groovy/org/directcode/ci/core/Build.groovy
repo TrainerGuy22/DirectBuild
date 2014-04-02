@@ -95,6 +95,7 @@ class Build {
                 Task task = taskConfig.create()
 
                 task.job = job
+                task.build = this
                 task.log = jobLog
 
                 task.configure(taskConfig.configClosure)
