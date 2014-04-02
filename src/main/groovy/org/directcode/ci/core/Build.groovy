@@ -111,7 +111,7 @@ class Build {
 
             def artifactsDir = new File(ci.artifactDir, "${job.name}/${number}").absoluteFile
             artifactsDir.mkdirs()
-            job.artifacts.files.each { location ->
+            job.artifacts.files.each { String location ->
                 def source = new File(job.buildDir, location)
                 def target = new File(artifactsDir, source.name)
                 if (!source.exists()) {
