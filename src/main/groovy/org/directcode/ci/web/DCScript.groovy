@@ -4,9 +4,10 @@ import org.vertx.groovy.core.http.HttpServerRequest
 import org.vertx.groovy.core.http.RouteMatcher
 
 abstract class DCScript extends Script {
-    protected DataType type
-    protected Closure creator
-    protected RouteMatcher router
+    DataType type
+    Closure creator
+    RouteMatcher router
+    DCScript upper = this
 
     void type(DataType type) {
         this.type = type
@@ -16,16 +17,21 @@ abstract class DCScript extends Script {
         this.creator = creator
     }
 
-    void mapping(Closure mapping) {
-        mapping.delegate = new Object() {
-            void get(String path) {
-                router.get(path) { HttpServerRequest request ->
-                    type.handle(request, { req, builder ->
-                        creator(req, builder)
-                    })
-                }
+    void mapping(Closure closure) {
+        new Mapping()(closure)
+    }
+
+    class Mapping {
+
+        void call(Closure closure) {
+            closure.delegate = this
+            closure()
+        }
+
+        void GET(String path) {
+            upper.router.get(path) { HttpServerRequest request ->
+                upper.type.handle(request, upper.creator)
             }
         }
-        mapping()
     }
 }

@@ -4,9 +4,9 @@ import org.directcode.ci.jobs.Job
 import org.directcode.ci.web.DataType
 import org.vertx.groovy.core.http.HttpServerRequest
 
-type = DataType.JSON
+type(DataType.JSON)
 
-create { HttpServerRequest request, JsonBuilder builder ->
+create({ HttpServerRequest request, JsonBuilder builder ->
     def info = []
     CI.get().jobs.values().each { Job job ->
         info.add([
@@ -15,4 +15,8 @@ create { HttpServerRequest request, JsonBuilder builder ->
         ])
     }
     builder(info)
-}
+})
+
+mapping({
+    GET("/api/jobs.json")
+})

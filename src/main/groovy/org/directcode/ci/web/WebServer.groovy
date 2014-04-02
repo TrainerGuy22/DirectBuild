@@ -31,7 +31,6 @@ class WebServer {
     private void configure(RouteMatcher matcher) {
         def ci = CI.get()
 
-
         matcher.get('/') { HttpServerRequest r ->
             writeResource(r, "index.html")
         }
@@ -150,6 +149,8 @@ class WebServer {
         }
 
         ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: vertx])
+
+        loadDCScripts(matcher)
     }
 
     static void loadDCScripts(RouteMatcher matcher) {
