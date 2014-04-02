@@ -1,8 +1,8 @@
 #!/bin/bash
-####################################
-# A QuickStart Script for SimpleCI #
-# Created by: Kenneth Endfinger    #
-####################################
+#######################################
+# A QuickStart Script for DirectBuild #
+#   Created by: Kenneth Endfinger     #
+#######################################
 # Options #
 USE_PREBUILTS="false"
 # End Options #
@@ -32,29 +32,29 @@ function check_java_version() {
 }
 
 function build() {
-    git clone --recursive --branch master --depth 1 git://github.com/DirectMyFile/SimpleCI.git _build_
+    git clone --recursive --branch master --depth 1 git://github.com/DirectBuild/DirectBuild.git _build_
     if [[ ${?} -ne 0 ]]; then
-        echo "ERROR: Failed to clone SimpleCI."
+        echo "ERROR: Failed to clone DirectBuild."
         exit 1
     fi
     cd _build_
     ./gradlew jar
     if [[ ${?} -ne 0 ]]; then
-        echo "ERROR: Failed to build SimpleCI. Falling back to prebuilts."
+        echo "ERROR: Failed to build DirectBuild. Falling back to prebuilts."
         download_prebuilts
     fi
-    cp -R build/libs/SimpleCI.jar ../SimpleCI.jar
+    cp -R build/libs/DirectBuild.jar ../DirectBuild.jar
     cd ..
     echo "Cleaning Up..."
     rm -rf _build_
 }
 
 function download_prebuilts() {
-    wget https://kaendfinger.ci.cloudbees.com/job/SimpleCI/lastSuccessfulBuild/artifact/build/libs/SimpleCI.jar -OSimpleCI.jar
+    wget https://kaendfinger.ci.cloudbees.com/job/SimpleCI/lastSuccessfulBuild/artifact/build/libs/DirectBuild.jar -ODirectBuild.jar
     if [[ ${?} -ne 0 ]]; then
         echo "ERROR: Failed to download prebuilts."
     fi
-    chmod a+x SimpleCI.jar # For Good Measure
+    chmod a+x DirectBuild.jar # For Good Measure
 }
 
 if [[ ${USE_PREBUILTS} == true ]]; then
@@ -67,4 +67,4 @@ else
     echo "Building SimpleCI..."
     build
 fi
-echo "You may now start SimpleCI by typing 'java -jar SimpleCI.jar'"
+echo "You may now start DirectBuild by typing 'java -jar DirectBuild.jar'"

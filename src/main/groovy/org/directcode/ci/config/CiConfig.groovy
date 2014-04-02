@@ -26,12 +26,6 @@ class CiConfig extends GConfig {
         ]) as Map<String, Object>
     }
 
-    Map<String, Object> securitySection() {
-        return getProperty("security", [
-                enabled: false
-        ]) as Map<String, Object>
-    }
-
     Map<String, String> pathsSection() {
         return getProperty("paths", [:]) as Map<String, String>
     }

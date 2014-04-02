@@ -53,7 +53,7 @@ class Utils {
     }
 
     @Memoized(maxCacheSize = 15)
-    static def resourceToString(String path) {
+    static String resourceToString(String path) {
         return resource(path).text
     }
 

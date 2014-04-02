@@ -18,12 +18,6 @@ web = [
         port: 8080
 ]
 
-/* Security-related configuration */
-security = [
-        /* Security is enabled or not */
-        enabled: false
-]
-
 /* Plugin-related configuration */
 plugins = [
         /* Class Names of Disabled Plugins */

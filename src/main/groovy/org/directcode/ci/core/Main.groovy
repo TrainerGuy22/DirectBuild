@@ -15,12 +15,17 @@ import org.jetbrains.annotations.NotNull
 class Main {
 
     static final Logger logger = Logger.getLogger("Console")
+    static boolean noReports = false
 
     @SuppressWarnings("GroovyEmptyStatementBody")
     static void main(@NotNull String[] consoleArgs) {
 
         if (OperatingSystem.current().unsupported) {
-            logger.warning("SimpleCI does not officially support your platform.")
+            logger.warning("DirectBuild does not officially support your platform.")
+        }
+
+        if ("--no-reports" in consoleArgs) {
+            noReports = true
         }
 
         /* Configure log4j to fix warnings */
@@ -80,5 +85,9 @@ class Main {
                 }
             }
         }
+    }
+
+    static boolean noReports() {
+        return noReports
     }
 }

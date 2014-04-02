@@ -1,1 +1,0 @@
-SimpleCI is designed to be easy to setup.

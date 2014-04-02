@@ -21,3 +21,4 @@ config.groovy
 /logs/
 /plugins/
 /workspace/
+src/test/work/*

@@ -33,12 +33,12 @@ class CrashReporter {
             @Override
             void execute() {
                 logger.error("An unexpected error occurred in SimpleCI")
-                logger.error("Sending Crash Report")
-                HTTP.post(data: [log: path.text], url: reporter) { Map<String, Object> data ->
+                if (!Main.noReports) HTTP.post(data: [log: path.text], url: reporter) { Map<String, Object> data ->
+                    logger.error("Sending Crash Report")
                     def id = data.get("data", "Unknown") as String
                     logger.error("Crash Report Sent. ID: ${id}")
-                    Runtime.runtime.halt(1)
                 }
+                Runtime.runtime.halt(1)
             }
         })
     }

@@ -27,6 +27,11 @@ class JobQueue {
                 builder.shouldRun = false
             }
         }
+        CI.get().eventBus.on("ci.shutdown.start") { event ->
+            builders.each { builder ->
+                builder.shouldRun = false
+            }
+        }
     }
 
     Set<Build> builds() {

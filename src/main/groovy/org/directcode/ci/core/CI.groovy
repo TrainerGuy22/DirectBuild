@@ -257,4 +257,13 @@ class CI {
             return INSTANCE
         }
     }
+
+    void unload() {
+        eventBus.dispatch("ci.shutdown.start")
+        webServer.server.close()
+        if (INSTANCE == this) {
+            INSTANCE = null
+        }
+        eventBus.dispatch("ci.shutdown.complete")
+    }
 }

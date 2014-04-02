@@ -2,6 +2,7 @@ package org.directcode.ci.web
 
 import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
 import org.vertx.groovy.core.Vertx
@@ -112,19 +113,6 @@ class WebServer {
             writeResource(r, "jobs.html")
         }
 
-        matcher.get('/api/jobs') { HttpServerRequest r ->
-            def jobInfo = []
-
-            ci.jobs.values().each { job ->
-                jobInfo += [
-                        name  : job.name,
-                        status: job.status.ordinal()
-                ]
-            }
-
-            r.response.end(Utils.encodeJSON(jobInfo) as String)
-        }
-
         matcher.post('/github/:name') { HttpServerRequest it ->
             def jobName = it.params['name'] as String
             it.response.end('')
@@ -156,15 +144,20 @@ class WebServer {
             r.response.end(Utils.encodeJSON(job.history.entries))
         }
 
-        matcher.get('/login') { HttpServerRequest r ->
-            writeResource(r, "login.html")
-        }
-
         matcher.noMatch { HttpServerRequest r ->
             writeResource(r, "404.html")
         }
 
         ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: vertx])
+
+        loadDCScripts(matcher)
+    }
+
+    static void loadDCScripts(RouteMatcher matcher) {
+        def scripts = Utils.parseJSON(Utils.resourceToString("dcscripts.json"))
+        scripts.each { String scriptPath ->
+            loadDCScript(matcher, Utils.resource(scriptPath).newReader())
+        }
     }
 
     private void writeResource(HttpServerRequest r, String path) {
@@ -180,6 +173,15 @@ class WebServer {
         def buffer = new Buffer(stream.bytes)
 
         r.response.end(buffer)
+    }
+
+    private static void loadDCScript(RouteMatcher router, Reader reader) {
+        def cc = new CompilerConfiguration()
+        cc.scriptBaseClass = DCScript.class.name
+        def shell = new GroovyShell(cc)
+        def script = shell.parse(reader) as DCScript
+        script.router = router
+        script.run()
     }
 
     private static InputStream getStream(String path) {
