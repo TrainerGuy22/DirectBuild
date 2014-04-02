@@ -16,7 +16,8 @@ class BundledPluginProvider extends PluginProvider {
             AntPlugin,
             MavenPlugin,
             GroovyScriptPlugin,
-            DownloadSourcePlugin
+            DownloadSourcePlugin,
+            MercurialPlugin
     ]
 
     @Override
