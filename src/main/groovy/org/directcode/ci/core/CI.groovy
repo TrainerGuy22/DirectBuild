@@ -223,6 +223,10 @@ class CI {
             return jobQueue.add(job)
         }
     }
+    
+    Build build(@NotNull Job job) {
+        return runJob(job)
+    }
 
     /**
      * Updates all Jobs from the Database and parses Job Files
@@ -269,5 +273,17 @@ class CI {
             INSTANCE = null
         }
         eventBus.dispatch("ci.shutdown.complete")
+    }
+    
+    Job getJobForName(String name) {
+        return jobs[name]
+    }
+    
+    Class<? extends Task> getTaskForName(String taskName) {
+        return taskTypes[taskName]
+    }
+    
+    Class<? extends Task> getSourceForName(String sourceName) {
+        return sourceTypes[sourceName]
     }
 }
