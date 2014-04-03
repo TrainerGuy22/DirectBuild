@@ -89,7 +89,7 @@ class Utils {
     }
 
     static Object parseJSON(String text) {
-        return jsonSlurper.parseText(text)
+        return text.equals("") ? null : jsonSlurper.parseText(text);
     }
 
     @Memoized(maxCacheSize = 10)
