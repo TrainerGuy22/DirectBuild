@@ -275,15 +275,15 @@ class CI {
         eventBus.dispatch("ci.shutdown.complete")
     }
     
-    Job getJobForName(String name) {
+    Job getJobByName(String name) {
         return jobs[name]
     }
     
-    Class<? extends Task> getTaskForName(String taskName) {
+    Class<? extends Task> getTaskByName(String taskName) {
         return taskTypes[taskName]
     }
     
-    Class<? extends Source> getSourceForName(String sourceName) {
+    Class<? extends Source> getSourceByName(String sourceName) {
         return sourceTypes[sourceName]
     }
 }
