@@ -283,7 +283,7 @@ class CI {
         return taskTypes[taskName]
     }
     
-    Class<? extends Task> getSourceForName(String sourceName) {
+    Class<? extends Source> getSourceForName(String sourceName) {
         return sourceTypes[sourceName]
     }
 }
