@@ -18,8 +18,8 @@ class JobQueue {
         this.builders = new HashSet<>(builderCount)
         1.upto(builderCount) { id ->
             def builder = new Builder(id as int)
-            builder.start()
             builders.add(builder)
+            builder.start()
         }
         this.numbers = CI.get().storage.get("build_numbers") as Map<String, Integer>
         addShutdownHook { ->
