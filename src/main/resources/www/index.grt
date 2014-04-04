@@ -1,7 +1,8 @@
 <!DOCTYPE html>
+<% import org.directcode.ci.web.WebUtil %>
 <html>
 <head>
-    <title>Home | DirectBuild</title>
+    <title>Home | ${WebUtil.brand()}</title>
     <%= component("jquery") %>
     <%= component("bootstrap") %>
 </head>
