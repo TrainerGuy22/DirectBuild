@@ -6,7 +6,7 @@
     <%= component("bootstrap") %>
 </head>
 <body>
-<%= component("navigation") %>
+<%= component("navigation", [active: "Home"]) %>
 
 <%= component("job_table") %>
 </body>
