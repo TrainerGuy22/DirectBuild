@@ -15,7 +15,9 @@ class BaseComponents {
         factory.define("bootstrap") { opts ->
             build {
                 link(rel: "stylesheet", href: "/css/bootstrap.min.css")
-                script(src: "/js/bootstrap.min.js")
+                if (opts.js) {
+                    script(src: "/js/bootstrap.min.js")
+                }
                 style("""
                 body {
                     padding-top: 60px;
@@ -80,6 +82,10 @@ class BaseComponents {
                     }
                 }
             }
+        }
+
+        factory.define("use") {
+
         }
     }
 }
