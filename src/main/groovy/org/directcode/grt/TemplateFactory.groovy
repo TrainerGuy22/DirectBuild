@@ -20,6 +20,10 @@ class TemplateFactory {
         return new GrtTemplate(this, templateEngine.createTemplate(reader))
     }
 
+    GrtTemplate create(File file) {
+        return new GrtTemplate(this, templateEngine.createTemplate(file))
+    }
+
     void define(String name, @DelegatesTo(Component) Closure closure) {
         components[name] = closure
     }
@@ -36,8 +40,9 @@ class TemplateFactory {
         def builder = new MarkupBuilder(new PrintWriter(writer))
         builder.doubleQuotes = true
         builder.expandEmptyElements = true
-        c.build.delegate = builder
-        c.build.call(opts)
+        def build = c.build
+        build.delegate = builder
+        build.call(opts)
         return writer.toString()
     }
 }

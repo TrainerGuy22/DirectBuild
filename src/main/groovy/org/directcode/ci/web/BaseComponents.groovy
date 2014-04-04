@@ -2,6 +2,7 @@ package org.directcode.ci.web
 
 import org.directcode.ci.core.CI
 import org.directcode.grt.TemplateFactory
+import org.intellij.lang.annotations.Language
 
 class BaseComponents {
     static void load(TemplateFactory factory) {
@@ -10,6 +11,7 @@ class BaseComponents {
                 script(src: "/js/jquery.min.js")
             }
         }
+
         factory.define("bootstrap") { opts ->
             build {
                 link(rel: "stylesheet", href: "/css/bootstrap.min.css")
@@ -27,10 +29,14 @@ class BaseComponents {
                     [
                             name: "Home",
                             path: "/"
+                    ],
+                    [
+                            name: "Jobs",
+                            path: "/jobs"
                     ]
             ]
-            if (opts.add)
-                navbar.addAll((List<Map<String, ? extends Object>>) opts.add)
+            if (opts.pages)
+                navbar.addAll((List<Map<String, ? extends Object>>) opts.pages)
             build {
                 nav(class: "navbar navbar-default navbar-fixed-top", role: "navigation") {
                     div(class: "navbar-header") {
@@ -55,14 +61,14 @@ class BaseComponents {
 
         factory.define("job_table") { opts ->
             build {
-                table(class: "table table-bordered", border: "1") {
+                table(class: "job-table table table-bordered", border: "1") {
                     thead {
                         tr {
                             th("Name")
                             th("Status")
                         }
                     }
-                    tbody(style: "width: 400px;", id: "jobList") {
+                    tbody(id: "jobList") {
                         CI.get().jobs.values().each { job ->
                             tr(class: job.status.contextClass, id: "job-${job.name}") {
                                 td {

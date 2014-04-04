@@ -115,7 +115,7 @@ class WebServer {
         }
 
         matcher.get('/jobs') { HttpServerRequest r ->
-            writeResource(r, "jobs.html")
+            writeTemplate(r, "jobs.grt")
         }
 
         matcher.post('/github/:name') { HttpServerRequest it ->
