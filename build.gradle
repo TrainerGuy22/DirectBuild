@@ -10,7 +10,7 @@ defaultTasks 'jar'
 group = "com.directmyfile"
 
 ext {
-    groovyVersion = '2.3.0-SNAPSHOT:indy'
+    groovyVersion = '2.3.0-beta-1:indy'
 }
 
 repositories {
