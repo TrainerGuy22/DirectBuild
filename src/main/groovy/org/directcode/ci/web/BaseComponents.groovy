@@ -83,9 +83,5 @@ class BaseComponents {
                 }
             }
         }
-
-        factory.define("use") {
-
-        }
     }
 }
