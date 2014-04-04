@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
+import org.directcode.grt.TemplateFactory
 import org.vertx.groovy.core.Vertx
 import org.vertx.groovy.core.buffer.Buffer
 import org.vertx.groovy.core.http.HttpServer
@@ -15,10 +16,12 @@ import org.vertx.groovy.core.http.RouteMatcher
 class WebServer {
     final HttpServer server
     final Vertx vertx
+    final TemplateFactory templateFactory
 
     WebServer() {
         vertx = Vertx.newVertx()
         server = vertx.createHttpServer()
+        templateFactory = new TemplateFactory()
     }
 
     void start(int port, String ip) {
@@ -31,8 +34,10 @@ class WebServer {
     private void configure(RouteMatcher matcher) {
         def ci = CI.get()
 
+        BaseComponents.load(templateFactory)
+
         matcher.get('/') { HttpServerRequest r ->
-            writeResource(r, "index.html")
+            writeTemplate(r, "index.grt")
         }
 
         matcher.get('/css/:file') { HttpServerRequest r ->
@@ -173,6 +178,10 @@ class WebServer {
         def buffer = new Buffer(stream.bytes)
 
         r.response.end(buffer)
+    }
+
+    private void writeTemplate(HttpServerRequest request, String path) {
+        request.response.end(templateFactory.create(getStream(path).newReader()).make(ci: CI.get(), request: request).toString())
     }
 
     private static void loadDCScript(RouteMatcher router, Reader reader) {

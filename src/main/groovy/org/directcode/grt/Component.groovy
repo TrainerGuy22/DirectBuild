@@ -1,11 +1,13 @@
 package org.directcode.grt
 
-import groovy.xml.DOMBuilder
+import groovy.transform.CompileStatic
+import groovy.xml.MarkupBuilder
 
+@CompileStatic
 class Component {
     protected Closure build
 
-    void build(@DelegatesTo(DOMBuilder) Closure closure) {
+    void build(@DelegatesTo(MarkupBuilder) Closure closure) {
         build = closure
     }
 }

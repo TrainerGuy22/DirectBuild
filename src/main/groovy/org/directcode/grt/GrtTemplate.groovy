@@ -1,7 +1,9 @@
 package org.directcode.grt
 
 import groovy.text.Template
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class GrtTemplate {
     private TemplateFactory factory
     private Template template
@@ -13,11 +15,11 @@ class GrtTemplate {
 
     Writable make(Map<String, ? extends Object> binding) {
         def realBinding = [
-                component: { String name, Map<String, ? extends Object> opts ->
+                component: { String name, Map<String, ? extends Object> opts = [:] ->
                     return factory.useComponent(name, opts)
                 }
         ] as Map<String, ? extends Object>
         realBinding.putAll(binding)
-        return template.make(binding)
+        return template.make(realBinding)
     }
 }

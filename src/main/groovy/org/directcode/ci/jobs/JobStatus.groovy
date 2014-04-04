@@ -18,4 +18,13 @@ enum JobStatus {
         }
         return values()[id]
     }
+
+    String getContextClass() {
+        switch (this) {
+            case SUCCESS: return "success"
+            case FAILURE: return "danger"
+            case WAITING: return "warning"
+            default: return ""
+        }
+    }
 }

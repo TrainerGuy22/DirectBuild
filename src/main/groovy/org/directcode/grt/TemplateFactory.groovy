@@ -2,8 +2,10 @@ package org.directcode.grt
 
 import groovy.text.SimpleTemplateEngine
 import groovy.text.TemplateEngine
+import groovy.transform.CompileStatic
 import groovy.xml.MarkupBuilder
 
+@CompileStatic
 class TemplateFactory {
     private final TemplateEngine templateEngine
 
@@ -18,7 +20,7 @@ class TemplateFactory {
         return new GrtTemplate(this, templateEngine.createTemplate(reader))
     }
 
-    void component(String name, @DelegatesTo(Component) Closure closure) {
+    void define(String name, @DelegatesTo(Component) Closure closure) {
         components[name] = closure
     }
 
@@ -29,12 +31,13 @@ class TemplateFactory {
         }
         def c = new Component()
         component.delegate = c
-        component()
-        def builder = new MarkupBuilder()
+        component(opts)
+        def writer = new StringWriter()
+        def builder = new MarkupBuilder(new PrintWriter(writer))
         builder.doubleQuotes = true
-
+        builder.expandEmptyElements = true
         c.build.delegate = builder
         c.build.call(opts)
-        return builder
+        return writer.toString()
     }
 }
