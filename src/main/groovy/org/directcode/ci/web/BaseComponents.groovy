@@ -14,7 +14,7 @@ class BaseComponents {
             build {
                 link(rel: "stylesheet", href: "/css/bootstrap.min.css")
                 script(src: "/js/bootstrap.min.js")
-                style("""\
+                style("""
                 body {
                     padding-top: 60px;
                 }
