@@ -7,10 +7,7 @@
     <%= component("bootstrap") %>
 </head>
 <body class="container">
-< %=
-component("navigation", [active: "Home"])
-% >
-
-< %= component("build_queue") % >
+<%= component("navigation", [active: "Home"]) %>
+<%= component("build_queue") %>
 </body>
 </html>
