@@ -32,7 +32,7 @@ class CIStorage {
         }
     }
 
-    void load(@NotNull String storageName) {
+    synchronized void load(@NotNull String storageName) {
         def path = new File(storagePath.toFile(), "${storageName}.json").toPath()
         storages[storageName] = Utils.parseJSON(path.text) as Map<String, Object>
     }

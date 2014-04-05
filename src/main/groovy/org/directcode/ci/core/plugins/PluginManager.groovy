@@ -1,6 +1,7 @@
 package org.directcode.ci.core.plugins
 
 import groovy.transform.CompileStatic
+import org.directcode.ci.core.CI
 
 @CompileStatic
 class PluginManager {
@@ -13,7 +14,7 @@ class PluginManager {
     }
 
     void loadPlugins() {
-        new File("plugins").mkdirs()
+        new File(CI.get().configRoot, "plugins").mkdirs()
         providers.each { provider ->
             provider.loadPlugins()
         }
