@@ -64,13 +64,14 @@ class WebServer {
             def jobName = request.params['job'] as String
 
             if (!ci.jobs.containsKey(jobName)) {
-                writeResource(request, "404.html"); return
+                writeTemplate(request, "404.grt")
+                return
             }
 
             def job = ci.jobs[jobName]
 
             if (!job.logFile.exists()) {
-                writeResource(request, "404.html")
+                writeTemplate(request, "404.grt")
             } else {
                 request.response.sendFile(job.logFile.absolutePath)
             }
@@ -102,13 +103,15 @@ class WebServer {
             def artifact = request.params['name'] as String
             def id = request.params['id'] as String
             if (!ci.jobs.containsKey(jobName)) {
-                writeResource(request, "404.html"); return
+                writeTemplate(request, "404.grt")
+                return
             }
 
             def artifactFile = new File(ci.artifactDir, "${jobName}/${id}/${artifact}")
 
             if (!artifactFile.exists()) {
-                writeResource(request, "404.html"); return
+                writeTemplate(request, "404.grt")
+                return
             }
 
             request.response.sendFile(artifactFile.absolutePath)
@@ -150,7 +153,7 @@ class WebServer {
         }
 
         matcher.noMatch { HttpServerRequest r ->
-            writeResource(r, "404.html")
+            writeTemplate(r, "404.grt")
         }
 
         ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: vertx])
@@ -172,7 +175,7 @@ class WebServer {
         r.response.headers.add("Content-Type", mimeType)
 
         if (stream == null) {
-            writeResource(r, "404.html")
+            writeTemplate(r, "404.grt")
         }
 
         def buffer = new Buffer(stream.bytes)

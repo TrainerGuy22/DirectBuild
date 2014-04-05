@@ -105,7 +105,7 @@ class CI {
      * Initializes this CI Server
      */
     private void init() {
-        logger.info("Initialization DirectBuild (revision ${ReleaseInfo.gitCommitSHA()})")
+        logger.info("Initializing DirectBuild (revision ${ReleaseInfo.gitCommitSHA()})")
         def timer = new ExecutionTimer()
         timer.start()
 
