@@ -36,8 +36,13 @@ class BaseComponents {
                             path: "/jobs"
                     ]
             ]
+
+            def right = (List<Closure>) []
             if (opts.pages) {
                 navbar.addAll((List<Map<String, ? extends Object>>) opts.pages)
+            }
+            if (opts.right) {
+                right.addAll((List<Closure>) opts.right)
             }
             build {
                 nav(class: "navbar navbar-default navbar-fixed-top", role: "navigation") {
@@ -54,6 +59,14 @@ class BaseComponents {
                                 li {
                                     a(href: nav.path, nav.name)
                                 }
+                            }
+                        }
+                    }
+                    if (right) {
+                        ul(class: "nav navbar-nav navbar-right") {
+                            right.each { nav ->
+                                nav.delegate = delegate
+                                nav()
                             }
                         }
                     }
@@ -79,6 +92,16 @@ class BaseComponents {
                                 td(job.status.toString())
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        factory.define("build_queue") { opts ->
+            build {
+                ul(class: "list-group") {
+                    CI.get().jobQueue.buildQueues().each { build ->
+                        li(class: "list-group-item", "${build.job.name} - ${build.number} - ${build.running ? 'Running' : 'Waiting'}")
                     }
                 }
             }

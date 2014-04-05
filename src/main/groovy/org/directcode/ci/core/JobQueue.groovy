@@ -9,12 +9,11 @@ import org.jetbrains.annotations.Nullable
 @CompileStatic
 class JobQueue {
     static final Logger logger = Logger.getLogger("JobQueue")
-    private final Set<Build> buildQueue
     private final Set<Builder> builders
     private final Map<String, Integer> numbers
+    private final Set<BuildDescriptor> descriptors = []
 
     JobQueue(@NotNull int builderCount) {
-        this.buildQueue = new HashSet<>()
         this.builders = new HashSet<>(builderCount)
         1.upto(builderCount) { id ->
             def builder = new Builder(id as int)
@@ -32,10 +31,6 @@ class JobQueue {
                 builder.shouldRun = false
             }
         }
-    }
-
-    Set<Build> builds() {
-        return buildQueue
     }
 
     boolean isBuilding(@NotNull Job job, @Nullable Builder exclude = null) {
@@ -63,5 +58,25 @@ class JobQueue {
             available.first().queue().add(build)
         }
         return build
+    }
+
+    int freeBuilders() {
+        return (builders*.free).findAll().size()
+    }
+
+    int workingBuilders() {
+        return (builders*.busy).findAll().size()
+    }
+
+    int totalBuilders() {
+        return builders.size()
+    }
+
+    Set<Build> buildQueues() {
+        def all = [].toSet()
+        builders.each {
+            all.addAll(it.queue())
+        }
+        return all
     }
 }

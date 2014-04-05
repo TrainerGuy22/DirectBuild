@@ -134,6 +134,10 @@ class WebServer {
             ci.runJob(job)
         }
 
+        matcher.get('/queue') { HttpServerRequest request ->
+            writeTemplate(request, "queue.grt")
+        }
+
         matcher.get('/api/history/:name') { HttpServerRequest r ->
             def jobName = r.params['name'] as String
 
