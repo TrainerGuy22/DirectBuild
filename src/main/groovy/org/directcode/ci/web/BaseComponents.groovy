@@ -2,21 +2,20 @@ package org.directcode.ci.web
 
 import org.directcode.ci.core.CI
 import org.directcode.grt.TemplateFactory
-import org.intellij.lang.annotations.Language
 
 class BaseComponents {
     static void load(TemplateFactory factory) {
         factory.define("jquery") { opts ->
             build {
-                script(src: "/js/jquery.min.js")
+                script(src: "https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js")
             }
         }
 
         factory.define("bootstrap") { opts ->
             build {
-                link(rel: "stylesheet", href: "/css/bootstrap.min.css")
+                link(rel: "stylesheet", href: "https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css")
                 if (opts.js) {
-                    script(src: "/js/bootstrap.min.js")
+                    script(src: "https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js")
                 }
                 style("""
                 body {
@@ -37,8 +36,9 @@ class BaseComponents {
                             path: "/jobs"
                     ]
             ]
-            if (opts.pages)
+            if (opts.pages) {
                 navbar.addAll((List<Map<String, ? extends Object>>) opts.pages)
+            }
             build {
                 nav(class: "navbar navbar-default navbar-fixed-top", role: "navigation") {
                     div(class: "navbar-header") {
