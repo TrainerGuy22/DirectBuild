@@ -8,11 +8,11 @@ import static org.junit.Assert.assertEquals
 
 abstract class CITest {
 
-    static CI ci
+    static CI ci = null
 
     @BeforeClass
     static void setupCIInstance() {
-        if (!ci) {
+        if (ci == null) {
             ci = CI.get()
             ci.configRoot = new File("src/test/work/")
             ci.configRoot.deleteDir()
