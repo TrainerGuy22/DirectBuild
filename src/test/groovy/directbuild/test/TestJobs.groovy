@@ -1,11 +1,14 @@
 package directbuild.test
 
 import org.directcode.ci.jobs.JobStatus
+import org.junit.FixMethodOrder
 import org.junit.Ignore
 import org.junit.Test
+import org.junit.runners.MethodSorters
 
 import static org.junit.Assert.*
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class TestJobs extends CITest {
 
     @Test(timeout = 60000L)
