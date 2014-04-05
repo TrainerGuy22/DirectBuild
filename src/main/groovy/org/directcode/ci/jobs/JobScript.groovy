@@ -22,9 +22,16 @@ abstract class JobScript extends Script {
     List<TaskConfiguration> tasks = []
     ArtifactSpec artifacts = new ArtifactSpec()
     Map<String, ? extends Object> source = [type: "none"]
+    Conditions conditions = new Conditions()
+
 
     void name(String name) {
         this.name = name
+    }
+
+    void conditions(@DelegatesTo(Conditions) Closure closure) {
+        closure.delegate = conditions
+        closure()
     }
 
     void task(String type, Closure closure) {
@@ -82,5 +89,18 @@ abstract class JobScript extends Script {
         script.job = job
         script.run()
         return script
+    }
+
+    class Conditions {
+
+        Condition build = new Condition()
+
+        class Condition {
+            List<Closure<Boolean>> conditions = []
+
+            void onlyIf(Closure<Boolean> condition) {
+                conditions.add(condition)
+            }
+        }
     }
 }

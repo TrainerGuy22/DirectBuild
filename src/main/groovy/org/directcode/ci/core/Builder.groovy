@@ -63,6 +63,10 @@ class Builder implements Runnable {
         return busy
     }
 
+    boolean isFree() {
+        return !busy
+    }
+
     Set<Build> queue() {
         return builderQueue
     }

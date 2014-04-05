@@ -151,9 +151,18 @@ class Build {
 
         def job_history = ci.storage.get("job_history")
 
-        def history = ((List<Map<String, ? extends Object>>) job_history.get(job.name, new LinkedList<>()))
+        def historyListOriginal = (List<Map<String, ? extends Object>>) job_history.get(job.name, new LinkedList<>())
+
+        def history = (List<Map<String, ? extends Object>>) []
+
+        for (it in historyListOriginal) {
+            history.add(it)
+        }
 
         history.add([number: number, status: job.status.ordinal(), log: base64Log, buildTime: buildTime, timeStamp: new Date().toString()])
+
+        job_history[job.name] = history
+
         this.complete = true
     }
 

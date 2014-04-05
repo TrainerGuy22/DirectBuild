@@ -70,4 +70,8 @@ class Job {
         history.load()
         return history
     }
+
+    boolean shouldBuild() {
+        return !buildConfig.conditions.build.conditions*.call().contains(false)
+    }
 }

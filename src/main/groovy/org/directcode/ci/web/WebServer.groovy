@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.directcode.ci.core.CI
 import org.directcode.ci.utils.Utils
+import org.directcode.grt.TemplateFactory
 import org.vertx.groovy.core.Vertx
 import org.vertx.groovy.core.buffer.Buffer
 import org.vertx.groovy.core.http.HttpServer
@@ -15,10 +16,12 @@ import org.vertx.groovy.core.http.RouteMatcher
 class WebServer {
     final HttpServer server
     final Vertx vertx
+    final TemplateFactory templateFactory
 
     WebServer() {
         vertx = Vertx.newVertx()
         server = vertx.createHttpServer()
+        templateFactory = new TemplateFactory()
     }
 
     void start(int port, String ip) {
@@ -31,8 +34,10 @@ class WebServer {
     private void configure(RouteMatcher matcher) {
         def ci = CI.get()
 
+        BaseComponents.load(templateFactory)
+
         matcher.get('/') { HttpServerRequest r ->
-            writeResource(r, "index.html")
+            writeTemplate(r, "index.grt")
         }
 
         matcher.get('/css/:file') { HttpServerRequest r ->
@@ -59,13 +64,14 @@ class WebServer {
             def jobName = request.params['job'] as String
 
             if (!ci.jobs.containsKey(jobName)) {
-                writeResource(request, "404.html"); return
+                writeTemplate(request, "404.grt")
+                return
             }
 
             def job = ci.jobs[jobName]
 
             if (!job.logFile.exists()) {
-                writeResource(request, "404.html")
+                writeTemplate(request, "404.grt")
             } else {
                 request.response.sendFile(job.logFile.absolutePath)
             }
@@ -97,20 +103,22 @@ class WebServer {
             def artifact = request.params['name'] as String
             def id = request.params['id'] as String
             if (!ci.jobs.containsKey(jobName)) {
-                writeResource(request, "404.html"); return
+                writeTemplate(request, "404.grt")
+                return
             }
 
             def artifactFile = new File(ci.artifactDir, "${jobName}/${id}/${artifact}")
 
             if (!artifactFile.exists()) {
-                writeResource(request, "404.html"); return
+                writeTemplate(request, "404.grt")
+                return
             }
 
             request.response.sendFile(artifactFile.absolutePath)
         }
 
         matcher.get('/jobs') { HttpServerRequest r ->
-            writeResource(r, "jobs.html")
+            writeTemplate(r, "jobs.grt")
         }
 
         matcher.post('/github/:name') { HttpServerRequest it ->
@@ -124,6 +132,10 @@ class WebServer {
             ci.logger.info "GitHub Hook executing job ${jobName}"
 
             ci.runJob(job)
+        }
+
+        matcher.get('/queue') { HttpServerRequest request ->
+            writeTemplate(request, "queue.grt")
         }
 
         matcher.get('/api/history/:name') { HttpServerRequest r ->
@@ -145,7 +157,7 @@ class WebServer {
         }
 
         matcher.noMatch { HttpServerRequest r ->
-            writeResource(r, "404.html")
+            writeTemplate(r, "404.grt")
         }
 
         ci.eventBus.dispatch("ci.web.setup", [router: matcher, server: server, vertx: vertx])
@@ -167,12 +179,16 @@ class WebServer {
         r.response.headers.add("Content-Type", mimeType)
 
         if (stream == null) {
-            writeResource(r, "404.html")
+            writeTemplate(r, "404.grt")
         }
 
         def buffer = new Buffer(stream.bytes)
 
         r.response.end(buffer)
+    }
+
+    private void writeTemplate(HttpServerRequest request, String path) {
+        request.response.end(templateFactory.create(getStream(path).newReader()).make(ci: CI.get(), request: request).toString())
     }
 
     private static void loadDCScript(RouteMatcher router, Reader reader) {

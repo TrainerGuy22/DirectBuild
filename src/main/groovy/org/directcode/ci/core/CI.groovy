@@ -14,6 +14,7 @@ import org.directcode.ci.tasks.CommandTask
 import org.directcode.ci.utils.ExecutionTimer
 import org.directcode.ci.utils.FileMatcher
 import org.directcode.ci.utils.HTTP
+import org.directcode.ci.utils.ReleaseInfo
 import org.directcode.ci.web.WebServer
 import org.jetbrains.annotations.NotNull
 
@@ -104,6 +105,7 @@ class CI {
      * Initializes this CI Server
      */
     private void init() {
+        logger.info("Initializing DirectBuild (revision ${ReleaseInfo.gitCommitSHA()})")
         def timer = new ExecutionTimer()
         timer.start()
 
@@ -146,6 +148,7 @@ class CI {
         CrashReporter.logger
         Build.logger
         JobQueue.logger
+        ReleaseInfo.logger
 
 
         def logLevel = LogLevel.parse(config.loggingSection().level.toString().toUpperCase())
@@ -217,7 +220,15 @@ class CI {
      * @return A Build that can be used to track status information
      */
     Build runJob(@NotNull Job job) {
-        return jobQueue.add(job)
+        if (!job.shouldBuild()) {
+            return null
+        } else {
+            return jobQueue.add(job)
+        }
+    }
+
+    Build build(@NotNull Job job) {
+        return runJob(job)
     }
 
     /**
@@ -265,5 +276,17 @@ class CI {
             INSTANCE = null
         }
         eventBus.dispatch("ci.shutdown.complete")
+    }
+
+    Job getJobByName(String name) {
+        return jobs[name]
+    }
+
+    Class<? extends Task> getTaskByName(String taskName) {
+        return taskTypes[taskName]
+    }
+
+    Class<? extends Source> getSourceByName(String sourceName) {
+        return sourceTypes[sourceName]
     }
 }

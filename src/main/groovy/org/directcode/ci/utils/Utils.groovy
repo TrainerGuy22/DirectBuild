@@ -89,7 +89,10 @@ class Utils {
     }
 
     static Object parseJSON(String text) {
-        return jsonSlurper.parseText(text)
+        if (text.equals("")) {
+            text = "{}"
+        }
+        return jsonSlurper.parseText(text);
     }
 
     @Memoized(maxCacheSize = 10)
@@ -120,5 +123,13 @@ class Utils {
             argument(file.toFile().absolutePath)
             directory(workingDir)
         }
+    }
+
+    static List<String> environmentList() {
+        def environment = []
+        System.getenv().entrySet().each {
+            environment.add("${it.key}=${it.value}")
+        }
+        return environment
     }
 }

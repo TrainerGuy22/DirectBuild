@@ -4,13 +4,25 @@ apply plugin: 'codenarc'
 apply plugin: 'maven'
 apply plugin: 'distribution'
 apply plugin: 'idea'
+apply plugin: 'versions'
+
+buildscript {
+    repositories {
+        maven { url "https://raw.githubusercontent.com/ben-manes/gradle-versions-plugin/mvnrepo" }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.5-beta-1'
+    }
+}
 
 defaultTasks 'jar'
 
 group = "com.directmyfile"
 
 ext {
-    groovyVersion = '2.3.0-SNAPSHOT:indy'
+    groovyVersion = '2.3.0-beta-1:indy'
 }
 
 repositories {
@@ -82,7 +94,7 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.0-20140402033729+0000"
+    gradleVersion = "2.0-20140404222411+0000"
     distributionUrl = "http://services.gradle.org/distributions-snapshots/gradle-${gradleVersion}-all.zip"
 }
 

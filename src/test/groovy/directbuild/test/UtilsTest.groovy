@@ -1,4 +1,4 @@
-package simpleci.test
+package directbuild.test
 
 import org.directcode.ci.utils.Utils
 import org.intellij.lang.annotations.Language
