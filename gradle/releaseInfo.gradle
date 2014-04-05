@@ -1,0 +1,11 @@
+String gitCommitSHA() {
+    try {
+        return "git log -1 --format=oneline".execute(["PATH=${System.getenv("PATH")}"], rootProject.projectDir)
+    } catch (ignored) {
+        return "Unknown"
+    }
+}
+
+processResources {
+    expand(["GIT_COMMIT_SHA": gitCommitSHA()])
+}
