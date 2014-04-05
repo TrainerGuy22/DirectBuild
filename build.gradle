@@ -4,6 +4,18 @@ apply plugin: 'codenarc'
 apply plugin: 'maven'
 apply plugin: 'distribution'
 apply plugin: 'idea'
+apply plugin: 'versions'
+
+buildscript {
+    repositories {
+        maven { url "https://raw.githubusercontent.com/ben-manes/gradle-versions-plugin/mvnrepo" }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.5-beta-1'
+    }
+}
 
 defaultTasks 'jar'
 
