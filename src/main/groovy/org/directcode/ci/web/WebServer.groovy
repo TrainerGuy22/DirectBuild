@@ -57,7 +57,7 @@ class WebServer {
         }
 
         matcher.get('/job/:name') { HttpServerRequest r ->
-            writeResource(r, "job.html")
+            writeTemplate(r, "job.grt")
         }
 
         matcher.get('/api/log/:job') { HttpServerRequest request ->
@@ -180,6 +180,7 @@ class WebServer {
 
         if (stream == null) {
             writeTemplate(r, "404.grt")
+            return
         }
 
         def buffer = new Buffer(stream.bytes)

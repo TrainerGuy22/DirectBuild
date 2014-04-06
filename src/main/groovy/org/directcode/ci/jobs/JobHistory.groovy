@@ -16,7 +16,7 @@ class JobHistory {
     }
 
     void load() {
-        def history = ((List<Map<String, Object>>) CI.get().storage.get("job_history").get(job.name, []))
+        def history = ((List<Map<String, ? extends Object>>) CI.get().storage.get("job_history").get(job.name, []))
         for (result in history) {
             def entry = new Entry()
             entries.add(entry)
