@@ -1,7 +1,7 @@
 package org.directcode.ci.web
-
 import org.directcode.ci.core.CI
 import org.directcode.grt.TemplateFactory
+import org.intellij.lang.annotations.Language
 
 class BaseComponents {
     static void load(TemplateFactory factory) {
@@ -103,6 +103,28 @@ class BaseComponents {
                     CI.get().jobQueue.buildQueues().each { build ->
                         li(class: "list-group-item", "${build.job.name} - ${build.number} - ${build.running ? 'Running' : 'Waiting'}")
                     }
+                }
+            }
+        }
+
+        factory.define("nav-tab-switch-script") { opts ->
+            @Language("JavaScript") def switchScript = '''
+$(".nav-tabs li").each(function (index, tab) {
+        tab = $(tab);
+        $(tab).click(function () {
+            $(".nav-tabs li").each(function (i, t) {
+                t = $(t);
+                t.removeClass("active");
+                $("#" + t.attr("data-target")).hide();
+            });
+            tab.addClass("active");
+            var target = tab.attr("data-target");
+            $("#" + target).show();
+        });
+});'''
+            build {
+                script {
+                    yield(switchScript)
                 }
             }
         }

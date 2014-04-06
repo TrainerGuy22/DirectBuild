@@ -63,9 +63,13 @@ class CIStorage {
     }
 
     synchronized void save(@NotNull String storageName) {
-        def storageFile = new File(storagePath.toFile(), "${storageName}.json").toPath()
+        def storageFile = new File(storagePath.toFile(), "${storageName}.json")
+        def storageOut = storageFile.toPath()
         def builder = new JsonBuilder(storages[storageName])
-        storageFile.write(builder.toPrettyString() + System.lineSeparator())
+        if (storageFile.exists()) {
+            storageFile.delete()
+        }
+        storageOut.write(builder.toPrettyString() + System.lineSeparator())
         eventBus.dispatch("${storageName}.saved")
     }
 
