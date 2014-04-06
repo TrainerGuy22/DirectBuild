@@ -1,10 +1,10 @@
 #!/bin/bash
 #######################################
-# A QuickStart Script for DirectBuild #
+# A quickstart script for DirectBuild #
 #   Created by: Kenneth Endfinger     #
 #######################################
 # Options #
-USE_PREBUILTS="false"
+USE_BINARY="false"
 # End Options #
 
 function check_commands() {
@@ -49,16 +49,16 @@ function build() {
     rm -rf _build_
 }
 
-function download_prebuilts() {
+function download_binary() {
     wget https://kaendfinger.ci.cloudbees.com/job/SimpleCI/lastSuccessfulBuild/artifact/build/libs/DirectBuild.jar -ODirectBuild.jar
     if [[ ${?} -ne 0 ]]; then
-        echo "ERROR: Failed to download prebuilts."
+        echo "ERROR: Failed to download binary."
     fi
     chmod a+x DirectBuild.jar # For Good Measure
 }
 
-if [[ ${USE_PREBUILTS} == true ]]; then
-    download_prebuilts
+if [[ ${USE_BINARY} == true ]]; then
+    download_binary
 else
     echo "Checking system for needed commands..."
     check_commands
