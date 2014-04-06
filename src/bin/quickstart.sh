@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #######################################
 # A quickstart script for DirectBuild #
 #   Created by: Kenneth Endfinger     #
